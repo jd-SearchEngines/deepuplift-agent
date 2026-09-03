@@ -5,6 +5,7 @@ __pycache__/
 .coverage
 .eggs/
 *.egg-info/
+build/
 .mypy_cache/
 .ruff_cache/
 .venv/

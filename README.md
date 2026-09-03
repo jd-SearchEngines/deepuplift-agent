@@ -77,16 +77,17 @@ bash -n scripts/*.sh
 
 可选后端和 Python 3.11 的 CausalML 环境见 [`requirements-optional.txt`](requirements-optional.txt) 和 [`requirements-causalml-py311.txt`](requirements-causalml-py311.txt)。
 
-## v0.3 Trusted Causal Core
+## v0.4.0a1 Alpha Release Candidate
 
 DeepUplift supports randomized and observational data, binary treatment (stable reference path), and multi-treatment/continuous treatment as experimental boundaries. The model catalog now distinguishes `STABLE`, `OPTIONAL`, `EXPERIMENTAL`, `LEGACY`, and `INTERFACE_ONLY`; only runnable models are presented as runnable.
 
 | Family | Models | Maturity |
 |---|---|---|
-| Meta learners | S/T/X/DR, R, IPW | STABLE |
-| Tree-backed meta | S/T/X/DR + RandomForest | STABLE |
-| External forests/trees | EconML CausalForestDML, CausalML UpliftTree/UpliftRandomForest | OPTIONAL (real adapters; dependency-gated) |
-| Multi / continuous | MultiTreatmentOutcome, DoseResponseGBM | EXPERIMENTAL |
+| Meta learners | S/T/X, DR/R/IPW | STABLE |
+| Tree-backed meta | S-Learner-RF, DR-Learner-RF | STABLE |
+| Causal forest / uplift trees | CausalForestDML, CausalML UpliftTree/UpliftRF | OPTIONAL (real adapters; dependency-gated) |
+| Multi-treatment | MultiTreatmentOutcome | EXPERIMENTAL / reference |
+| Continuous dose | DoseResponseGBM | EXPERIMENTAL / offline-only |
 | Deep models | TarNet, CFRNet, DragonNet, CEVAE, GANITE and others | EXPERIMENTAL / research compatibility |
 
 For observational binary data, `run_uplift_pipeline()` automatically estimates and
@@ -113,9 +114,29 @@ Public loaders do not download or redistribute raw data. `synthetic_ground_truth
 
 `0.4.0a1` Alpha preparation: binary randomized and observational reference paths are stable in core CI; multi-treatment is experimental/reference, continuous treatment is experimental/offline-only, and external causal forests/uplift trees have real optional adapters gated by their dependencies. Public-data loaders are available, but a public-data validation claim is made only after a real local benchmark run.
 
+## Scenario map
+
+| Scenario | Treatment | Decision | Maturity |
+|---|---|---|---|
+| Coupon targeting | Binary | Who | Stable |
+| Marketing exposure | Binary | Who | Stable |
+| Coupon amount | Multi | Which | Experimental / Beta path |
+| Subsidy | Continuous | How much | Experimental |
+| Coins / points | Multi / Continuous | Which / How much | Reference |
+
+## Quick install
+
+```bash
+python -m pip install -e .
+# development and packaging checks
+python -m pip install -e ".[dev]"
+```
+
+PyPI release pending; do not assume `pip install deepuplift` is available yet.
+
 ## 输入数据
 
-框架一级支持三类 treatment：`binary`、`multi_discrete`、`continuous`。当前 reference pipeline 完整跑通 binary；multi-treatment 和 continuous treatment 已冻结 contract 与扩展边界。
+框架一级支持三类 treatment：`binary`、`multi_discrete`、`continuous`。binary 是稳定 reference path；multi-treatment 和 continuous treatment 是可运行但实验性的决策边界。
 
 最小二元 treatment 数据需要包含：
 
@@ -138,6 +159,20 @@ scripts/                       数据准备、烟测、回归和证据生成脚�
 docs/architecture/             平台分层设计
 docs/recovery/                 项目恢复与上下文说明
 ```
+
+## Tutorials and API
+
+- [Binary coupon targeting](docs/tutorials/01_coupon_targeting.md)
+- [Observational targeting](docs/tutorials/02_observational_targeting.md)
+- [Multi coupon amount](docs/tutorials/03_coupon_amount.md)
+- [Continuous subsidy](docs/tutorials/04_subsidy_optimization.md)
+- [Public benchmark](docs/tutorials/05_public_benchmark.md)
+- [API guide](docs/API_GUIDE.md) · [data format](docs/DATA_FORMAT.md) · [troubleshooting](docs/TROUBLESHOOTING.md)
+
+Run the release benchmark with `python scripts/run_release_benchmark.py --help`.
+The command accepts local upstream paths, `--scale 10000 100000 1000000`, an
+optional packaging Python, and an externally verified CI status. Generated
+evidence is written outside Git under `release_runs/<run_id>/`.
 
 ## 证据与发布边界
 

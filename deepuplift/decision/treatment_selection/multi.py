@@ -15,11 +15,14 @@ def build_multi_policy(
     outcome_value: float = 1.0,
     budget: float | None = None,
     no_treatment: Any = "NO_TREATMENT",
+    optimizer: str = "net_value",
     policy_name: str = "multi_net_value_policy",
 ) -> PolicyResult:
     """Choose the action with maximum incremental net value, including no-op."""
     if prediction.treatment_type != TreatmentType.MULTI_DISCRETE:
         raise ValueError("build_multi_policy requires a multi_discrete EffectPrediction.")
+    if optimizer not in {"net_value", "value_per_cost"}:
+        raise ValueError("optimizer must be 'net_value' or 'value_per_cost'.")
     effects = {key: np.asarray(value, dtype="float64") for key, value in prediction.treatment_effects.items()}
     n = len(np.asarray(prediction.unit_id))
     if not effects:
@@ -35,7 +38,10 @@ def build_multi_policy(
                 best_treatment, best_net = treatment, float(values[index])
         cost = float(cost_fn(best_treatment)) if best_treatment != no_treatment else 0.0
         selected.append({"index": index, "treatment": best_treatment, "net_value": best_net, "cost": cost, "effect": float(effects[best_treatment][index]) if best_treatment != no_treatment else 0.0})
-    selected.sort(key=lambda row: row["net_value"], reverse=True)
+    if optimizer == "value_per_cost":
+        selected.sort(key=lambda row: row["net_value"] / row["cost"] if row["cost"] > 0 else -np.inf, reverse=True)
+    else:
+        selected.sort(key=lambda row: row["net_value"], reverse=True)
     spent = 0.0
     chosen: dict[int, bool] = {}
     for row in selected:
@@ -50,7 +56,7 @@ def build_multi_policy(
         rows.append({"unit_id": prediction.unit_id[row["index"]], "recommended_treatment": treatment, "estimated_effect": row["effect"] if eligible else 0.0, "expected_incremental_value": row["effect"] * float(outcome_value) if eligible else 0.0, "treatment_cost": row["cost"] if eligible else 0.0, "net_value": row["net_value"] if eligible else 0.0, "eligible": eligible, "reason": "maximum positive net value" if eligible else "no positive net value or budget unavailable"})
     active = [row for row in rows if row["eligible"]]
     value = sum(row["expected_incremental_value"] for row in active)
-    return PolicyResult(rows=rows, summary={"target_count": len(active), "total_cost": spent, "expected_incremental_outcome": sum(row["estimated_effect"] for row in active), "expected_incremental_value": value, "expected_net_value": sum(row["net_value"] for row in active), "iroas": value / spent if spent > 0 else None, "budget": budget, "budget_utilization": spent / float(budget) if budget and budget > 0 else None}, policy_name=policy_name, metadata={"offline_only": True, "decision_rule": "argmax treatment-specific net value including no-treatment"})
+    return PolicyResult(rows=rows, summary={"target_count": len(active), "total_cost": spent, "expected_incremental_outcome": sum(row["estimated_effect"] for row in active), "expected_incremental_value": value, "expected_net_value": sum(row["net_value"] for row in active), "iroas": value / spent if spent > 0 else None, "budget": budget, "budget_utilization": spent / float(budget) if budget and budget > 0 else None}, policy_name=policy_name, metadata={"offline_only": True, "decision_rule": f"{optimizer}: action-specific net value including no-treatment"})
 
 
 __all__ = ["build_multi_policy"]

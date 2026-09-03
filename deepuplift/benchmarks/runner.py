@@ -42,7 +42,8 @@ def run_benchmark(dataset, *, models: Iterable[str] | None = None, output_dir: s
     train, test = dataset.subset(train_idx), dataset.subset(test_idx)
     nuisance = None
     config = nuisance_config or {}
-    if dataset.assignment_type.value == "observational":
+    requested_nuisance = dataset.assignment_type.value == "observational" or any(model_info(name).get("capabilities", {}).get("requires_propensity") for name in names)
+    if requested_nuisance:
         nuisance = estimate_nuisance(train, random_state=seed, **config)
     rows = []
     predictions = {}
@@ -57,7 +58,7 @@ def run_benchmark(dataset, *, models: Iterable[str] | None = None, output_dir: s
             model.fit(train, nuisance=nuisance) if nuisance is not None else model.fit(train)
             prediction = model.predict(test)
             metrics = evaluate_prediction(prediction, test, true_effect_col=dataset.metadata.get("true_effect_col"))
-            rows.append({"model": name, "status": "PASS", "runtime_seconds": time.perf_counter() - begin, "metrics": metrics, "model_info": info})
+            rows.append({"model": name, "status": "PASS", "runtime_seconds": time.perf_counter() - begin, "metrics": metrics, "model_info": info, "nuisance_used": nuisance is not None, "nuisance_config": config})
             predictions[name] = prediction
         except Exception as exc:
             rows.append({"model": name, "status": "FAIL", "error": str(exc), "model_info": info})

@@ -38,6 +38,9 @@ class EffectPrediction:
     lower_bound: Any | None = None
     upper_bound: Any | None = None
     propensity: Any | None = None
+    dose_grid: Any | None = None
+    dose_outcome_predictions: Mapping[Any, Any] = field(default_factory=dict)
+    dose_effect_predictions: Mapping[Any, Any] = field(default_factory=dict)
     metadata: Dict[str, Any] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
@@ -61,6 +64,12 @@ class EffectPrediction:
             value_length = _length(getattr(self, name))
             if expected is not None and value_length is not None and value_length != expected:
                 raise ValueError(f"EffectPrediction field '{name}' has length {value_length}; expected {expected}.")
+        for name in ["dose_outcome_predictions", "dose_effect_predictions"]:
+            mapping = getattr(self, name)
+            for dose, values in mapping.items():
+                value_length = _length(values)
+                if expected is not None and value_length is not None and value_length != expected:
+                    raise ValueError(f"EffectPrediction field '{name}[{dose}]' has length {value_length}; expected {expected}.")
         for treatment, effects in self.treatment_effects.items():
             value_length = _length(effects)
             if expected is not None and value_length is not None and value_length != expected:

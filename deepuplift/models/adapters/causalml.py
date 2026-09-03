@@ -32,10 +32,17 @@ class CausalMLUpliftAdapter:
         outcome = pd.to_numeric(frame[dataset.outcome_col], errors="coerce").to_numpy(dtype="float64")
         cls = self._class()
         params = dict(self.kwargs)
-        if self.name == "CausalMLUpliftTree":
-            params.setdefault("control_name", "control")
+        params.setdefault("control_name", "control")
+        if self.name == "CausalMLUpliftRandomForest":
+            params.setdefault("n_estimators", 50)
+            params.setdefault("max_features", min(10, max(1, x.shape[1])))
+            params.setdefault("min_samples_leaf", 20)
+            params.setdefault("min_samples_treatment", 5)
         self.model = cls(**params)
-        self.model.fit(X=x, treatment=treatment, y=outcome)
+        # CausalML 0.16's RF bootstrap indexes ``X`` positionally; passing a
+        # numpy matrix avoids pandas 2.x column-index semantics in that path.
+        fit_x = x.to_numpy() if self.name == "CausalMLUpliftRandomForest" else x
+        self.model.fit(X=fit_x, treatment=treatment, y=outcome)
         self.feature_cols = list(dataset.feature_cols)
         self.metadata = {"model_name": self.name, "backend": "causalml", "nuisance_mode": "internal", "nuisance_provenance": "CausalML uplift estimator owns its internal fitting path", "caller_nuisance_supplied": nuisance is not None, "treatment_mapping": {str(values[0]): "control", str(values[1]): "treatment"}}
         return self
@@ -44,7 +51,8 @@ class CausalMLUpliftAdapter:
         if not hasattr(self, "model"):
             raise RuntimeError("Model must be fitted before predict.")
         x = self.preprocessor.transform(dataset.to_pandas()[self.feature_cols])
-        raw = np.asarray(self.model.predict(x))
+        predict_x = x.to_numpy() if self.name == "CausalMLUpliftRandomForest" else x
+        raw = np.asarray(self.model.predict(predict_x))
         uplift = raw[:, -1] if raw.ndim == 2 else raw.reshape(-1)
         return EffectPrediction(unit_id=dataset.unit_ids.to_numpy(), treatment_type=TreatmentType.BINARY, uplift=uplift, cate=uplift, y0=np.zeros(len(uplift)), y1=uplift, recommended_effect=uplift, propensity=np.full(len(uplift), .5), metadata=self.metadata)
 

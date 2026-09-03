@@ -34,17 +34,20 @@ def _from_csv(path: str | Path, *, name: str, feature_cols: list[str], treatment
     return create_causal_dataset(frame, feature_cols=feature_cols, treatment_col=treatment_col, outcome_col=outcome_col, treatment_type=TreatmentType.BINARY, assignment_type=assignment_type, id_column=id_column, metadata={"name": name, **metadata, "source_path": str(path), "raw_data_redistributed": False})
 
 
-def load_hillstrom(path: str | Path) -> CausalDataset:
+def load_hillstrom(path: str | Path, *, multi_treatment: bool = False) -> CausalDataset:
+    path = Path(path)
+    if not path.exists():
+        raise FileNotFoundError(f"Hillstrom data was not found at {path}; raw data is not redistributed.")
     frame = pd.read_csv(path)
-    treatment_map = {"No E-Mail": 0, "Mens E-Mail": 1, "Womens E-Mail": 1}
-    if "segment" in frame and frame["segment"].dtype == object:
+    treatment_map = {"No E-Mail": 0, "Mens E-Mail": 1, "Womens E-Mail": 2 if multi_treatment else 1}
+    if "segment" in frame and (pd.api.types.is_object_dtype(frame["segment"]) or pd.api.types.is_string_dtype(frame["segment"])):
         frame["treatment"] = frame["segment"].map(treatment_map)
     elif "treatment" not in frame:
         raise ValueError("Hillstrom loader needs segment or treatment column.")
     if "conversion" not in frame:
         raise ValueError("Hillstrom loader needs conversion outcome column.")
     feature_cols = [c for c in ["history_segment", "zip_code", "channel", "mens", "womens", "newbie", "recency", "history"] if c in frame.columns]
-    return create_causal_dataset(frame, feature_cols=feature_cols, treatment_col="treatment", outcome_col="conversion", treatment_type=TreatmentType.BINARY, assignment_type=AssignmentType.RANDOMIZED, id_column="customer_id" if "customer_id" in frame else None, metadata={"name": "hillstrom", "source": "Hillstrom MineThatData challenge", "license": "Upstream dataset terms apply", "raw_data_redistributed": False, "treatment_mapping": treatment_map})
+    return create_causal_dataset(frame, feature_cols=feature_cols, treatment_col="treatment", outcome_col="conversion", treatment_type=TreatmentType.MULTI_DISCRETE if multi_treatment else TreatmentType.BINARY, assignment_type=AssignmentType.RANDOMIZED, id_column="customer_id" if "customer_id" in frame else None, metadata={"name": "hillstrom_multi" if multi_treatment else "hillstrom", "source": "Hillstrom MineThatData challenge", "license": "Upstream dataset terms apply", "raw_data_redistributed": False, "treatment_mapping": treatment_map, "business_cost_assumption": "Demo-only cost assumptions; not a fact in the raw dataset."})
 
 
 def load_criteo(path: str | Path, *, sample_rows: int | None = None, seed: int = 42) -> CausalDataset:
@@ -58,7 +61,7 @@ def load_criteo(path: str | Path, *, sample_rows: int | None = None, seed: int =
     outcome_col = "conversion" if "conversion" in frame else "visit" if "visit" in frame else "outcome"
     if treatment_col not in frame or outcome_col not in frame:
         raise ValueError("Criteo loader expects treatment/treatment_group and conversion/visit/outcome columns.")
-    excluded = {treatment_col, outcome_col, "id", "user_id"}
+    excluded = {treatment_col, outcome_col, "conversion", "visit", "exposure", "id", "user_id"}
     features = [c for c in frame.columns if c not in excluded and frame[c].nunique(dropna=False) > 1]
     return create_causal_dataset(frame, feature_cols=features, treatment_col=treatment_col, outcome_col=outcome_col, treatment_type=TreatmentType.BINARY, assignment_type=AssignmentType.RANDOMIZED, id_column="user_id" if "user_id" in frame else None, metadata={"name": "criteo", "source": "Official Criteo uplift dataset", "license": "Upstream dataset terms apply", "mode": "sample" if sample_rows else "full", "sample_rows": sample_rows, "raw_data_redistributed": False})
 
@@ -81,7 +84,7 @@ def load_public_dataset(name: str, path: str | Path | None = None, **kwargs: Any
     if path is None:
         raise ValueError(f"{name} requires a local path; public raw data is never downloaded implicitly.")
     if key == "hillstrom":
-        return load_hillstrom(path)
+        return load_hillstrom(path, **kwargs)
     if key == "criteo":
         return load_criteo(path, **kwargs)
     if key in {"retail", "lenta", "x5"}:

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import hashlib
 import json
 import platform
 import subprocess
@@ -23,6 +22,7 @@ from deepuplift.decision import build_continuous_policy, build_multi_policy
 
 from .config import ReleaseConfig
 from .gates import build_release_gate, optional_backend_status
+from .packaging import run_packaging_validation
 from .policy import coupon_policy_benchmark
 
 
@@ -60,7 +60,43 @@ def _run_continuous(seed: int) -> dict[str, Any]:
     from deepuplift.models import build_model
     model = build_model("DoseResponseGBM"); model.fit(dataset); prediction = model.predict(dataset)
     policy = build_continuous_policy(prediction, dose_cost=lambda value: .01 * value, outcome_value=1.0, budget=rows)
-    return {"status": "PASS", "policy": policy.summary, "prediction_finite": bool(np.isfinite(prediction.recommended_effect).all()), "maturity": "EXPERIMENTAL", "offline_only": True}
+    return {"status": "PASS", "policy": policy.summary, "prediction_finite": bool(np.isfinite(prediction.recommended_effect).all()), "dose_grid": prediction.dose_grid, "dose_effect_predictions": prediction.dose_effect_predictions, "maturity": "EXPERIMENTAL", "offline_only": True}
+
+
+def _load_optional_report(path: str | Path | None) -> dict[str, Any] | None:
+    if not path:
+        return None
+    report_path = Path(path)
+    if not report_path.exists():
+        return {"status": "FAIL", "error": f"optional backend report not found: {report_path}"}
+    return json.loads(report_path.read_text(encoding="utf-8"))
+
+
+def _public_benchmark(loader, path: str | Path, models: list[str], *, seed: int = 42, **kwargs: Any) -> dict[str, Any]:
+    try:
+        dataset = loader(path, **kwargs)
+        report = run_benchmark(dataset, models=models, seed=seed)
+        report["status"] = "PASS" if any(row.get("status") == "PASS" for row in report["results"]) else "FAIL"
+        report["rows"] = len(dataset.to_pandas())
+        report["assignment"] = dataset.assignment_type.value
+        report["treatment_type"] = dataset.treatment_type.value
+        return report
+    except Exception as exc:
+        return {"status": "FAIL", "error": f"{type(exc).__name__}: {exc}"}
+
+
+def _hillstrom_multi(path: str | Path) -> dict[str, Any]:
+    try:
+        from deepuplift.data.public import load_hillstrom
+        from deepuplift.models import build_model
+        dataset = load_hillstrom(path, multi_treatment=True)
+        model = build_model("MultiTreatmentOutcome")
+        model.fit(dataset)
+        prediction = model.predict(dataset)
+        policy = build_multi_policy(prediction, treatment_costs={1: 0.05, 2: 0.05}, outcome_value=1.0, budget=len(dataset.to_pandas()) * 0.05, no_treatment=0, optimizer="value_per_cost")
+        return {"status": "PASS", "rows": len(dataset.to_pandas()), "treatment_values": sorted(dataset.treatment.unique().tolist()), "assignment": dataset.assignment_type.value, "treatment_type": dataset.treatment_type.value, "policy": policy.summary, "cost_assumption": "Demo-only cost assumptions; not a fact in Hillstrom raw data.", "offline_only": True}
+    except Exception as exc:
+        return {"status": "FAIL", "error": f"{type(exc).__name__}: {exc}"}
 
 
 def run_release_benchmark(config: ReleaseConfig | None = None) -> dict[str, Any]:
@@ -81,36 +117,41 @@ def run_release_benchmark(config: ReleaseConfig | None = None) -> dict[str, Any]
     coupon_prediction = rct_result.prediction
     policy_report = coupon_policy_benchmark(coupon, coupon_prediction)
     multi_report = _run_multi(config.seed); continuous_report = _run_continuous(config.seed)
-    hillstrom = {"status": "NOT_RUN", "reason": "No local upstream Hillstrom path configured; raw data is not redistributed."}
+    hillstrom = {"status": "NOT_RUN", "reason": "No local upstream Hillstrom path configured; raw data is not redistributed.", "blocked_reason": "BLOCKED_BY_DATA_ACCESS"}
     if config.hillstrom_path:
         from deepuplift.data.public import load_hillstrom
-        hillstrom = run_benchmark(load_hillstrom(config.hillstrom_path), models=["S-Learner", "T-Learner", "X-Learner", "DR-Learner"], seed=config.seed)
-        hillstrom["status"] = "PASS"
-    criteo = {"status": "NOT_RUN", "reason": "No local upstream Criteo path configured; raw data is not redistributed."}
+        hillstrom = _public_benchmark(load_hillstrom, config.hillstrom_path, ["S-Learner", "T-Learner", "X-Learner", "DR-Learner", "R-Learner", "S-Learner-RF", "DR-Learner-RF", "CausalForestDML", "CausalMLUpliftTree", "CausalMLUpliftRandomForest"], seed=config.seed)
+    criteo = {"status": "NOT_RUN", "reason": "No local upstream Criteo path configured; raw data is not redistributed.", "blocked_reason": "BLOCKED_BY_DATA_ACCESS"}
     if config.criteo_path:
         from deepuplift.data.public import load_criteo
-        criteo = run_benchmark(load_criteo(config.criteo_path, sample_rows=config.criteo_sample_rows, seed=config.seed), models=["T-Learner", "DR-Learner", "S-Learner-RF"], seed=config.seed)
-        criteo["status"] = "PASS"
+        criteo = _public_benchmark(load_criteo, config.criteo_path, ["T-Learner", "DR-Learner", "S-Learner-RF", "DR-Learner-RF"], sample_rows=config.criteo_sample_rows, seed=config.seed)
+    hillstrom_multi = _hillstrom_multi(config.hillstrom_path) if config.hillstrom_path else {"status": "NOT_RUN", "reason": "Requires local Hillstrom path.", "blocked_reason": "BLOCKED_BY_DATA_ACCESS"}
     scale = run_scalability_benchmark(config.scale_sizes, seed=config.seed)
-    for row in scale:
-        row.update({"prediction_finite": True, "policy_generated": True})
     first = run_benchmark(synthetic, models=["DR-Learner"], seed=config.seed)
     second = run_benchmark(synthetic, models=["DR-Learner"], seed=config.seed)
     reproducibility = first["manifest"]["dataset_hash"] == second["manifest"]["dataset_hash"] and first["results"][0].get("metrics", {}).get("ground_truth") == second["results"][0].get("metrics", {}).get("ground_truth")
-    optional = {name: optional_backend_status(name, model_info(name), synthetic_report["results"]) for name in ["CausalForestDML", "CausalMLUpliftTree", "CausalMLUpliftRandomForest"]}
+    optional_external = _load_optional_report(config.optional_backend_report_path)
+    optional = optional_external.get("statuses", {}) if optional_external and optional_external.get("statuses") else {name: optional_backend_status(name, model_info(name), synthetic_report["results"]) for name in ["CausalForestDML", "CausalMLUpliftTree", "CausalMLUpliftRandomForest"]}
+    native_names = {"S-Learner", "T-Learner", "X-Learner", "DR-Learner", "R-Learner"}
+    native_rows = [row for row in synthetic_report["results"] if row.get("model") in native_names]
+    rf_rows = [row for row in synthetic_report["results"] if row.get("model") in {"S-Learner-RF", "DR-Learner-RF"}]
+    synthetic_pass = bool(native_rows) and all(row.get("status") == "PASS" for row in native_rows)
+    rf_pass = len(rf_rows) == 2 and all(row.get("status") == "PASS" for row in rf_rows)
     rct_pass = rct_result.prediction.uplift is not None and bool(np.isfinite(rct_result.prediction.uplift).all()) and bool(rct_result.policy.rows)
-    gate = build_release_gate(synthetic_pass=synthetic_report["readiness"] == "PASS", observational_pass=observational_report["readiness"] == "PASS", application_pass=app_result.nuisance is not None and bool(app_result.prediction.uplift is not None), rct_pass=rct_pass, multi_pass=multi_report["status"] == "PASS", continuous_pass=continuous_report["status"] == "PASS", scale_results=scale, hillstrom_status=hillstrom.get("status", "NOT_RUN"), criteo_status=criteo.get("status", "NOT_RUN"), reproducibility_pass=reproducibility, packaging_pass=True, ci_pass=True, optional_statuses=optional)
-    report = {"run_id": run_id, "commit": _sha(), "environment": {"python": sys.version, "platform": platform.platform()}, "synthetic": synthetic_report, "observational": observational_report, "observational_application": {"status": "PASS", "nuisance_used": app_result.nuisance is not None, "policy": app_result.policy.summary, "readiness": app_result.diagnostics.readiness}, "rct": {"status": "PASS" if rct_pass else "FAIL", "policy": rct_result.policy.summary, "benchmark": rct_result.benchmark.to_dict()}, "hillstrom": hillstrom, "criteo": criteo, "policy": policy_report, "multi": multi_report, "continuous": continuous_report, "scale": scale, "model_matrix": {name: model_info(name) for name in config.benchmark_models if name in {"S-Learner", "T-Learner", "X-Learner", "DR-Learner", "R-Learner", "S-Learner-RF", "DR-Learner-RF", "CausalForestDML"}}, "release_gate": gate, "runtime_seconds": time.perf_counter() - started}
+    packaging = run_packaging_validation(python_executable=config.packaging_python) if config.packaging_python else {"status": config.packaging_status, "reason": "Packaging validation not requested in this run; supply --packaging-python for build + fresh venv evidence."}
+    gate = build_release_gate(synthetic_pass=synthetic_pass, observational_pass=observational_report["readiness"] == "PASS", application_pass=app_result.nuisance is not None and bool(app_result.prediction.uplift is not None), rct_pass=rct_pass, multi_pass=multi_report["status"] == "PASS", continuous_pass=continuous_report["status"] == "PASS", scale_results=scale, hillstrom_status=hillstrom.get("status", "NOT_RUN"), criteo_status=criteo.get("status", "NOT_RUN"), reproducibility_pass=reproducibility, packaging_pass=packaging.get("status", config.packaging_status), ci_pass=config.ci_status, optional_statuses=optional, rf_pass=rf_pass)
+    report = {"run_id": run_id, "commit": _sha(), "version": "0.4.0a1", "environment": {"python": sys.version, "platform": platform.platform()}, "synthetic": synthetic_report, "observational": observational_report, "observational_application": {"status": "PASS", "nuisance_used": app_result.nuisance is not None, "policy": app_result.policy.summary, "readiness": app_result.diagnostics.readiness}, "rct": {"status": "PASS" if rct_pass else "FAIL", "policy": rct_result.policy.summary, "benchmark": rct_result.benchmark.to_dict()}, "hillstrom": hillstrom, "hillstrom_multi": hillstrom_multi, "criteo": criteo, "policy": policy_report, "multi": multi_report, "continuous": continuous_report, "scale": scale, "optional_backends": optional_external or {"statuses": optional, "reason": "No optional smoke report supplied."}, "packaging": packaging, "model_matrix": {name: model_info(name) for name in config.benchmark_models + ("CausalMLUpliftTree", "CausalMLUpliftRandomForest") if name in {"S-Learner", "T-Learner", "X-Learner", "DR-Learner", "R-Learner", "S-Learner-RF", "DR-Learner-RF", "CausalForestDML", "CausalMLUpliftTree", "CausalMLUpliftRandomForest"}}, "release_gate": gate, "runtime_seconds": time.perf_counter() - started}
     _write_release_bundle(output_dir, report)
     return report
 
 
 def _write_release_bundle(output_dir: Path, report: dict[str, Any]) -> None:
-    files = {"release_manifest.json": {"run_id": report["run_id"], "commit": report["commit"], "runtime_seconds": report["runtime_seconds"]}, "environment.json": report["environment"], "package.json": {"name": "deepuplift", "version": "0.4.0a1"}, "synthetic.json": report["synthetic"], "hillstrom.json": report["hillstrom"], "criteo.json": report["criteo"], "observational.json": {"benchmark": report["observational"], "application": report["observational_application"]}, "policy.json": {"coupon": report["policy"], "rct": report["rct"]}, "scale.json": report["scale"], "model_matrix.json": report["model_matrix"], "release_gate.json": report["release_gate"]}
+    files = {"release_manifest.json": {"run_id": report["run_id"], "commit": report["commit"], "version": report["version"], "runtime_seconds": report["runtime_seconds"]}, "environment.json": report["environment"], "package.json": {"name": "deepuplift", "version": report["version"]}, "synthetic.json": report["synthetic"], "hillstrom.json": report["hillstrom"], "hillstrom_multi.json": report["hillstrom_multi"], "criteo.json": report["criteo"], "observational.json": {"benchmark": report["observational"], "application": report["observational_application"]}, "multi.json": report["multi"], "continuous.json": report["continuous"], "policy.json": {"coupon": report["policy"], "rct": report["rct"]}, "scale.json": report["scale"], "optional_backends.json": report["optional_backends"], "packaging.json": report["packaging"], "model_matrix.json": report["model_matrix"], "release_gate.json": report["release_gate"]}
     for name, value in files.items():
         (output_dir / name).write_text(json.dumps(_jsonable(value), ensure_ascii=False, indent=2, allow_nan=False) + "\n", encoding="utf-8")
     gate = report["release_gate"]
-    markdown = "# DeepUplift Release Benchmark v1\n\n" + f"- Run: `{report['run_id']}`\n- Commit: `{report['commit']}`\n- Overall: **{gate['overall']}**\n\n## Release gate\n\n```json\n" + json.dumps(_jsonable(gate), ensure_ascii=False, indent=2) + "\n```\n\n## Known boundaries\n\n- Hillstrom/Criteo are `NOT_RUN` unless upstream local paths are configured.\n- Continuous and multi-treatment outputs are experimental and offline-only.\n- Observational causal claims depend on ignorability and positivity assumptions.\n- Policy value is offline evidence, not online lift.\n"
+    sections = ["# DeepUplift Release Benchmark v2", f"\n- Run: `{report['run_id']}`\n- Commit: `{report['commit']}`\n- Version: `{report['version']}`\n- Overall: **{gate['overall']}**\n", "## Environment\n\n" + json.dumps(_jsonable(report["environment"]), ensure_ascii=False, indent=2), "## Release Gate\n\n" + json.dumps(_jsonable(gate), ensure_ascii=False, indent=2), "## Synthetic Benchmark\n\n" + json.dumps(_jsonable(report["synthetic"]["selection"]), ensure_ascii=False, indent=2), "## Observational Benchmark\n\n" + json.dumps(_jsonable({"benchmark": report["observational"].get("selection"), "application": report["observational_application"]}), ensure_ascii=False, indent=2), "## Hillstrom Benchmark\n\n" + json.dumps(_jsonable({"binary": report["hillstrom"], "multi": report["hillstrom_multi"]}), ensure_ascii=False, indent=2), "## Criteo Benchmark\n\n" + json.dumps(_jsonable(report["criteo"]), ensure_ascii=False, indent=2), "## Multi-treatment Benchmark\n\n" + json.dumps(_jsonable(report["multi"]), ensure_ascii=False, indent=2), "## Continuous-treatment Benchmark\n\n" + json.dumps(_jsonable(report["continuous"]), ensure_ascii=False, indent=2), "## Scale Benchmark\n\n" + json.dumps(_jsonable(report["scale"]), ensure_ascii=False, indent=2), "## Optional Backends\n\n" + json.dumps(_jsonable(report["optional_backends"]), ensure_ascii=False, indent=2), "## Packaging\n\n" + json.dumps(_jsonable(report["packaging"]), ensure_ascii=False, indent=2), "## Known Limitations\n\n- Public data remains upstream/local-path evidence; raw data is not redistributed.\n- Continuous and multi-treatment outputs are experimental and offline-only.\n- Observational causal claims depend on ignorability and positivity assumptions.\n- Policy value is offline evidence, not online lift.\n", "## Final Status\n\n" + gate["overall"]]
+    markdown = "\n\n".join(sections) + "\n"
     (output_dir / "RELEASE_BENCHMARK_REPORT.md").write_text(markdown, encoding="utf-8")
 
 

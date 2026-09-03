@@ -34,7 +34,10 @@ class DoseResponseGBM:
         if self.task == "classification" and len(np.unique(y)) > 2:
             self.task = "regression"
         self.model = OutcomeEstimator(self.task, self.random_state).fit(x, y)
-        self.dose_grid = np.linspace(float(dose.quantile(0.01)), float(dose.quantile(0.99)), self.grid_size)
+        lower, upper = float(dose.quantile(0.01)), float(dose.quantile(0.99))
+        # Dose applications use a non-negative intervention scale. Keep the
+        # requested grid size while reserving the first point for no-treatment.
+        self.dose_grid = np.linspace(0.0, max(upper, 0.0), self.grid_size)
         self.feature_cols = list(dataset.feature_cols)
         return self
 
@@ -48,10 +51,13 @@ class DoseResponseGBM:
             x["__dose__"] = float(dose)
             predictions.append(self.model.predict(x))
         values = np.vstack(predictions).T
-        best_idx = values.argmax(axis=1)
-        baseline_idx = 0
+        baseline_idx = int(np.argmin(np.abs(self.dose_grid - 0.0)))
         baseline = values[:, baseline_idx]
+        effects = values - baseline[:, None]
+        best_idx = effects.argmax(axis=1)
         recommended = values[np.arange(len(values)), best_idx]
+        outcome_by_dose = {float(dose): values[:, index] for index, dose in enumerate(self.dose_grid)}
+        effect_by_dose = {float(dose): effects[:, index] for index, dose in enumerate(self.dose_grid)}
         return EffectPrediction(
             unit_id=dataset.unit_ids.to_numpy(),
             treatment_type=TreatmentType.CONTINUOUS,
@@ -60,5 +66,8 @@ class DoseResponseGBM:
             uplift=recommended - baseline,
             recommended_effect=recommended - baseline,
             recommended_treatment=self.dose_grid[best_idx],
+            dose_grid=self.dose_grid,
+            dose_outcome_predictions=outcome_by_dose,
+            dose_effect_predictions=effect_by_dose,
             metadata={"model_name": self.name, "dose_grid": self.dose_grid.tolist(), "baseline_dose": float(self.dose_grid[baseline_idx]), "maturity": "EXPERIMENTAL", "status": "EXPERIMENTAL", "offline_only": True},
         )
