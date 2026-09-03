@@ -5,7 +5,7 @@ Git under `release_runs/<run_id>/` and is intentionally not committed.
 
 Final validation evidence (2026-09-04):
 
-- Run: `20260903T174116Z-42`; commit: `422d22f19250edc5cf888782bbc5b2e9baad11ff`.
+- Run: `20260903T175621Z-42`; commit: `40b32dfdab84917ed3ebb1089a3ba91859faf545`.
 - Verdict: `READY_FOR_BETA_RELEASE`.
 - Hillstrom: 64,000 randomized rows; all native baselines and EconML passed.
   DR-Learner Qini was `32.2305`; X-Learner had the lowest calibration MAE,
@@ -15,8 +15,8 @@ Final validation evidence (2026-09-04):
   S-Learner-RF was fastest at about `3.63s` in the isolated run.
 - Optional adapters: CausalForestDML, CausalMLUpliftTree, and
   CausalMLUpliftRandomForest each passed real fit, predict, and metric smoke.
-- Scale: 10K `5.41s`, 100K `45.14s`, 1M `538.94s`; 1M peak process RSS was
-  `1465.6MB`. These are measured local runs, not extrapolations.
+- Scale: 10K `4.24s`, 100K `41.69s`, 1M `571.50s`; 1M peak process RSS was
+  `1386.9MB`. These are measured local runs, not extrapolations.
 - Packaging: wheel and sdist built; fresh Python 3.11 venv install, import, and
   synthetic quickstart passed.
 
