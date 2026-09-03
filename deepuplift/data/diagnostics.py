@@ -4,9 +4,8 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
-from sklearn.linear_model import LogisticRegression
-
 from deepuplift.contracts import CausalDataset, DataDiagnostics, TreatmentType
+from deepuplift.data.nuisance import estimate_nuisance
 
 from .preprocessing import TabularPreprocessor
 
@@ -48,33 +47,17 @@ def _propensity(frame: pd.DataFrame, dataset: CausalDataset) -> tuple[dict[str, 
     values = sorted(treatment.dropna().unique().tolist(), key=lambda item: str(item))
     if len(values) != 2:
         return {}, {"status": "unavailable"}, ["Binary propensity diagnostics need exactly two treatment values."]
-    encoded = treatment.map({values[0]: 0, values[1]: 1}).astype(float)
-    preprocessor = TabularPreprocessor(dataset.feature_cols)
-    x = preprocessor.fit_transform(frame[dataset.feature_cols])
-    if encoded.nunique() < 2:
-        return {}, {"status": "failed"}, ["Only one treatment arm is present."]
     try:
-        estimator = LogisticRegression(max_iter=500, random_state=42)
-        estimator.fit(x, encoded)
-        scores = estimator.predict_proba(x)[:, 1]
+        counts = treatment.value_counts()
+        folds = min(5, int(counts.min())) if len(counts) else 2
+        result = estimate_nuisance(dataset, estimator="logistic", cross_fit=folds >= 2, n_splits=max(2, folds))
+        scores = result.propensity_scores
     except Exception as exc:
         return {}, {"status": "failed", "error": str(exc)}, ["Propensity model could not be fit."]
-    summary = {
-        "status": "estimated",
-        "min": _clean(scores.min()),
-        "p05": _clean(np.quantile(scores, 0.05)),
-        "median": _clean(np.median(scores)),
-        "p95": _clean(np.quantile(scores, 0.95)),
-        "max": _clean(scores.max()),
-        "mean": _clean(scores.mean()),
-    }
-    overlap = {
-        "status": "estimated",
-        "common_support_rate": _clean(np.mean((scores >= 0.05) & (scores <= 0.95))),
-        "extreme_propensity_rate": _clean(np.mean((scores < 0.05) | (scores > 0.95))),
-        "positivity_warning": bool(np.mean((scores < 0.05) | (scores > 0.95)) > 0.05),
-    }
-    return summary, overlap, []
+    diagnostics = result.diagnostics
+    summary = {key: value for key, value in diagnostics.items() if key not in {"overlap_mask", "outcome_nuisance_oof", "clipping", "treated_distribution", "control_distribution"}}
+    overlap = {"status": "estimated", **{key: diagnostics[key] for key in ("common_support_rate", "extreme_propensity_rate", "treated_distribution", "control_distribution")}}
+    return summary, overlap, ["Cross-fitted propensity is diagnostic evidence, not proof of no hidden confounding."]
 
 
 def diagnose_dataset(dataset: CausalDataset, *, post_treatment_cols: list[str] | None = None) -> DataDiagnostics:
@@ -110,7 +93,18 @@ def diagnose_dataset(dataset: CausalDataset, *, post_treatment_cols: list[str] |
         warnings.extend(propensity_warnings)
         warnings.append("Observational estimates rely on conditional ignorability and positivity assumptions.")
 
-    readiness = "READY" if not warnings and not leakage_warnings else "REVIEW"
+    if dataset.assignment_type.value == "observational":
+        overlap_rate = overlap_summary.get("common_support_rate")
+        extreme_rate = overlap_summary.get("extreme_propensity_rate")
+        ess = (dataset.metadata.get("nuisance_result") or {}).get("effective_sample_size") if isinstance(dataset.metadata.get("nuisance_result"), dict) else None
+        if leakage_warnings or (overlap_rate is not None and overlap_rate < 0.8) or (extreme_rate is not None and extreme_rate > 0.2) or (balance_values and max(balance_values) > 0.5) or len(frame) < 100:
+            readiness = "NOT_RECOMMENDED"
+        elif [w for w in warnings if "assumptions" not in w and "confounding" not in w] or (ess and ess.get("overall") is not None and ess["overall"] < 50):
+            readiness = "REVIEW"
+        else:
+            readiness = "READY"
+    else:
+        readiness = "READY" if not warnings and not leakage_warnings else "REVIEW"
     return DataDiagnostics(
         sample_size=int(len(frame)),
         treatment_distribution=treatment_distribution,
@@ -125,5 +119,6 @@ def diagnose_dataset(dataset: CausalDataset, *, post_treatment_cols: list[str] |
             "treatment_type": dataset.treatment_type.value,
             "assignment_type": dataset.assignment_type.value,
             "feature_count": len(feature_cols),
+            "observational_causal_assumption": "Conditional ignorability/unconfoundedness is assumed; diagnostics cannot detect hidden confounding.",
         },
     )

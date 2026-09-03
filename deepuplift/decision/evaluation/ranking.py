@@ -52,10 +52,28 @@ def ranking_metrics(prediction: EffectPrediction, dataset: CausalDataset, fracti
     frame = _frame(prediction, dataset)
     curve = qini_curve(frame)
     top_k = [{"fraction": fraction, "uplift": uplift_at_k(frame, fraction)} for fraction in fractions]
+    balance_curve = []
+    ordered = frame.sort_values("uplift", ascending=False).reset_index(drop=True)
+    for index in range(len(frame)):
+        prefix = ordered.iloc[: index + 1]
+        balance_curve.append({"fraction": (index + 1) / max(len(frame), 1), "treated_rate": float((prefix["treatment"] == 1).mean())})
+    rng = np.random.default_rng(42)
+    bootstrap = []
+    for _ in range(20):
+        if len(frame) < 2:
+            break
+        sample = frame.iloc[rng.integers(0, len(frame), len(frame))]
+        if sample["treatment"].nunique() == 2:
+            bootstrap.append(_area(qini_curve(sample), "qini"))
     return {
         "qini": _area(curve, "qini"),
         "auuc": _area(curve, "qini"),
         "uplift_at_k": top_k,
+        "uplift_at_10": uplift_at_k(frame, .1),
+        "uplift_at_20": uplift_at_k(frame, .2),
         "rows": int(len(frame)),
         "curve": curve.to_dict(orient="records"),
+        "gain_curve": curve.to_dict(orient="records"),
+        "treatment_balance_curve": balance_curve,
+        "bootstrap_stability": {"n": len(bootstrap), "mean_qini": float(np.mean(bootstrap)) if bootstrap else None, "std_qini": float(np.std(bootstrap)) if bootstrap else None},
     }

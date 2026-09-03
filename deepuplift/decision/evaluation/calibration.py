@@ -30,4 +30,16 @@ def calibration_metrics(
         predicted = float(group["uplift"].mean())
         rows.append({"bucket": str(bucket), "predicted": predicted, "observed": observed_uplift, "rows": len(group)})
     errors = [abs(row["predicted"] - row["observed"]) for row in rows if row["observed"] is not None]
-    return {"mae": float(np.mean(errors)) if errors else None, "buckets": rows}
+    paired = [(row["predicted"], row["observed"]) for row in rows if row["observed"] is not None]
+    slope = None
+    if len(paired) >= 3 and np.std([item[0] for item in paired]) > 1e-12:
+        slope = float(np.polyfit([item[0] for item in paired], [item[1] for item in paired], 1)[0])
+    # A bucket-level bootstrap interval is intentionally reported as a
+    # diagnostic, not a formal clustered confidence interval.
+    bootstrap = []
+    rng = np.random.default_rng(42)
+    for _ in range(50):
+        if len(errors) < 2:
+            break
+        bootstrap.append(float(np.mean(rng.choice(errors, size=len(errors), replace=True))))
+    return {"mae": float(np.mean(errors)) if errors else None, "calibration_slope": slope, "bootstrap_interval": [float(np.quantile(bootstrap, .025)), float(np.quantile(bootstrap, .975))] if bootstrap else None, "buckets": rows}

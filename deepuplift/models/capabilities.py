@@ -16,6 +16,9 @@ class ModelCapabilities:
     supports_sample_weight: bool = False
     supports_out_of_core: bool = False
     requires_propensity: bool = False
+    supports_observational: bool = True
+    supports_uncertainty: bool = False
+    supports_large_data: bool = False
     backend: str = "native"
 
     def to_dict(self) -> Dict[str, Any]:

@@ -2,15 +2,19 @@
 
 ## Native reference backends
 
-The v0.2 reference runtime includes four real binary-treatment baselines:
+The v0.3 reference runtime includes real binary-treatment baselines:
 
 - `S-Learner`
 - `T-Learner`
 - `X-Learner`
 - `DR-Learner`
+- `R-Learner`
+- `IPW-Learner`
+- `S-Learner-RF`, `T-Learner-RF`, `X-Learner-RF`, `DR-Learner-RF`
 
 They use scikit-learn outcome/effect estimators and all return the same
-`EffectPrediction` contract. The coupon E2E uses these four models only.
+`EffectPrediction` contract. Observational DR/R/IPW reuse a cross-fitted
+`NuisanceResult`; they do not silently fit a second propensity model.
 
 ## Optional adapters
 
@@ -20,7 +24,8 @@ They use scikit-learn outcome/effect estimators and all return the same
 - CausalML;
 - scikit-uplift.
 
-These adapters are optional and do not make a missing package look runnable.
+These adapters are optional/interface-only in v0.3 until a configured estimator
+can fit and predict. They do not make a missing package look runnable.
 The existing legacy catalog in `deepuplift.core.registry` remains available
 for the Streamlit workbench and has its own dependency guards.
 

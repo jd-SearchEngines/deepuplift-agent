@@ -77,6 +77,35 @@ bash -n scripts/*.sh
 
 可选后端和 Python 3.11 的 CausalML 环境见 [`requirements-optional.txt`](requirements-optional.txt) 和 [`requirements-causalml-py311.txt`](requirements-causalml-py311.txt)。
 
+## v0.3 Trusted Causal Core
+
+DeepUplift supports randomized and observational data, binary treatment (stable reference path), and multi-treatment/continuous treatment as experimental boundaries. The model catalog now distinguishes `STABLE`, `OPTIONAL`, `EXPERIMENTAL`, `LEGACY`, and `INTERFACE_ONLY`; only runnable models are presented as runnable.
+
+| Family | Models | Maturity |
+|---|---|---|
+| Meta learners | S/T/X/DR, R, IPW | STABLE |
+| Tree-backed meta | S/T/X/DR + RandomForest | STABLE |
+| External forests/trees | EconML, CausalML, scikit-uplift | OPTIONAL / INTERFACE_ONLY |
+| Multi / continuous | MultiTreatmentOutcome, DoseResponseGBM | EXPERIMENTAL |
+| Deep models | TarNet, CFRNet, DragonNet, CEVAE, GANITE and others | EXPERIMENTAL / research compatibility |
+
+For observational binary data, use the unified nuisance contract:
+
+```python
+from deepuplift.data import estimate_nuisance
+from deepuplift.benchmarks import run_benchmark
+
+nuisance = estimate_nuisance(
+    dataset, estimator="logistic", cross_fit=True, n_splits=5,
+    weighting="overlap", trim_threshold=0.05,
+)
+report = run_benchmark(dataset, models=["DR-Learner", "R-Learner"], nuisance_config={"weighting": "overlap"})
+```
+
+The result records OOF fold IDs, propensity distribution, overlap, clipping/trimming, ESS, balance before/after weighting, and provenance. Observational diagnostics cannot prove absence of hidden confounding. Benchmark policy value is offline evidence only.
+
+Public loaders do not download or redistribute raw data. `synthetic_ground_truth()` is deterministic and carries true unit effects; Hillstrom, Criteo, and retail loaders require a user-supplied upstream file and retain source/license metadata.
+
 ## 输入数据
 
 框架一级支持三类 treatment：`binary`、`multi_discrete`、`continuous`。当前 reference pipeline 完整跑通 binary；multi-treatment 和 continuous treatment 已冻结 contract 与扩展边界。
@@ -107,7 +136,9 @@ docs/recovery/                 项目恢复与上下文说明
 
 每次训练运行可以生成配置、指标、预测、readiness、promotion 和 evidence manifest。`runs/`、`reports/`、本地数据、模型权重和截图均属于可再生或环境相关内容，默认不会进入 Git。
 
-模型比较应同时查看 QINI/AUUC、Top-K uplift、校准、bootstrap、overlap 和 policy value；单个离线指标胜出不等于可以上线。线上实验、随机化设计、灰度、回滚和隐私审查需要由使用方单独完成。
+模型比较应同时查看 ranking、ground-truth（仅 synthetic/semi-synthetic）、calibration 和 business policy value；单个离线指标胜出不等于可以上线。线上实验、随机化设计、灰度、回滚和隐私审查需要由使用方单独完成。benchmark evidence bundle 写入用户指定的 `runs/<run_id>/`，不提交 Git。
+
+详细协议：[`docs/data/OBSERVATIONAL_PIPELINE.md`](docs/data/OBSERVATIONAL_PIPELINE.md)、[`docs/data/PROPENSITY_AND_OVERLAP.md`](docs/data/PROPENSITY_AND_OVERLAP.md)、[`docs/models/TREE_MODELS.md`](docs/models/TREE_MODELS.md)、[`docs/benchmarks/BENCHMARK_PROTOCOL.md`](docs/benchmarks/BENCHMARK_PROTOCOL.md)、[`docs/open_source/MODEL_MATURITY.md`](docs/open_source/MODEL_MATURITY.md)。
 
 ## 开源路线图
 

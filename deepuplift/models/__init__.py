@@ -7,10 +7,11 @@ from .registry import (
     build_model,
     is_model_available,
     missing_dependencies,
+    model_info,
 )
 from .capabilities import ModelCapabilities
 
-__version__ = "0.2.0"
+__version__ = "0.3.0"
 
 __all__ = [
     "MODEL_REGISTRY",
@@ -20,4 +21,5 @@ __all__ = [
     "build_model",
     "is_model_available",
     "missing_dependencies",
+    "model_info",
 ]
