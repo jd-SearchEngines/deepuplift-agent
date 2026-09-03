@@ -36,7 +36,7 @@ all = [
   "torch>=1.12",
   "geomloss>=0.2.6",
 ]
-dev = ["pytest>=8.0", "build>=1.2"]
+dev = ["pytest>=8.0", "build>=1.2", "wheel>=0.42"]
 
 [tool.setuptools.packages.find]
 include = ["deepuplift*"]
