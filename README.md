@@ -1,4 +1,12 @@
-# DeepUplift Agent
+# DeepUplift
+
+Open-source Uplift & Causal Decision Framework
+
+`Data → Models → Decision`
+
+From heterogeneous treatment effect estimation to deployable business policies.
+
+## DeepUplift Agent
 
 面向增长、营销与资源分配的因果决策工作台（Causal Decision Workbench）。
 
@@ -21,15 +29,43 @@ DeepUplift 的核心问题不是“谁本来就会转化”，而是“谁会因
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
+python -m pip install --upgrade pip setuptools
+python -m pip install -e ".[dev]"
+python examples/coupon_allocation/run.py --rows 10000 --budget 50000
+```
+
+这个命令会从合成发券数据跑完：`CausalDataset → diagnostics → S/T/X/DR benchmark → EffectPrediction → coupon policy → experiment plan`。生成物写入 `runs/`，不会进入 Git。
+
+要启动 Streamlit 工作台，额外安装完整应用依赖：
+
+```bash
 python -m pip install -r requirements.txt
 python scripts/prepare_sample_datasets.py
 streamlit run app.py
 ```
 
-打开 `http://localhost:8501`，即可使用 Streamlit 工作台。无 UI 的轻量检查：
+打开 `http://localhost:8501`。无 UI 的旧版轻量检查：
 
 ```bash
-PYTHON_BIN=python scripts/smoke_test_agent.sh
+PYTHON_BIN=python3 scripts/smoke_test_agent.sh
+```
+
+最小 Python API：
+
+```python
+from deepuplift.application import run_uplift_pipeline
+
+result = run_uplift_pipeline(
+    data,
+    feature_cols=["recency_days", "orders_30d", "segment"],
+    treatment_col="coupon_received",
+    outcome_col="conversion",
+    id_column="user_id",
+    treatment_cost=10,
+    outcome_value=35,
+    budget=50_000,
+)
+print(result.policy.summary)
 ```
 
 如果只想检查语法和 shell 脚本：
@@ -42,6 +78,8 @@ bash -n scripts/*.sh
 可选后端和 Python 3.11 的 CausalML 环境见 [`requirements-optional.txt`](requirements-optional.txt) 和 [`requirements-causalml-py311.txt`](requirements-causalml-py311.txt)。
 
 ## 输入数据
+
+框架一级支持三类 treatment：`binary`、`multi_discrete`、`continuous`。当前 reference pipeline 完整跑通 binary；multi-treatment 和 continuous treatment 已冻结 contract 与扩展边界。
 
 最小二元 treatment 数据需要包含：
 

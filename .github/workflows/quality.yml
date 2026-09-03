@@ -12,7 +12,13 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+      - name: Install core test dependencies
+        run: python -m pip install --upgrade pip && python -m pip install -e ".[dev]"
       - name: Compile Python sources
         run: python -m compileall -q app.py deepuplift deepuplift_multiple_treatment scripts
       - name: Check shell scripts
         run: bash -n scripts/*.sh
+      - name: Run core tests and coupon E2E
+        run: python -m pytest -q
+      - name: Run coupon command smoke
+        run: python examples/coupon_allocation/run.py --rows 700 --budget 1000

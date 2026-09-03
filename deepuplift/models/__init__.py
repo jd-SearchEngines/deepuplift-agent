@@ -1,11 +1,6 @@
-"""Model-layer entry points and implementations.
+"""Model-layer entry points and implementations."""
 
-Concrete neural implementations keep their historical module names for
-backwards compatibility. Registry functions are re-exported here so callers
-do not need to know about the application-service package.
-"""
-
-from deepuplift.core.registry import (
+from .registry import (
     MODEL_REGISTRY,
     ModelSpec,
     available_models,
@@ -13,11 +8,13 @@ from deepuplift.core.registry import (
     is_model_available,
     missing_dependencies,
 )
+from .capabilities import ModelCapabilities
 
-__version__ = "1.0.0"
+__version__ = "0.2.0"
 
 __all__ = [
     "MODEL_REGISTRY",
+    "ModelCapabilities",
     "ModelSpec",
     "available_models",
     "build_model",

@@ -10,6 +10,8 @@ DeepUplift Agent｜面向增长、营销与资源分配的因果决策平台
 
 平台把 uplift / CATE 从单一模型训练扩展为：数据设计诊断、模型比较、策略价值评估、人群筛选、证据生成和上线前 readiness 检查。
 
+当前版本是 `v0.2.0` framework skeleton：binary coupon allocation 已有一键 E2E；multi-discrete、continuous、optional backend 和大数据 backend 已建立 contract/extension boundary。
+
 ## Current boundaries
 
 - 数据层：`deepuplift.data`，负责 schema、预处理、数据 profile、manifest 和 causal diagnostics。
@@ -24,7 +26,7 @@ DeepUplift Agent｜面向增长、营销与资源分配的因果决策平台
 
 ## Next discussion topics
 
-1. 冻结三层 API 和 config/artifact schema；
+1. 继续冻结三层 API 和 config/artifact schema；
 2. 增加公开数据集和可复现 benchmark；
 3. 建立 model card、evidence manifest 和版本化协议；
 4. 最后再讨论在线策略服务、实验平台、权限和审计。
