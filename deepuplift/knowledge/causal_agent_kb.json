@@ -1,0 +1,686 @@
+{
+  "version": "2026-05-16.24",
+  "source_report": "optional local research context; not included in this repository",
+  "purpose": "Operational causal workflow knowledge for the DeepUplift Agent.",
+  "principles": [
+    {
+      "id": "workflow_first",
+      "title": "Causal workflow before model chasing",
+      "guidance": "Start with data design, overlap, leakage, balance, and identification assumptions before ranking models."
+    },
+    {
+      "id": "rank_stability",
+      "title": "Ranking quality must be stress-tested",
+      "guidance": "Use QINI/AUUC together with Top-K policy value, calibration, segment stability, and bootstrap confidence intervals."
+    },
+    {
+      "id": "deployment_policy",
+      "title": "Uplift is a policy problem",
+      "guidance": "Translate uplift scores into targeting thresholds, expected value, and risks before recommending deployment."
+    },
+    {
+      "id": "growth_topk_alignment",
+      "title": "Growth uplift must align offline ranking with online delivery",
+      "guidance": "For push, SMS, RTA, and resource-slot campaigns, optimize and validate Top-K recall, QINI, policy value, and score calibration together."
+    }
+  ],
+  "diagnostic_rules": [
+    {
+      "id": "binary_randomized_like",
+      "trigger": {"treatment_type": "binary", "max_propensity_auc": 0.65, "max_abs_balance": 0.15},
+      "message": "Treatment assignment looks close to randomized from observed features. Simple meta-learners and neural baselines are reasonable first candidates.",
+      "models": ["TLearnerLightGBM", "TLearnerGBM", "SLearnerLightGBM", "SkLiftTwoModelsLightGBM", "SkLiftSoloInteractionLightGBM", "TransformedOutcomeLightGBM", "SkLiftTransformedOutcomeLightGBM", "ClassVariableTransformGBM", "TarNet", "DragonNet"],
+      "assumptions": ["SUTVA/no interference", "consistent treatment definition", "no post-treatment leakage"],
+      "references": ["model_selection_dilemma", "task_specific_experimental_design"]
+    },
+    {
+      "id": "observational_selection_bias",
+      "trigger": {"treatment_type": "binary", "min_propensity_auc": 0.75},
+      "message": "Treatment assignment is predictable from covariates, so observational selection bias is likely. Prefer doubly robust or orthogonal learners and inspect overlap.",
+      "models": ["DRLearnerLightGBM", "DRLearnerGBM", "RLearnerLightGBM", "RLearnerGBM", "EconMLDRLearner", "EconMLCausalForestDML", "OrthogonalDMLGBM", "CausalForest", "CFRNet"],
+      "assumptions": ["conditional ignorability", "overlap/positivity", "well-specified nuisance models"],
+      "references": ["selection_bias", "r_learning_inverse_variance", "dowhy_dr"]
+    },
+    {
+      "id": "weak_overlap",
+      "trigger": {"min_weak_overlap_rate": 0.05},
+      "message": "Weak overlap is present. Estimates for poorly covered users can be unstable; consider trimming, overlap-weighted metrics, and conservative policy thresholds.",
+      "models": ["XLearnerLightGBM", "XLearnerGBM", "DRLearnerLightGBM", "RLearnerLightGBM", "IPWLightGBM", "CFRNet"],
+      "assumptions": ["avoid extrapolating outside common support"],
+      "references": ["covariate_balancing_ipm", "selection_bias", "confounding_bounds"]
+    },
+    {
+      "id": "imbalanced_treatment",
+      "trigger": {"min_treatment_rate": 0.0, "max_treatment_rate": 0.2},
+      "message": "Treatment/control sizes are imbalanced. X-Learner and DR/R-style learners are often better baselines than plain T-Learner.",
+      "models": ["XLearnerLightGBM", "XLearnerGBM", "DRLearnerLightGBM", "RLearnerLightGBM", "PAVCalibratedClassVariableTransformGBM", "CausalForest"],
+      "assumptions": ["minority group has enough positive outcomes for evaluation"],
+      "references": ["model_selection_dilemma", "r_learning_inverse_variance"]
+    },
+    {
+      "id": "feature_imbalance",
+      "trigger": {"min_abs_balance": 0.25},
+      "message": "Some covariates differ substantially between treatment groups. Balance-aware representation models and orthogonal learners should be included.",
+      "models": ["CFRNet", "DomainAdaptationLightGBM", "DomainAdaptationLearner", "DRLearnerLightGBM", "DRLearnerGBM", "RLearnerLightGBM", "OrthogonalDMLGBM"],
+      "assumptions": ["observed covariates are sufficient to adjust selection"],
+      "references": ["covariate_balancing_ipm", "selection_bias"]
+    },
+    {
+      "id": "multi_treatment",
+      "trigger": {"treatment_type": "multi-valued"},
+      "message": "The current binary uplift workflow is not enough. Use multi-treatment learners and compare action-specific policy value.",
+      "models": ["MultiTLearnerGBM", "MultiTLearnerRF", "MultiDRLearnerGBM", "MultiDRLearnerRF"],
+      "assumptions": ["well-defined treatment levels", "sufficient overlap for each action"],
+      "references": ["multi_valued_meta_learners"]
+    },
+    {
+      "id": "continuous_treatment",
+      "trigger": {"treatment_type": "continuous"},
+      "message": "Continuous treatment requires dose-response modeling, not binary QINI/AUUC alone.",
+      "models": ["DoseResponseGBM", "DoseResponseRF"],
+      "assumptions": ["smoothness or dose-response structure", "continuous overlap"],
+      "references": ["continuous_treatment_foundation"]
+    }
+  ],
+  "evaluation_rules": [
+    {
+      "id": "calibration",
+      "message": "If uplift buckets are not monotonic or calibration error is high, use the score for ranking cautiously and validate with holdout or bootstrap.",
+      "references": ["causal_isotonic_calibration"]
+    },
+    {
+      "id": "bootstrap_ci",
+      "message": "Model comparison should prefer stable lower confidence bounds over single-point QINI/AUUC wins.",
+      "references": ["bootstrap_confidence", "model_selection_dilemma"]
+    },
+    {
+      "id": "segment_hte",
+      "message": "Segment analysis is useful for surfacing HTE, but small segment counts should be treated as hypotheses rather than deployment rules.",
+      "references": ["hte_surfacing", "causal_rule_subgroups"]
+    },
+    {
+      "id": "causal_distillation_segments",
+      "message": "Distill black-box uplift rankings into shallow segment rules for business review, then validate support and holdout stability before deployment.",
+      "references": ["causal_distillation_trees_2025", "hte_surfacing", "deployment_policy"]
+    },
+    {
+      "id": "policy_value",
+      "message": "A deployment recommendation should include contact cost, conversion value, and the best targeting threshold.",
+      "references": ["adaptive_sampling_ads", "deployment_policy"]
+    },
+    {
+      "id": "refutation_checks",
+      "message": "Before deployment, a model should beat random-score and permuted-treatment null checks; otherwise treat the ranking as exploratory.",
+      "references": ["dowhy_dr", "bootstrap_confidence", "selection_bias"]
+    },
+    {
+      "id": "overlap_trimming",
+      "message": "If policy value or QINI collapses after common-support trimming, deployment should be limited to well-overlapped users or delayed for more data.",
+      "references": ["covariate_balancing_ipm", "selection_bias", "confounding_bounds"]
+    },
+    {
+      "id": "multi_treatment_scoring",
+      "message": "A multi-treatment run should be validated by action-specific uplift, recommended action mix, and Top-K recommended-policy export before use.",
+      "references": ["multi_valued_meta_learners", "deployment_policy"]
+    },
+    {
+      "id": "multi_treatment_policy_ci",
+      "message": "Multi-treatment policy recommendations need action-level overlap diagnostics and policy-value uncertainty, especially when some actions are rare.",
+      "references": ["multi_valued_meta_learners", "bootstrap_confidence", "deployment_policy"]
+    },
+    {
+      "id": "multi_treatment_compare",
+      "message": "Compare multi-treatment T- and DR-learners by incremental policy-value lower bound, action overlap, and recommended action mix rather than by a single point estimate.",
+      "references": ["multi_valued_meta_learners", "bootstrap_confidence", "deployment_policy"]
+    },
+    {
+      "id": "pav_score_calibration",
+      "message": "When the business decision is Top-K targeting, PAV/isotonic calibration can make uplift scores more reliable as a monotone ranking signal.",
+      "references": ["business_growth_resume", "causal_isotonic_calibration", "deployment_policy"]
+    },
+    {
+      "id": "oracle_topk_recall",
+      "message": "On synthetic or benchmark data with known treatment effects, use Oracle Top-K recall to test whether the model actually finds high-uplift users.",
+      "references": ["business_growth_resume", "model_selection_dilemma", "deployment_policy"]
+    },
+    {
+      "id": "business_score_topk_alignment",
+      "message": "When delivery, DM, online, or business-score columns exist, compare uplift Top-K against that ranking to detect offline-online mismatch before rollout.",
+      "references": ["business_growth_resume", "deployment_policy", "adaptive_sampling_ads"]
+    },
+    {
+      "id": "scoring_population_shift",
+      "message": "Before exporting a targeting list, compare scoring population features against training profiles to catch SSB and deployment-distribution drift.",
+      "references": ["business_growth_resume", "selection_bias", "deployment_policy"]
+    }
+  ],
+  "model_cards": {
+    "SLearnerGBM": {
+      "family": "meta_learner",
+      "best_for": ["quick baseline", "randomized binary treatment", "large datasets"],
+      "risks": ["can underfit heterogeneous effects because treatment is only another feature"],
+      "explanation": "S-Learner is a fast sanity-check baseline. Use it to verify the pipeline and compare against richer CATE learners."
+    },
+    "SLearnerRF": {
+      "family": "meta_learner",
+      "best_for": ["nonlinear quick baseline", "randomized binary treatment", "tabular data"],
+      "risks": ["can smooth away small uplift effects", "less direct extrapolation control"],
+      "explanation": "S-Learner with a random forest outcome model is a robust nonlinear baseline."
+    },
+    "TLearnerGBM": {
+      "family": "meta_learner",
+      "best_for": ["randomized binary treatment", "balanced treatment/control", "interpretable outcome-model comparison"],
+      "risks": ["can be unstable when one treatment group is small"],
+      "explanation": "T-Learner trains separate outcome models for treatment and control, then subtracts predictions."
+    },
+    "TLearnerRF": {
+      "family": "meta_learner",
+      "best_for": ["nonlinear randomized experiments", "balanced treatment/control", "interaction-heavy tables"],
+      "risks": ["two separate forests can amplify noise when groups are small"],
+      "explanation": "T-Learner with forest outcome models is useful when response surfaces are nonlinear."
+    },
+    "XLearnerGBM": {
+      "family": "meta_learner",
+      "best_for": ["imbalanced treatment/control", "observational binary treatment"],
+      "risks": ["depends on high-quality first-stage outcome models"],
+      "explanation": "X-Learner imputes treatment effects using counterfactual outcome models, then blends effect models using propensity."
+    },
+    "XLearnerForest": {
+      "family": "meta_learner",
+      "best_for": ["imbalanced groups", "nonlinear heterogeneous effects", "observational binary treatment"],
+      "risks": ["propensity blending can be unreliable under weak overlap"],
+      "explanation": "X-Learner with a forest effect stage is a strong practical baseline for unequal treatment/control sizes."
+    },
+    "DRLearnerGBM": {
+      "family": "doubly_robust",
+      "best_for": ["observational data", "selection bias", "propensity-adjusted CATE"],
+      "risks": ["poor overlap can still cause high-variance pseudo outcomes"],
+      "explanation": "DR-Learner combines outcome and propensity models so one nuisance model can partially protect the effect estimate."
+    },
+    "DRLearnerForest": {
+      "family": "doubly_robust",
+      "best_for": ["nonlinear selection bias", "observational data", "stable Top-K ranking"],
+      "risks": ["DR pseudo outcomes can be noisy under weak overlap"],
+      "explanation": "A forest final stage learns nonlinear structure in doubly robust pseudo outcomes."
+    },
+    "RLearnerGBM": {
+      "family": "orthogonal",
+      "best_for": ["observational data", "high treatment selection bias", "robust ranking"],
+      "risks": ["requires useful outcome and propensity nuisance models"],
+      "explanation": "R-Learner residualizes outcome and treatment before learning CATE, reducing nuisance-model error leakage into the final effect model."
+    },
+    "RLearnerForest": {
+      "family": "orthogonal",
+      "best_for": ["nonlinear observational data", "propensity-driven assignment", "ranking robustness checks"],
+      "risks": ["residual signal can be weak when propensity is near 0 or 1"],
+      "explanation": "R-Learner with a forest final stage is useful when orthogonal residuals have nonlinear interactions."
+    },
+    "OrthogonalDMLGBM": {
+      "family": "orthogonal",
+      "best_for": ["observational data", "stress-testing DR/R learner rankings"],
+      "risks": ["current implementation is a lightweight adapter, not a full cross-fit EconML DML implementation"],
+      "explanation": "OrthogonalDML-style learning uses residualized signals to make effect learning less sensitive to first-stage model errors."
+    },
+    "OrthogonalRandomForest": {
+      "family": "orthogonal_forest",
+      "best_for": ["nonlinear CATE", "observational tabular data", "robust ranking checks"],
+      "risks": ["current implementation is local forest final-stage logic, not full generalized random forest inference"],
+      "explanation": "Orthogonal Random Forest style learning combines residualization with a forest CATE stage."
+    },
+    "CausalForest": {
+      "family": "forest_style",
+      "best_for": ["nonlinear heterogeneity", "stable ranking", "tabular observational data"],
+      "risks": ["current adapter is forest-style rather than a full generalized random forest"],
+      "explanation": "CausalForest-style models are useful when interactions are nonlinear and segment-level heterogeneity matters."
+    },
+    "TransformedOutcomeGBM": {
+      "family": "pseudo_outcome",
+      "best_for": ["randomized experiments", "fast uplift baseline", "binary treatment"],
+      "risks": ["can be high variance outside randomized or well-overlapped data"],
+      "explanation": "Transformed Outcome models learn a direct uplift pseudo outcome and are useful as a quick experiment baseline."
+    },
+    "TransformedOutcomeForest": {
+      "family": "pseudo_outcome",
+      "best_for": ["randomized experiments", "nonlinear uplift", "fast forest baseline"],
+      "risks": ["high variance if treatment assignment is confounded"],
+      "explanation": "Forest transformed outcome learning captures nonlinear uplift in randomized-like data."
+    },
+    "IPWLearnerGBM": {
+      "family": "propensity_weighted",
+      "best_for": ["observational bias checks", "propensity-adjusted baseline", "policy stress tests"],
+      "risks": ["unstable when propensity is close to 0 or 1"],
+      "explanation": "IPW learning estimates uplift from inverse-propensity weighted pseudo outcomes."
+    },
+    "IPWForest": {
+      "family": "propensity_weighted",
+      "best_for": ["nonlinear observational bias checks", "policy stress tests"],
+      "risks": ["inherits IPW high variance under weak overlap"],
+      "explanation": "IPWForest uses a forest final stage on inverse-propensity weighted pseudo outcomes."
+    },
+    "DomainAdaptationLearner": {
+      "family": "meta_learner",
+      "best_for": ["treatment/control feature shift", "imbalanced observational data", "X-learner comparison"],
+      "risks": ["requires reliable propensity estimates", "does not solve unobserved confounding"],
+      "explanation": "Domain Adaptation Learner reweights outcome models to reduce observed distribution shift between groups."
+    },
+    "TLearnerLightGBM": {
+      "family": "industrial_boosting_meta_learner",
+      "best_for": ["large tabular experiments", "fast production baselines", "binary and regression outcomes"],
+      "risks": ["plain T-learner can be unstable when treatment/control sizes are very imbalanced"],
+      "explanation": "TLearnerLightGBM trains separate LightGBM outcome models for treatment and control and is a strong industrial ranking baseline."
+    },
+    "XLearnerLightGBM": {
+      "family": "industrial_boosting_meta_learner",
+      "best_for": ["imbalanced treatment/control", "large marketing datasets", "nonlinear CATE ranking"],
+      "risks": ["depends on useful first-stage counterfactual outcome models and propensity blending"],
+      "explanation": "XLearnerLightGBM combines LightGBM counterfactual outcome models with LightGBM effect stages."
+    },
+    "DRLearnerLightGBM": {
+      "family": "industrial_boosting_doubly_robust",
+      "best_for": ["observational production data", "selection bias", "large-scale Top-K ranking"],
+      "risks": ["weak overlap can still create high-variance pseudo effects"],
+      "explanation": "DRLearnerLightGBM uses LightGBM for outcome and effect stages around a doubly robust pseudo-effect signal."
+    },
+    "RLearnerLightGBM": {
+      "family": "industrial_boosting_orthogonal",
+      "best_for": ["selection-biased tabular data", "orthogonal residual ranking", "large-scale campaign scoring"],
+      "risks": ["requires enough residual signal after outcome and propensity nuisance modeling"],
+      "explanation": "RLearnerLightGBM residualizes outcome and treatment, then learns the final CATE surface with LightGBM."
+    },
+    "GGBMUpliftLightGBM": {
+      "family": "boosted_doubly_robust_calibrated",
+      "best_for": ["growth push/SMS campaigns", "industrial Top-K ranking", "PAV-calibrated uplift scores"],
+      "risks": ["calibration should be validated on holdout and with bootstrap before deployment"],
+      "explanation": "GGBMUpliftLightGBM combines a DR pseudo-effect signal, LightGBM effect stage, and isotonic/PAV calibration."
+    },
+    "SkLiftTwoModelsLightGBM": {
+      "family": "official_scikit_uplift",
+      "best_for": ["open-source uplift benchmark", "binary treatment experiments", "fast LightGBM two-model baseline"],
+      "risks": ["plain two-model uplift can be noisy with small treatment/control cells"],
+      "explanation": "SkLiftTwoModelsLightGBM wraps the official scikit-uplift TwoModels interface and returns unified y0/y1/uplift outputs."
+    },
+    "SkLiftSoloInteractionLightGBM": {
+      "family": "official_scikit_uplift",
+      "best_for": ["treatment-feature interaction checks", "randomized-like experiments", "industrial LightGBM baseline"],
+      "risks": ["single-model treatment interactions can underfit heterogeneous effects if interactions are weakly represented"],
+      "explanation": "SkLiftSoloInteractionLightGBM uses scikit-uplift SoloModel with explicit treatment-feature interactions."
+    },
+    "SkLiftClassTransformationLightGBM": {
+      "family": "official_scikit_uplift",
+      "best_for": ["binary conversion uplift", "randomized experiments", "class-variable transform benchmarks"],
+      "risks": ["classification-only and sensitive to confounded treatment assignment"],
+      "explanation": "SkLiftClassTransformationLightGBM wraps the official scikit-uplift class-variable transformation learner."
+    },
+    "SkLiftTransformedOutcomeLightGBM": {
+      "family": "official_scikit_uplift",
+      "best_for": ["transformed-outcome benchmark", "fast randomized experiment baseline", "ranking sanity checks"],
+      "risks": ["propensity estimates can add variance under weak overlap"],
+      "explanation": "SkLiftTransformedOutcomeLightGBM wraps scikit-uplift ClassTransformationReg with a LightGBM effect stage."
+    },
+    "GGBMUpliftCatBoost": {
+      "family": "optional_catboost_calibrated",
+      "best_for": ["category-heavy marketing tables", "industrial Top-K ranking", "optional CatBoost validation"],
+      "risks": ["requires optional catboost installation and local runtime validation"],
+      "explanation": "GGBMUpliftCatBoost is the CatBoost version of the calibrated DR pseudo-effect ranking learner."
+    },
+    "GGBMUpliftGBM": {
+      "family": "boosted_doubly_robust_calibrated",
+      "best_for": ["growth push/SMS campaigns", "large-scale Top-K ranking", "observational binary treatment"],
+      "risks": ["isotonic calibration can overfit small holdouts", "still requires overlap and nuisance-model checks"],
+      "explanation": "GGBMUpliftGBM uses a doubly robust pseudo-effect signal, a GBM effect stage, and PAV/isotonic calibration for monotone uplift ranking."
+    },
+    "PAVCalibratedDRLearnerGBM": {
+      "family": "calibrated_doubly_robust",
+      "best_for": ["Top-K targeting", "policy ranking stability", "observational growth campaigns"],
+      "risks": ["calibration quality depends on enough treated/control support across the score range"],
+      "explanation": "PAVCalibratedDRLearnerGBM fits a DR learner and then learns a monotone mapping from raw uplift scores to DR pseudo effects."
+    },
+    "PAVCalibratedRLearnerGBM": {
+      "family": "calibrated_orthogonal",
+      "best_for": ["selection-biased observational data", "residualized CATE ranking", "Top-K policy validation"],
+      "risks": ["R-learner residual signal can be noisy under weak overlap"],
+      "explanation": "PAVCalibratedRLearnerGBM calibrates R-learner uplift scores with an isotonic/PAV mapping."
+    },
+    "PAVCalibratedCausalForest": {
+      "family": "calibrated_forest_style",
+      "best_for": ["nonlinear heterogeneous effects", "segment discovery", "calibrated forest ranking"],
+      "risks": ["forest variance and calibration variance should be checked with bootstrap"],
+      "explanation": "PAVCalibratedCausalForest combines forest-style CATE learning with monotone uplift calibration."
+    },
+    "ClassVariableTransformGBM": {
+      "family": "transformed_class_variable",
+      "best_for": ["binary conversion uplift", "randomized or near-randomized experiments", "fast classification baseline"],
+      "risks": ["requires binary outcome", "can be biased when treatment assignment is strongly confounded"],
+      "explanation": "ClassVariableTransformGBM transforms binary response into a class-variable uplift target and maps it back to treatment-effect scores."
+    },
+    "ClassVariableTransformForest": {
+      "family": "transformed_class_variable",
+      "best_for": ["nonlinear binary uplift", "classification uplift benchmarking", "interaction-heavy tabular data"],
+      "risks": ["forest score variance should be checked with calibration and Top-K validation"],
+      "explanation": "ClassVariableTransformForest is a nonlinear CVT uplift baseline for randomized-like binary conversion data."
+    },
+    "PAVCalibratedClassVariableTransformGBM": {
+      "family": "calibrated_transformed_class_variable",
+      "best_for": ["Top-K binary targeting", "imbalanced RCT stress tests", "calibrated classification uplift"],
+      "risks": ["experimental local adapter; validate against transformed outcome and DR/R learners before relying on it"],
+      "explanation": "PAVCalibratedClassVariableTransformGBM applies isotonic calibration to a CVT uplift score to improve monotone ranking behavior."
+    },
+    "TarNet": {
+      "family": "representation",
+      "best_for": ["neural baseline", "binary treatment", "medium-size tabular data"],
+      "risks": ["does not explicitly balance treatment/control representations"],
+      "explanation": "TarNet learns shared representations with separate treatment/control outcome heads."
+    },
+    "CFRNet": {
+      "family": "representation_balancing",
+      "best_for": ["feature imbalance", "observational data", "weak but usable overlap"],
+      "risks": ["representation balancing does not fix unobserved confounding"],
+      "explanation": "CFRNet extends TarNet by encouraging balanced representations across treatment groups."
+    },
+    "DragonNet": {
+      "family": "propensity_augmented_neural",
+      "best_for": ["binary treatment", "outcome plus propensity learning", "strong neural baseline"],
+      "risks": ["can overfit on small tabular datasets without careful validation"],
+      "explanation": "DragonNet jointly learns outcome heads and treatment assignment, which helps expose selection structure."
+    },
+    "EFIN": {
+      "family": "feature_interaction_neural",
+      "best_for": ["marketing/recommendation features", "categorical-heavy tabular data"],
+      "risks": ["needs enough data to learn interactions"],
+      "explanation": "EFIN emphasizes explicit feature interactions for uplift modeling."
+    },
+    "DESCN": {
+      "family": "entire_space_uplift",
+      "best_for": ["binary conversion outcome", "marketing/uplift classification"],
+      "risks": ["classification-only in current registry"],
+      "explanation": "DESCN/ESX targets entire-space uplift estimation for binary response tasks."
+    },
+    "EconMLCausalForestDML": {
+      "family": "external_econml",
+      "best_for": ["official generalized random forest style CATE", "observational data", "inference-aware workflows"],
+      "risks": ["requires optional econml dependency", "slower than local lightweight learners"],
+      "explanation": "EconML CausalForestDML is the preferred official adapter when you need a mature orthogonal causal forest implementation."
+    },
+    "EconMLDRLearner": {
+      "family": "external_econml",
+      "best_for": ["official doubly robust CATE", "observational data", "orthogonal validation"],
+      "risks": ["requires optional econml dependency"],
+      "explanation": "EconML DRLearner provides a mature doubly robust estimator behind the same DeepUplift interface."
+    },
+    "EconMLForestDRLearner": {
+      "family": "external_econml",
+      "best_for": ["official forest DR learner", "nonlinear CATE", "observational data"],
+      "risks": ["requires optional econml dependency"],
+      "explanation": "EconML ForestDRLearner is a strong optional benchmark for nonlinear doubly robust effect estimation."
+    },
+    "EconMLSparseLinearDML": {
+      "family": "external_econml",
+      "best_for": ["high-dimensional sparse features", "interpretable DML", "observational data"],
+      "risks": ["linear sparse CATE can underfit nonlinear treatment effects"],
+      "explanation": "EconML SparseLinearDML is useful when the feature space is wide and a sparse linear CATE explanation is preferred."
+    },
+    "EconMLKernelDML": {
+      "family": "external_econml",
+      "best_for": ["nonlinear DML checks", "medium-size datasets", "orthogonal validation"],
+      "risks": ["can be slower and more sensitive to kernel settings"],
+      "explanation": "EconML KernelDML adds a kernelized CATE final stage behind the same DeepUplift interface."
+    },
+    "EconMLLinearDRLearner": {
+      "family": "external_econml",
+      "best_for": ["interpretable doubly robust CATE", "observational data", "baseline inference"],
+      "risks": ["linear final stage can underfit complex heterogeneity"],
+      "explanation": "EconML LinearDRLearner is a readable doubly robust estimator for CATE ranking and sanity checks."
+    },
+    "EconMLGRFCausalForest": {
+      "family": "external_econml_grf",
+      "best_for": ["generalized random forest", "nonlinear CATE", "official EconML forest backend"],
+      "risks": ["slower than local lightweight forest-style learners"],
+      "explanation": "EconML GRF CausalForest provides a mature generalized random forest style estimator."
+    },
+    "CausalMLUpliftTree": {
+      "family": "external_causalml",
+      "best_for": ["official uplift tree", "classification uplift", "interpretable segmentation"],
+      "risks": ["requires causalml and Python 3.11+ for current releases"],
+      "explanation": "CausalML UpliftTreeClassifier is a direct uplift-modeling tree implementation."
+    },
+    "CausalMLUpliftRandomForest": {
+      "family": "external_causalml",
+      "best_for": ["official uplift random forest", "classification uplift", "campaign targeting"],
+      "risks": ["requires causalml and Python 3.11+ for current releases"],
+      "explanation": "CausalML UpliftRandomForestClassifier is useful for direct classification uplift benchmarks."
+    },
+    "CausalMLCausalRandomForest": {
+      "family": "external_causalml",
+      "best_for": ["causal random forest", "multi-treatment extension path", "tree-based CATE"],
+      "risks": ["requires causalml and Python 3.11+ for current releases"],
+      "explanation": "CausalML CausalRandomForestRegressor is the optional path toward multi-treatment tree/forest support."
+    },
+    "CausalMLSLearnerLightGBM": {
+      "family": "official_causalml_meta_learner",
+      "best_for": ["official CausalML benchmark", "randomized-like tabular data", "Python 3.11 optional environment"],
+      "risks": ["single-model treatment encoding can miss subtle heterogeneity"],
+      "explanation": "CausalMLSLearnerLightGBM wraps CausalML BaseS with a LightGBM outcome learner."
+    },
+    "CausalMLTLearnerLightGBM": {
+      "family": "official_causalml_meta_learner",
+      "best_for": ["official CausalML benchmark", "large tabular experiments", "Python 3.11 optional environment"],
+      "risks": ["requires CausalML Python 3.11 runtime validation"],
+      "explanation": "CausalMLTLearnerLightGBM wraps CausalML BaseT with a LightGBM outcome learner."
+    },
+    "CausalMLXLearnerLightGBM": {
+      "family": "official_causalml_meta_learner",
+      "best_for": ["imbalanced treatment/control", "official CausalML X-learner comparison", "large marketing tables"],
+      "risks": ["depends on reliable propensity and counterfactual outcome stages"],
+      "explanation": "CausalMLXLearnerLightGBM wraps CausalML BaseX with a LightGBM learner."
+    },
+    "CausalMLRLearnerLightGBM": {
+      "family": "official_causalml_meta_learner",
+      "best_for": ["orthogonal residual CATE benchmark", "observational data checks", "official CausalML comparison"],
+      "risks": ["requires enough residual treatment variation after nuisance modeling"],
+      "explanation": "CausalMLRLearnerLightGBM wraps CausalML BaseR with a LightGBM learner."
+    },
+    "MultiTLearnerGBM": {
+      "family": "multi_treatment_meta_learner",
+      "best_for": ["multi-valued treatment", "action-specific policy scoring", "fast baseline"],
+      "risks": ["IPW policy value depends on overlap for every action", "separate outcome models can be noisy for rare actions"],
+      "explanation": "MultiTLearnerGBM trains one outcome model per action and recommends the action with the highest predicted outcome."
+    },
+    "MultiTLearnerRF": {
+      "family": "multi_treatment_meta_learner",
+      "best_for": ["multi-valued treatment", "nonlinear action response", "policy mix exploration"],
+      "risks": ["rare actions can overfit", "policy estimates need action-level overlap checks"],
+      "explanation": "MultiTLearnerRF is a forest-based multi-action T-Learner for nonlinear action-specific response surfaces."
+    },
+    "MultiDRLearnerGBM": {
+      "family": "multi_treatment_doubly_robust",
+      "best_for": ["multi-valued treatment", "observational action assignment", "propensity-adjusted action effects"],
+      "risks": ["DR pseudo effects can still be unstable under weak action overlap", "requires useful outcome and propensity models"],
+      "explanation": "MultiDRLearnerGBM learns action-vs-control doubly robust pseudo effects with a GBM final stage."
+    },
+    "MultiDRLearnerRF": {
+      "family": "multi_treatment_doubly_robust",
+      "best_for": ["multi-valued treatment", "nonlinear action-specific response", "observational policy learning"],
+      "risks": ["rare actions can produce high-variance pseudo effects", "requires action-level overlap checks"],
+      "explanation": "MultiDRLearnerRF uses forest effect models for nonlinear doubly robust action uplift."
+    },
+    "DoseResponseGBM": {
+      "family": "continuous_treatment_dose_response",
+      "best_for": ["discount intensity", "contact frequency", "subsidy level", "continuous treatment policy"],
+      "risks": ["requires observed support across the dose grid", "current implementation is a practical S-learner baseline rather than full VCNet"],
+      "explanation": "DoseResponseGBM learns an outcome model over features plus continuous dose and scores a grid of possible doses for each user."
+    },
+    "DoseResponseRF": {
+      "family": "continuous_treatment_dose_response",
+      "best_for": ["nonlinear dose response", "robust exploratory dose policies"],
+      "risks": ["can be noisy outside observed dose support", "does not yet provide DRNet/VCNet targeted regularization"],
+      "explanation": "DoseResponseRF uses a forest outcome model over features plus continuous dose to estimate individual dose-response curves."
+    },
+    "CausalDistillationTree": {
+      "family": "posthoc_interpretability",
+      "best_for": ["business-readable subgroup rules", "black-box uplift explanation", "segment hypothesis generation"],
+      "risks": ["rules summarize the fitted model rather than proving causal identification", "small leaves can be unstable without bootstrap or holdout checks"],
+      "explanation": "CausalDistillationTree distills a trained uplift model's scores into a shallow decision tree so humans can review high-uplift segments."
+    }
+  },
+  "research_frontier": [
+    {
+      "id": "upliftbench_2026",
+      "status": "partially_implemented",
+      "business_signal": "Large-scale marketing uplift benchmarks still favor comparing S/T/X learners and causal forests on QINI, cumulative gain, Top-K capture, and uncertainty rather than trusting one model family.",
+      "agent_action": "Keep Compare as the default workflow and add LightGBM/EconML adapters when dependencies are available.",
+      "reference": "upliftbench_2026"
+    },
+    {
+      "id": "causal_distillation_tree_2025",
+      "status": "implemented_as_posthoc_segments",
+      "business_signal": "Black-box CATE models need stable, readable subgroup explanations for deployment review.",
+      "agent_action": "Generate Causal Distillation Segments after every binary uplift run and validate them with support, holdout uplift, and bootstrap.",
+      "reference": "causal_distillation_trees_2025"
+    },
+    {
+      "id": "class_flipping_2024",
+      "status": "partially_implemented_as_cvt_baselines",
+      "business_signal": "Imbalanced randomized uplift data can make transformed-outcome learners fragile; class-flipping style corrections are a candidate next adapter.",
+      "agent_action": "Use ClassVariableTransformGBM and PAVCalibratedClassVariableTransformGBM as local classification baselines, then add exact class-flipping correction only with reproducible validation.",
+      "reference": "class_flipping_uplift_2024"
+    },
+    {
+      "id": "mtmt_2024",
+      "status": "partially_covered_by_multi_treatment",
+      "business_signal": "Growth scenarios often have multiple incentives and multiple response tasks, so action-specific uplift should not be reduced to binary treatment.",
+      "agent_action": "Extend the current Multi-Treatment page toward multi-task outcomes after binary/multi-action scoring is stable.",
+      "reference": "mtmt_user_growth_2024"
+    },
+    {
+      "id": "causalpfn_2025",
+      "status": "research_adapter_candidate",
+      "business_signal": "Prior-fitted causal transformers may automate estimator choice and uncertainty on small or medium observational datasets.",
+      "agent_action": "Treat as optional external research adapter; do not block local deterministic training on it.",
+      "reference": "causalpfn_2025"
+    },
+    {
+      "id": "terra_2025",
+      "status": "future_longitudinal_workflow",
+      "business_signal": "Repeated touchpoints need longitudinal HTE with carryover and post-treatment bias handling, beyond static uplift.",
+      "agent_action": "Add a sequence/longitudinal data design first, then consider Transformer-enabled recursive R-learner adapters.",
+      "reference": "terra_longitudinal_2025"
+    }
+  ],
+  "references": {
+    "model_selection_dilemma": {
+      "title": "In Search of Insights, Not Magic Bullets: Towards Demystification of the Model Selection Dilemma in Heterogeneous Treatment Effects",
+      "url": "https://huggingface.co/papers/2302.02923",
+      "signal": "No single HTE model dominates; model choice should depend on data design and validation."
+    },
+    "multi_valued_meta_learners": {
+      "title": "Comparison of meta-learners for estimating multi-valued treatment heterogeneous effects",
+      "url": "https://huggingface.co/papers/2205.14714",
+      "signal": "Multi-treatment settings need action-specific learners and evaluation, not binary uplift shortcuts."
+    },
+    "causal_isotonic_calibration": {
+      "title": "Causal isotonic calibration for heterogeneous treatment effects",
+      "url": "https://huggingface.co/papers/2302.14011",
+      "signal": "Calibration matters for using CATE scores as policy rankings."
+    },
+    "r_learning_inverse_variance": {
+      "title": "The Connection Between R-Learning and Inverse-Variance Weighting for Estimation of Heterogeneous Treatment Effects",
+      "url": "https://huggingface.co/papers/2307.09700",
+      "signal": "R-learning and pseudo-outcome weighting are central for robust HTE estimation."
+    },
+    "covariate_balancing_ipm": {
+      "title": "Covariate balancing using the integral probability metric for causal inference",
+      "url": "https://huggingface.co/papers/2305.13715",
+      "signal": "Balance diagnostics and IPM-style representation checks help detect treatment/control mismatch."
+    },
+    "confounding_bounds": {
+      "title": "Bounds on the conditional and average treatment effect with unobserved confounding factors",
+      "url": "https://huggingface.co/papers/1808.09521",
+      "signal": "Unobserved confounding can invalidate point estimates; use sensitivity/bounds thinking."
+    },
+    "hte_surfacing": {
+      "title": "A Systematic Paradigm for Detecting, Surfacing, and Characterizing Heterogeneous Treatment Effects",
+      "url": "https://huggingface.co/papers/2211.01547",
+      "signal": "Subgroup discovery should be framed as hypothesis surfacing and validated."
+    },
+    "continuous_treatment_foundation": {
+      "title": "Causal Foundation Models with Continuous Treatments",
+      "url": "https://arxiv.org/abs/2605.15133",
+      "signal": "Continuous treatment requires dose-response workflows and cannot be reduced to binary uplift."
+    },
+    "survival_hte": {
+      "title": "SurvHTE-Bench: A Benchmark for Heterogeneous Treatment Effect Estimation in Survival Analysis",
+      "url": "https://huggingface.co/papers/2603.05483",
+      "signal": "Time-to-event outcomes need survival-specific HTE metrics and censoring assumptions."
+    },
+    "dowhy_dr": {
+      "title": "DoWhy v0.14: Python 3.13 support and a new doubly robust estimator",
+      "url": "https://github.com/py-why/dowhy/releases/tag/v0.14",
+      "signal": "Doubly robust estimation and refutation workflows are becoming standard platform capabilities."
+    },
+    "selection_bias": {
+      "title": "Towards a holistic understanding of Selection Bias for Causal Effect Identification",
+      "url": "https://arxiv.org/abs/2605.13430",
+      "signal": "Selection bias should be diagnosed before model selection and deployment."
+    },
+    "task_specific_experimental_design": {
+      "title": "Task-specific experimental design for treatment effect estimation",
+      "url": "https://huggingface.co/papers/2306.05484",
+      "signal": "Experiment design should be aligned with the downstream effect-estimation task."
+    },
+    "adaptive_sampling_ads": {
+      "title": "Optimal Data Integration and Adaptive Sampling for Efficient Treatment Effect Estimation",
+      "url": "https://huggingface.co/papers/2603.29110",
+      "signal": "Advertising treatment-effect work should connect estimation to campaign selection and value."
+    },
+    "bootstrap_confidence": {
+      "title": "Bootstrap aggregation and confidence measures to improve time series causal discovery",
+      "url": "https://huggingface.co/papers/2306.08946",
+      "signal": "Confidence measures are necessary for deciding whether a model win is stable."
+    },
+    "causal_rule_subgroups": {
+      "title": "CURLS: Causal Rule Learning for Subgroups with Significant Treatment Effect",
+      "url": "https://huggingface.co/papers/2407.01004",
+      "signal": "Subgroup rules should be surfaced with significance and support checks."
+    },
+    "upliftbench_2026": {
+      "title": "A Large-Scale Empirical Comparison of Meta-Learners and Causal Forests for Heterogeneous Treatment Effect Estimation in Marketing Uplift Modeling",
+      "url": "https://arxiv.org/abs/2604.06123",
+      "signal": "Industrial marketing uplift should benchmark meta-learners and causal forests with QINI, cumulative gain, Top-K capture, and uncertainty."
+    },
+    "terra_longitudinal_2025": {
+      "title": "TERRA: A Transformer-Enabled Recursive R-learner for Longitudinal Heterogeneous Treatment Effect Estimation",
+      "url": "https://arxiv.org/abs/2510.22407",
+      "signal": "Time-varying treatment workflows need sequence-aware effect estimation that handles carryover and post-treatment bias."
+    },
+    "causal_distillation_trees_2025": {
+      "title": "Distilling heterogeneous treatment effects: Stable subgroup estimation in causal inference",
+      "url": "https://arxiv.org/abs/2502.07275",
+      "signal": "Black-box HTE estimates can be distilled into stable, interpretable subgroup rules."
+    },
+    "class_flipping_uplift_2024": {
+      "title": "Class flipping for uplift modeling and Heterogeneous Treatment Effect estimation on imbalanced RCT data",
+      "url": "https://arxiv.org/abs/2412.10009",
+      "signal": "Imbalanced randomized uplift data needs corrections that avoid distorting treatment effects."
+    },
+    "mtmt_user_growth_2024": {
+      "title": "Multi-Treatment Multi-Task Uplift Modeling for Enhancing User Growth",
+      "url": "https://arxiv.org/abs/2408.12803",
+      "signal": "Growth workflows often require multi-treatment and multi-task uplift rather than single binary response modeling."
+    },
+    "causalpfn_2025": {
+      "title": "CausalPFN: Amortized Causal Effect Estimation via In-Context Learning",
+      "url": "https://arxiv.org/abs/2506.07918",
+      "signal": "Prior-fitted causal transformers are a candidate path for automated estimator choice and calibrated uncertainty."
+    },
+    "deployment_policy": {
+      "title": "DeepUplift Agent policy-value principle",
+      "url": "local://docs/UPLIFT_AGENT_OPTIMIZATION.md",
+      "signal": "Uplift scores must be converted into decisions, thresholds, and economic value."
+    },
+    "business_growth_resume": {
+      "title": "Growth uplift business resume notes",
+      "url": "local://not-in-repository",
+      "signal": "Growth uplift production systems emphasize SSB mitigation, GGBM-style scalable effect learning, PAV/isotonic calibration, QINI, Top-K recall, and online/offline alignment."
+    }
+  }
+}

@@ -1,0 +1,41 @@
+# Python and local tooling
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+env/
+.DS_Store
+
+# Secrets and machine-specific configuration
+.env
+.env.*
+*.pem
+*.key
+
+# Regenerable artifacts and local data
+runs/
+reports/
+pics/
+examples/datasets/*.csv
+examples/datasets/*.csv.gz
+*.pt
+*.pth
+*.pkl
+*.pickle
+*.parquet
+*.zip
+*.tgz
+*.tar.gz
+*.png
+*.jpg
+*.jpeg
+*.pdf
+*.pptx
+
+# Legacy recovery copies kept locally; canonical copies live in docs/recovery/
+/01_CODE_MINIMAL_RECOVERY.md
+/02_CODEX_RESTORE.md
+/03_LIGHTWEIGHT_CONVERSATION.md

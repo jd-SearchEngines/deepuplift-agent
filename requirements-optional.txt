@@ -1,0 +1,13 @@
+# Optional official CATE/uplift backends.
+# LightGBM is a first-class industrial tabular backend for local meta-learners.
+lightgbm>=4.0
+xgboost>=3.0
+scikit-uplift>=0.5.1
+catboost>=1.2
+
+# EconML 0.16 supports the current Python 3.10 app environment.
+econml==0.16.0
+
+# CausalML 0.16 requires Python >=3.11. Install this in a separate Python 3.11
+# environment if you want the official CausalML uplift tree/forest adapters.
+# causalml==0.16.0
