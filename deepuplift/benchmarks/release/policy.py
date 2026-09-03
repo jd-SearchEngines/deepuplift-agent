@@ -26,10 +26,11 @@ def coupon_policy_benchmark(dataset, prediction, *, budget: float = 500.0, treat
     policy = build_binary_policy(prediction, treatment_cost=treatment_cost, outcome_value=outcome_value, budget=budget)
     net_selected = policy.to_frame()["recommended_treatment"].to_numpy(dtype=int) == 1
     oracle_order = np.argsort(truth)[::-1]
-    oracle_selected = np.zeros(n, dtype=bool); oracle_selected[oracle_order[:max_targets]] = True
+    oracle_selected = np.zeros(n, dtype=bool)
+    profitable = oracle_order[(truth[oracle_order] * outcome_value - treatment_cost) > 0]
+    oracle_selected[profitable[:max_targets]] = True
     policies = {"A_NO_TREATMENT": _summary(np.zeros(n, dtype=bool), truth, cost=treatment_cost, outcome_value=outcome_value, budget=budget), "B_RANDOM_TREATMENT": _summary(random_selected, truth, cost=treatment_cost, outcome_value=outcome_value, budget=budget), "C_TOP_PREDICTED_UPLIFT": _summary(top_selected, truth, cost=treatment_cost, outcome_value=outcome_value, budget=budget), "D_NET_VALUE_BUDGET": _summary(net_selected, truth, cost=treatment_cost, outcome_value=outcome_value, budget=budget), "ORACLE": _summary(oracle_selected, truth, cost=treatment_cost, outcome_value=outcome_value, budget=budget)}
     oracle_value = policies["ORACLE"]["net_value"]
     for name, row in policies.items():
         row["policy_regret_vs_oracle"] = float(oracle_value - row["net_value"])
     return policies
-
