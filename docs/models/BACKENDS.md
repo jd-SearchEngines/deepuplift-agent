@@ -24,8 +24,11 @@ They use scikit-learn outcome/effect estimators and all return the same
 - CausalML;
 - scikit-uplift.
 
-These adapters are optional/interface-only in v0.3 until a configured estimator
-can fit and predict. They do not make a missing package look runnable.
+The EconML and CausalML entries are real adapters: they import the configured
+third-party estimator, fit it, normalize predictions to `EffectPrediction`, and
+record backend/nuisance provenance. They remain dependency-gated and do not make
+a missing package look runnable. scikit-uplift remains an explicit
+`INTERFACE_ONLY` compatibility boundary until a real adapter is added.
 The existing legacy catalog in `deepuplift.core.registry` remains available
 for the Streamlit workbench and has its own dependency guards.
 

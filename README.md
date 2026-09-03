@@ -85,21 +85,24 @@ DeepUplift supports randomized and observational data, binary treatment (stable 
 |---|---|---|
 | Meta learners | S/T/X/DR, R, IPW | STABLE |
 | Tree-backed meta | S/T/X/DR + RandomForest | STABLE |
-| External forests/trees | EconML, CausalML, scikit-uplift | OPTIONAL / INTERFACE_ONLY |
+| External forests/trees | EconML CausalForestDML, CausalML UpliftTree/UpliftRandomForest | OPTIONAL (real adapters; dependency-gated) |
 | Multi / continuous | MultiTreatmentOutcome, DoseResponseGBM | EXPERIMENTAL |
 | Deep models | TarNet, CFRNet, DragonNet, CEVAE, GANITE and others | EXPERIMENTAL / research compatibility |
 
-For observational binary data, use the unified nuisance contract:
+For observational binary data, `run_uplift_pipeline()` automatically estimates and
+records a cross-fitted nuisance contract. You can override the defaults explicitly:
 
 ```python
-from deepuplift.data import estimate_nuisance
-from deepuplift.benchmarks import run_benchmark
+from deepuplift.application import run_uplift_pipeline
 
-nuisance = estimate_nuisance(
-    dataset, estimator="logistic", cross_fit=True, n_splits=5,
-    weighting="overlap", trim_threshold=0.05,
+result = run_uplift_pipeline(
+    data, feature_cols=["x1", "x2"], treatment_col="treatment",
+    outcome_col="outcome", assignment_type="observational",
+    model_names=["DR-Learner", "R-Learner"],
+    nuisance_config={"estimator": "logistic", "cross_fit": True,
+                     "n_splits": 5, "weighting": "overlap",
+                     "trim_threshold": 0.05},
 )
-report = run_benchmark(dataset, models=["DR-Learner", "R-Learner"], nuisance_config={"weighting": "overlap"})
 ```
 
 The result records OOF fold IDs, propensity distribution, overlap, clipping/trimming, ESS, balance before/after weighting, and provenance. Observational diagnostics cannot prove absence of hidden confounding. Benchmark policy value is offline evidence only.
@@ -108,7 +111,7 @@ Public loaders do not download or redistribute raw data. `synthetic_ground_truth
 
 ## Release Status
 
-`0.4.0a1` Alpha preparation: binary randomized and observational reference paths are stable in core CI; multi-treatment is experimental/reference, continuous treatment is experimental/offline-only, and external causal forests/uplift trees are optional. Public-data loaders are available, but a public-data validation claim is made only after a real local benchmark run.
+`0.4.0a1` Alpha preparation: binary randomized and observational reference paths are stable in core CI; multi-treatment is experimental/reference, continuous treatment is experimental/offline-only, and external causal forests/uplift trees have real optional adapters gated by their dependencies. Public-data loaders are available, but a public-data validation claim is made only after a real local benchmark run.
 
 ## 输入数据
 
