@@ -34,7 +34,8 @@ class MultiTreatmentOutcomeModel:
             outcome = pd.to_numeric(frame.loc[mask, dataset.outcome_col], errors="coerce").to_numpy(dtype="float64")
             if np.isnan(outcome).any():
                 raise ValueError("Outcome must be numeric for the reference multi-treatment adapter.")
-            self.models[value] = OutcomeEstimator(self.task, self.random_state).fit(self.x.loc[mask], outcome)
+            outcome_task = "regression" if self.task == "classification" and len(np.unique(outcome)) > 2 else self.task
+            self.models[value] = OutcomeEstimator(outcome_task, self.random_state).fit(self.x.loc[mask], outcome)
         self.feature_cols = list(dataset.feature_cols)
         return self
 

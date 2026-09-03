@@ -5,9 +5,9 @@ from dataclasses import asdict, dataclass
 from typing import Any, Iterable
 
 from deepuplift.contracts import CausalDataset, DataDiagnostics, EffectPrediction, PolicyResult
-from deepuplift.data import AssignmentType, TreatmentType, create_causal_dataset, diagnose_dataset, split_dataset
+from deepuplift.data import AssignmentType, TreatmentType, create_causal_dataset, diagnose_dataset, estimate_nuisance, split_dataset
 from deepuplift.decision import build_binary_policy, build_experiment_plan, calibration_metrics, ranking_metrics
-from deepuplift.models.registry import build_model, is_model_available, missing_dependencies
+from deepuplift.models.registry import build_model, is_model_available, missing_dependencies, model_info
 
 
 @dataclass
@@ -28,6 +28,7 @@ class UpliftPipelineResult:
     prediction: EffectPrediction
     policy: PolicyResult
     experiment_plan: dict[str, Any]
+    nuisance: Any | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -36,6 +37,7 @@ class UpliftPipelineResult:
             "prediction": self.prediction.to_frame().to_dict(orient="records"),
             "policy": self.policy.to_dict(),
             "experiment_plan": self.experiment_plan,
+            "nuisance": self.nuisance.to_dict() if self.nuisance is not None else {"status": "not_requested"},
         }
 
 
@@ -56,17 +58,22 @@ def benchmark_models(
     model_names: Iterable[str] = ("S-Learner", "T-Learner", "X-Learner", "DR-Learner"),
     task: str = "classification",
     random_state: int = 42,
+    nuisance=None,
+    nuisance_config: dict[str, Any] | None = None,
 ) -> tuple[ModelBenchmarkResult, dict[str, EffectPrediction]]:
     rows: list[dict[str, Any]] = []
     predictions: dict[str, EffectPrediction] = {}
     for model_name in model_names:
-        if not is_model_available(model_name):
-            rows.append({"model": model_name, "status": "SKIPPED", "missing_dependencies": missing_dependencies(model_name)})
+        info = model_info(model_name)
+        if not info["runnable"]:
+            rows.append({"model": model_name, "status": "NOT_RUN", "maturity": info["maturity"], "missing_dependencies": info["missing_dependencies"], "reason": info["notes"]})
             continue
         started = time.perf_counter()
         try:
             model = build_model(model_name, task=task, random_state=random_state)
-            model.fit(train_dataset)
+            if train_dataset.assignment_type.value == "observational" and nuisance is None:
+                raise RuntimeError("Observational benchmark requires a unified NuisanceResult; application routing did not provide one.")
+            model.fit(train_dataset, nuisance=nuisance) if nuisance is not None else model.fit(train_dataset)
             train_seconds = time.perf_counter() - started
             prediction_started = time.perf_counter()
             prediction = model.predict(test_dataset)
@@ -83,6 +90,9 @@ def benchmark_models(
                 "calibration_mae": calibration["mae"],
                 "train_seconds": train_seconds,
                 "predict_seconds": predict_seconds,
+                "nuisance_used": nuisance is not None,
+                "nuisance_config": nuisance_config or {},
+                "model_maturity": info["maturity"],
             }
             predictions[model_name] = prediction
         except Exception as exc:
@@ -117,6 +127,7 @@ def run_uplift_pipeline(
     outcome_value: float = 1.0,
     budget: float | None = None,
     max_contacts: int | None = None,
+    nuisance_config: dict[str, Any] | None = None,
 ) -> UpliftPipelineResult:
     dataset = create_causal_dataset(
         data,
@@ -131,15 +142,31 @@ def run_uplift_pipeline(
         raise NotImplementedError("The reference pipeline is complete for binary treatment; use layer contracts for multi/continuous extensions.")
     diagnostics = diagnose_dataset(dataset)
     train_dataset, test_dataset = split_dataset(dataset, test_size=test_size, random_state=random_state)
+    nuisance = None
+    resolved_nuisance_config = dict(nuisance_config or {})
+    if dataset.assignment_type == AssignmentType.OBSERVATIONAL:
+        resolved_nuisance_config.setdefault("cross_fit", True)
+        resolved_nuisance_config.setdefault("n_splits", 5)
+        resolved_nuisance_config.setdefault("weighting", "overlap")
+        resolved_nuisance_config.setdefault("trim_threshold", 0.05)
+        resolved_nuisance_config.setdefault("random_state", random_state)
+        nuisance = estimate_nuisance(train_dataset, **resolved_nuisance_config)
     benchmark, _ = benchmark_models(
         train_dataset,
         test_dataset,
         model_names=model_names,
         task=task,
         random_state=random_state,
+        nuisance=nuisance,
+        nuisance_config=resolved_nuisance_config,
     )
     selected_model = build_model(benchmark.recommended_model, task=task, random_state=random_state)
-    selected_model.fit(dataset)
+    full_nuisance = None
+    if dataset.assignment_type == AssignmentType.OBSERVATIONAL:
+        full_config = dict(resolved_nuisance_config)
+        full_config["random_state"] = random_state
+        full_nuisance = estimate_nuisance(dataset, **full_config)
+    selected_model.fit(dataset, nuisance=full_nuisance) if full_nuisance is not None else selected_model.fit(dataset)
     prediction = selected_model.predict(dataset)
     policy = build_binary_policy(
         prediction,
@@ -152,4 +179,7 @@ def run_uplift_pipeline(
     experiment_plan["benchmark_holdout_metrics"] = next(
         row for row in benchmark.rows if row.get("model") == benchmark.recommended_model
     )
-    return UpliftPipelineResult(dataset, diagnostics, benchmark, prediction, policy, experiment_plan)
+    experiment_plan["nuisance_used"] = full_nuisance is not None
+    experiment_plan["nuisance_config"] = resolved_nuisance_config
+    experiment_plan["observational_assumption"] = "Conditional ignorability/unconfoundedness and positivity are assumptions; diagnostics cannot prove hidden confounding."
+    return UpliftPipelineResult(dataset, diagnostics, benchmark, prediction, policy, experiment_plan, full_nuisance)

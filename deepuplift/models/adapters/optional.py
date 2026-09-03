@@ -34,14 +34,14 @@ class OptionalBackendAdapter:
     def missing_dependency(self) -> str | None:
         return None if self.available else self.dependency
 
-    def fit(self, dataset: CausalDataset) -> "OptionalBackendAdapter":
+    def fit(self, dataset: CausalDataset, nuisance=None) -> "OptionalBackendAdapter":
         if not self.available:
             raise ImportError(f"{self.estimator_name} requires optional dependency '{self.dependency}'.")
         if self.estimator is None:
             raise NotImplementedError(
                 f"{self.estimator_name} is a backend boundary; provide an estimator implementation for this version."
             )
-        self.estimator.fit(dataset)
+        self.estimator.fit(dataset, nuisance=nuisance) if nuisance is not None else self.estimator.fit(dataset)
         return self
 
     def predict(self, dataset: CausalDataset) -> EffectPrediction:

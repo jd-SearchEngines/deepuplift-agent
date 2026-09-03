@@ -5,6 +5,7 @@ from .experiment import build_experiment_plan
 from .optimization import simulate_budget
 from .policy import build_binary_policy
 from .targeting import rank_users, select_top_k
+from .treatment_selection import build_continuous_policy, build_multi_policy
 from .ope import clipping_sensitivity, effective_sample_size, evaluate_ope_policy
 
 __all__ = [
@@ -18,4 +19,6 @@ __all__ = [
     "ranking_metrics",
     "select_top_k",
     "simulate_budget",
+    "build_multi_policy",
+    "build_continuous_policy",
 ]

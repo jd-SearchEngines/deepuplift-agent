@@ -4,10 +4,10 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "deepuplift"
-version = "0.3.0"
+version = "0.4.0a1"
 description = "Open-source uplift modeling and causal decision framework"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 license = {file = "LICENSE"}
 authors = [{name = "DeepUplift contributors"}]
 dependencies = [
@@ -36,7 +36,7 @@ all = [
   "torch>=1.12",
   "geomloss>=0.2.6",
 ]
-dev = ["pytest>=8.0"]
+dev = ["pytest>=8.0", "build>=1.2"]
 
 [tool.setuptools.packages.find]
 include = ["deepuplift*"]

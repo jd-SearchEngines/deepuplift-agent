@@ -78,7 +78,7 @@ def run_benchmark(dataset, *, models: Iterable[str] | None = None, output_dir: s
 
 def _git_sha() -> str | None:
     import subprocess
-    try: return subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
+    try: return subprocess.check_output(["git", "rev-parse", "HEAD"], text=True, stderr=subprocess.DEVNULL).strip()
     except Exception: return None
 
 

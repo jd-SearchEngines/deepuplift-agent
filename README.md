@@ -106,6 +106,10 @@ The result records OOF fold IDs, propensity distribution, overlap, clipping/trim
 
 Public loaders do not download or redistribute raw data. `synthetic_ground_truth()` is deterministic and carries true unit effects; Hillstrom, Criteo, and retail loaders require a user-supplied upstream file and retain source/license metadata.
 
+## Release Status
+
+`0.4.0a1` Alpha preparation: binary randomized and observational reference paths are stable in core CI; multi-treatment is experimental/reference, continuous treatment is experimental/offline-only, and external causal forests/uplift trees are optional. Public-data loaders are available, but a public-data validation claim is made only after a real local benchmark run.
+
 ## 输入数据
 
 框架一级支持三类 treatment：`binary`、`multi_discrete`、`continuous`。当前 reference pipeline 完整跑通 binary；multi-treatment 和 continuous treatment 已冻结 contract 与扩展边界。

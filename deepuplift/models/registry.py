@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Callable
 
-from .adapters import CausalMLAdapter, EconMLAdapter, SkLiftAdapter
+from .adapters import CausalMLAdapter, CausalForestDMLAdapter, EconMLAdapter, SkLiftAdapter
 from .binary import DRLearner, IPWLearner, RLearner, SLearner, TLearner, XLearner
 from .capabilities import DEFAULT_BINARY_CAPABILITIES, ModelCapabilities
 from .continuous import DoseResponseGBM
@@ -40,15 +40,16 @@ MODEL_REGISTRY: dict[str, ModelSpec] = {
     "DR-Learner-RF": ModelSpec("DR-Learner-RF", _native(DRLearner, "random_forest"), ModelCapabilities(requires_propensity=True, supports_sample_weight=True)),
     "MultiTreatmentOutcome": ModelSpec("MultiTreatmentOutcome", MultiTreatmentOutcomeModel, ModelCapabilities(supports_binary=False, supports_multi=True, supports_classification=True, supports_regression=True), maturity="EXPERIMENTAL"),
     "DoseResponseGBM": ModelSpec("DoseResponseGBM", DoseResponseGBM, ModelCapabilities(supports_binary=False, supports_continuous=True, supports_classification=True, supports_regression=True), maturity="EXPERIMENTAL", notes="Reference dose-response implementation; not industrial continuous-treatment evidence."),
-    "EconMLCausalForest": ModelSpec("EconMLCausalForest", EconMLAdapter, ModelCapabilities(backend="econml", requires_propensity=True), "econml", "econml", "OPTIONAL", False, "Interface-only until an EconML estimator adapter is configured."),
-    "CausalMLUpliftTree": ModelSpec("CausalMLUpliftTree", CausalMLAdapter, ModelCapabilities(backend="causalml"), "causalml", "causalml", "OPTIONAL", False, "Interface-only until a CausalML estimator adapter is configured."),
+    "CausalForestDML": ModelSpec("CausalForestDML", CausalForestDMLAdapter, ModelCapabilities(backend="econml", requires_propensity=True), "econml", "econml", "OPTIONAL", True, "EconML internally manages nuisance; provenance is recorded by the adapter."),
+    "CausalMLUpliftTree": ModelSpec("CausalMLUpliftTree", CausalMLAdapter, ModelCapabilities(backend="causalml"), "causalml", "causalml", "OPTIONAL", True, "CausalML UpliftTreeClassifier adapter."),
+    "CausalMLUpliftRandomForest": ModelSpec("CausalMLUpliftRandomForest", CausalMLAdapter, ModelCapabilities(backend="causalml"), "causalml", "causalml", "OPTIONAL", True, "CausalML UpliftRandomForestClassifier adapter."),
     "SkLiftTwoModels": ModelSpec("SkLiftTwoModels", SkLiftAdapter, ModelCapabilities(backend="scikit-uplift"), "scikit-uplift", "sklift", "OPTIONAL", False, "Interface-only; no silent native fallback."),
 }
 
 for _deep_name in ("TarNet", "CFRNet", "DragonNet", "CEVAE", "GANITE", "DESCN", "EFIN", "EUEN", "EEUEN", "ContrastiveUpliftNet"):
     MODEL_REGISTRY[_deep_name] = ModelSpec(_deep_name, lambda **kwargs: None, ModelCapabilities(), "legacy", None, "EXPERIMENTAL", False, "Deep implementation is retained for research compatibility; it is not a v0.3 runnable EffectPrediction adapter.")
 
-ALIASES = {"SLearnerGBM": "S-Learner", "TLearnerGBM": "T-Learner", "XLearnerGBM": "X-Learner", "DRLearnerGBM": "DR-Learner"}
+ALIASES = {"SLearnerGBM": "S-Learner", "TLearnerGBM": "T-Learner", "XLearnerGBM": "X-Learner", "DRLearnerGBM": "DR-Learner", "EconMLCausalForest": "CausalForestDML", "CausalForest": "CausalForestDML", "CausalMLUpliftRF": "CausalMLUpliftRandomForest"}
 
 
 def _canonical(name: str) -> str:

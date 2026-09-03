@@ -31,6 +31,8 @@ class DoseResponseGBM:
         y = pd.to_numeric(frame[dataset.outcome_col], errors="coerce").to_numpy(dtype="float64")
         if np.isnan(y).any():
             raise ValueError("Outcome must be numeric for DoseResponseGBM.")
+        if self.task == "classification" and len(np.unique(y)) > 2:
+            self.task = "regression"
         self.model = OutcomeEstimator(self.task, self.random_state).fit(x, y)
         self.dose_grid = np.linspace(float(dose.quantile(0.01)), float(dose.quantile(0.99)), self.grid_size)
         self.feature_cols = list(dataset.feature_cols)
@@ -58,5 +60,5 @@ class DoseResponseGBM:
             uplift=recommended - baseline,
             recommended_effect=recommended - baseline,
             recommended_treatment=self.dose_grid[best_idx],
-            metadata={"model_name": self.name, "dose_grid": self.dose_grid.tolist(), "baseline_dose": float(self.dose_grid[baseline_idx])},
+            metadata={"model_name": self.name, "dose_grid": self.dose_grid.tolist(), "baseline_dose": float(self.dose_grid[baseline_idx]), "maturity": "EXPERIMENTAL", "status": "EXPERIMENTAL", "offline_only": True},
         )

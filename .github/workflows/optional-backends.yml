@@ -1,0 +1,30 @@
+name: optional-backends
+
+on:
+  workflow_dispatch:
+
+jobs:
+  optional:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: econml
+            extra: econml
+            test: tests/models/test_causalforest_adapter.py
+          - name: causalml
+            extra: causalml
+            test: tests/models/test_causalml_uplift_tree_adapter.py tests/models/test_causalml_uplift_rf_adapter.py
+          - name: sklift
+            extra: sklift
+            test: tests/models/test_native_adapters.py
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install isolated optional backend
+        run: python -m pip install --upgrade pip && python -m pip install -e ".[${{ matrix.extra }}]" && python -m pip install pytest
+      - name: Run optional smoke
+        run: python -m pytest -q ${{ matrix.test }}
