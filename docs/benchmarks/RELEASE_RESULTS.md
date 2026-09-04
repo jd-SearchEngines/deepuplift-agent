@@ -3,7 +3,7 @@
 This page is a compact index; the full evidence bundle is generated outside
 Git under `release_runs/<run_id>/` and is intentionally not committed.
 
-Final validation evidence (2026-09-04):
+Final validation evidence for the `0.5.0b1` Beta candidate (2026-09-04):
 
 - Run: `20260903T175621Z-42`; commit: `40b32dfdab84917ed3ebb1089a3ba91859faf545`.
 - Verdict: `READY_FOR_BETA_RELEASE`.
