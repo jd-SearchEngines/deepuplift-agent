@@ -4,6 +4,8 @@ Open-source Uplift & Causal Decision Framework
 
 `Data → Models → Decision`
 
+Release status: `v0.5.0b1 Beta`
+
 From heterogeneous treatment effect estimation to deployable business policies.
 
 ## DeepUplift Agent
@@ -77,7 +79,7 @@ bash -n scripts/*.sh
 
 可选后端和 Python 3.11 的 CausalML 环境见 [`requirements-optional.txt`](requirements-optional.txt) 和 [`requirements-causalml-py311.txt`](requirements-causalml-py311.txt)。
 
-## v0.4.0a1 Alpha Release Candidate
+## v0.5.0b1 Beta
 
 DeepUplift supports randomized and observational data, binary treatment (stable reference path), and multi-treatment/continuous treatment as experimental boundaries. The model catalog now distinguishes `STABLE`, `OPTIONAL`, `EXPERIMENTAL`, `LEGACY`, and `INTERFACE_ONLY`; only runnable models are presented as runnable.
 
@@ -89,6 +91,8 @@ DeepUplift supports randomized and observational data, binary treatment (stable 
 | Multi-treatment | MultiTreatmentOutcome | EXPERIMENTAL / reference |
 | Continuous dose | DoseResponseGBM | EXPERIMENTAL / offline-only |
 | Deep models | TarNet, CFRNet, DragonNet, CEVAE, GANITE and others | EXPERIMENTAL / research compatibility |
+
+Maturity summary: binary randomized `STABLE`; binary observational `STABLE/BETA`; multi-treatment `BETA / EXPERIMENTAL`; continuous treatment `EXPERIMENTAL / OFFLINE_ONLY`; CausalForestDML and CausalML uplift models `OPTIONAL`; deep neural uplift models `RESEARCH / EXPERIMENTAL`.
 
 For observational binary data, `run_uplift_pipeline()` automatically estimates and
 records a cross-fitted nuisance contract. You can override the defaults explicitly:
@@ -112,7 +116,7 @@ Public loaders do not download or redistribute raw data. `synthetic_ground_truth
 
 ## Release Status
 
-`0.4.0a1` Alpha preparation: binary randomized and observational reference paths are stable in core CI; multi-treatment is experimental/reference, continuous treatment is experimental/offline-only, and external causal forests/uplift trees have real optional adapters gated by their dependencies. Public-data loaders are available, but a public-data validation claim is made only after a real local benchmark run.
+`0.5.0b1` Beta: `READY_FOR_BETA_RELEASE`. Binary randomized and observational reference paths are stable in core CI; multi-treatment is experimental/reference, continuous treatment is experimental/offline-only, and external causal forests/uplift trees have real optional adapters gated by their dependencies. Public-data validation is backed by the recorded Hillstrom and Criteo benchmark run.
 
 ## Scenario map
 
@@ -132,7 +136,7 @@ python -m pip install -e .
 python -m pip install -e ".[dev]"
 ```
 
-PyPI release pending; do not assume `pip install deepuplift` is available yet.
+PyPI release pending; install from the repository or a built artifact until the tagged release workflow completes.
 
 ## 输入数据
 

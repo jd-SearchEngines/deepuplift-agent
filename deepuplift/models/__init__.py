@@ -11,7 +11,7 @@ from .registry import (
 )
 from .capabilities import ModelCapabilities
 
-__version__ = "0.4.0a1"
+__version__ = "0.5.0b1"
 
 __all__ = [
     "MODEL_REGISTRY",

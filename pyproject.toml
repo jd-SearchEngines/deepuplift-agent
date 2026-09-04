@@ -4,12 +4,30 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "deepuplift"
-version = "0.4.0a1"
+version = "0.5.0b1"
 description = "Open-source uplift modeling and causal decision framework"
 readme = "README.md"
 requires-python = ">=3.10"
 license = {file = "LICENSE"}
 authors = [{name = "DeepUplift contributors"}]
+keywords = [
+  "uplift modeling",
+  "causal inference",
+  "CATE",
+  "heterogeneous treatment effect",
+  "treatment effect",
+  "causal decision",
+  "marketing",
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Scientific/Engineering",
+]
 dependencies = [
   "numpy>=1.24,<2",
   "pandas>=2.0",
@@ -37,6 +55,12 @@ all = [
   "geomloss>=0.2.6",
 ]
 dev = ["pytest>=8.0", "build>=1.2", "wheel>=0.42"]
+
+[project.urls]
+Homepage = "https://github.com/jd-SearchEngines/deepuplift-agent"
+Repository = "https://github.com/jd-SearchEngines/deepuplift-agent"
+Issues = "https://github.com/jd-SearchEngines/deepuplift-agent/issues"
+Documentation = "https://github.com/jd-SearchEngines/deepuplift-agent/tree/main/docs"
 
 [tool.setuptools.packages.find]
 include = ["deepuplift*"]
