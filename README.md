@@ -1,4 +1,14 @@
-# DeepUplift Agent
+# DeepUplift
+
+Open-source Uplift & Causal Decision Framework
+
+`Data → Models → Decision`
+
+Release status: `v0.5.0b1 Beta`
+
+From heterogeneous treatment effect estimation to deployable business policies.
+
+## DeepUplift Agent
 
 面向增长、营销与资源分配的因果决策工作台（Causal Decision Workbench）。
 
@@ -21,15 +31,43 @@ DeepUplift 的核心问题不是“谁本来就会转化”，而是“谁会因
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
+python -m pip install --upgrade pip setuptools
+python -m pip install -e ".[dev]"
+python examples/coupon_allocation/run.py --rows 10000 --budget 50000
+```
+
+这个命令会从合成发券数据跑完：`CausalDataset → diagnostics → S/T/X/DR benchmark → EffectPrediction → coupon policy → experiment plan`。生成物写入 `runs/`，不会进入 Git。
+
+要启动 Streamlit 工作台，额外安装完整应用依赖：
+
+```bash
 python -m pip install -r requirements.txt
 python scripts/prepare_sample_datasets.py
 streamlit run app.py
 ```
 
-打开 `http://localhost:8501`，即可使用 Streamlit 工作台。无 UI 的轻量检查：
+打开 `http://localhost:8501`。无 UI 的旧版轻量检查：
 
 ```bash
-PYTHON_BIN=python scripts/smoke_test_agent.sh
+PYTHON_BIN=python3 scripts/smoke_test_agent.sh
+```
+
+最小 Python API：
+
+```python
+from deepuplift.application import run_uplift_pipeline
+
+result = run_uplift_pipeline(
+    data,
+    feature_cols=["recency_days", "orders_30d", "segment"],
+    treatment_col="coupon_received",
+    outcome_col="conversion",
+    id_column="user_id",
+    treatment_cost=10,
+    outcome_value=35,
+    budget=50_000,
+)
+print(result.policy.summary)
 ```
 
 如果只想检查语法和 shell 脚本：
@@ -41,7 +79,68 @@ bash -n scripts/*.sh
 
 可选后端和 Python 3.11 的 CausalML 环境见 [`requirements-optional.txt`](requirements-optional.txt) 和 [`requirements-causalml-py311.txt`](requirements-causalml-py311.txt)。
 
+## v0.5.0b1 Beta
+
+DeepUplift supports randomized and observational data, binary treatment (stable reference path), and multi-treatment/continuous treatment as experimental boundaries. The model catalog now distinguishes `STABLE`, `OPTIONAL`, `EXPERIMENTAL`, `LEGACY`, and `INTERFACE_ONLY`; only runnable models are presented as runnable.
+
+| Family | Models | Maturity |
+|---|---|---|
+| Meta learners | S/T/X, DR/R/IPW | STABLE |
+| Tree-backed meta | S-Learner-RF, DR-Learner-RF | STABLE |
+| Causal forest / uplift trees | CausalForestDML, CausalML UpliftTree/UpliftRF | OPTIONAL (real adapters; dependency-gated) |
+| Multi-treatment | MultiTreatmentOutcome | EXPERIMENTAL / reference |
+| Continuous dose | DoseResponseGBM | EXPERIMENTAL / offline-only |
+| Deep models | TarNet, CFRNet, DragonNet, CEVAE, GANITE and others | EXPERIMENTAL / research compatibility |
+
+Maturity summary: binary randomized `STABLE`; binary observational `STABLE/BETA`; multi-treatment `BETA / EXPERIMENTAL`; continuous treatment `EXPERIMENTAL / OFFLINE_ONLY`; CausalForestDML and CausalML uplift models `OPTIONAL`; deep neural uplift models `RESEARCH / EXPERIMENTAL`.
+
+For observational binary data, `run_uplift_pipeline()` automatically estimates and
+records a cross-fitted nuisance contract. You can override the defaults explicitly:
+
+```python
+from deepuplift.application import run_uplift_pipeline
+
+result = run_uplift_pipeline(
+    data, feature_cols=["x1", "x2"], treatment_col="treatment",
+    outcome_col="outcome", assignment_type="observational",
+    model_names=["DR-Learner", "R-Learner"],
+    nuisance_config={"estimator": "logistic", "cross_fit": True,
+                     "n_splits": 5, "weighting": "overlap",
+                     "trim_threshold": 0.05},
+)
+```
+
+The result records OOF fold IDs, propensity distribution, overlap, clipping/trimming, ESS, balance before/after weighting, and provenance. Observational diagnostics cannot prove absence of hidden confounding. Benchmark policy value is offline evidence only.
+
+Public loaders do not download or redistribute raw data. `synthetic_ground_truth()` is deterministic and carries true unit effects; Hillstrom, Criteo, and retail loaders require a user-supplied upstream file and retain source/license metadata.
+
+## Release Status
+
+`0.5.0b1` Beta: `READY_FOR_BETA_RELEASE`. Binary randomized and observational reference paths are stable in core CI; multi-treatment is experimental/reference, continuous treatment is experimental/offline-only, and external causal forests/uplift trees have real optional adapters gated by their dependencies. Public-data validation is backed by the recorded Hillstrom and Criteo benchmark run.
+
+## Scenario map
+
+| Scenario | Treatment | Decision | Maturity |
+|---|---|---|---|
+| Coupon targeting | Binary | Who | Stable |
+| Marketing exposure | Binary | Who | Stable |
+| Coupon amount | Multi | Which | Experimental / Beta path |
+| Subsidy | Continuous | How much | Experimental |
+| Coins / points | Multi / Continuous | Which / How much | Reference |
+
+## Quick install
+
+```bash
+python -m pip install -e .
+# development and packaging checks
+python -m pip install -e ".[dev]"
+```
+
+PyPI release pending; install from the repository or a built artifact until the tagged release workflow completes.
+
 ## 输入数据
+
+框架一级支持三类 treatment：`binary`、`multi_discrete`、`continuous`。binary 是稳定 reference path；multi-treatment 和 continuous treatment 是可运行但实验性的决策边界。
 
 最小二元 treatment 数据需要包含：
 
@@ -65,11 +164,27 @@ docs/architecture/             平台分层设计
 docs/recovery/                 项目恢复与上下文说明
 ```
 
+## Tutorials and API
+
+- [Binary coupon targeting](docs/tutorials/01_coupon_targeting.md)
+- [Observational targeting](docs/tutorials/02_observational_targeting.md)
+- [Multi coupon amount](docs/tutorials/03_coupon_amount.md)
+- [Continuous subsidy](docs/tutorials/04_subsidy_optimization.md)
+- [Public benchmark](docs/tutorials/05_public_benchmark.md)
+- [API guide](docs/API_GUIDE.md) · [data format](docs/DATA_FORMAT.md) · [troubleshooting](docs/TROUBLESHOOTING.md)
+
+Run the release benchmark with `python scripts/run_release_benchmark.py --help`.
+The command accepts local upstream paths, `--scale 10000 100000 1000000`, an
+optional packaging Python, and an externally verified CI status. Generated
+evidence is written outside Git under `release_runs/<run_id>/`.
+
 ## 证据与发布边界
 
 每次训练运行可以生成配置、指标、预测、readiness、promotion 和 evidence manifest。`runs/`、`reports/`、本地数据、模型权重和截图均属于可再生或环境相关内容，默认不会进入 Git。
 
-模型比较应同时查看 QINI/AUUC、Top-K uplift、校准、bootstrap、overlap 和 policy value；单个离线指标胜出不等于可以上线。线上实验、随机化设计、灰度、回滚和隐私审查需要由使用方单独完成。
+模型比较应同时查看 ranking、ground-truth（仅 synthetic/semi-synthetic）、calibration 和 business policy value；单个离线指标胜出不等于可以上线。线上实验、随机化设计、灰度、回滚和隐私审查需要由使用方单独完成。benchmark evidence bundle 写入用户指定的 `runs/<run_id>/`，不提交 Git。
+
+详细协议：[`docs/data/OBSERVATIONAL_PIPELINE.md`](docs/data/OBSERVATIONAL_PIPELINE.md)、[`docs/data/PROPENSITY_AND_OVERLAP.md`](docs/data/PROPENSITY_AND_OVERLAP.md)、[`docs/models/TREE_MODELS.md`](docs/models/TREE_MODELS.md)、[`docs/benchmarks/BENCHMARK_PROTOCOL.md`](docs/benchmarks/BENCHMARK_PROTOCOL.md)、[`docs/open_source/MODEL_MATURITY.md`](docs/open_source/MODEL_MATURITY.md)。
 
 ## 开源路线图
 

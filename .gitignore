@@ -2,6 +2,11 @@
 __pycache__/
 *.py[cod]
 .pytest_cache/
+.coverage
+.eggs/
+*.egg-info/
+build/
+dist/
 .mypy_cache/
 .ruff_cache/
 .venv/
@@ -19,6 +24,7 @@ env/
 runs/
 reports/
 pics/
+.local/
 examples/datasets/*.csv
 examples/datasets/*.csv.gz
 *.pt

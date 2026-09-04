@@ -1,23 +1,24 @@
-"""Public decision-layer API for DeepUplift.
+"""Decision-layer APIs: evaluation, economics, targeting, policy and experiments."""
 
-Decision functions turn uplift predictions into evaluation evidence and policy
-recommendations. They deliberately do not imply that offline estimates are
-production causal proof.
-"""
-
-from deepuplift.core.evaluator import evaluate_uplift_predictions
-from deepuplift.core.ope import clipping_sensitivity, effective_sample_size, evaluate_ope_policy
-from deepuplift.core.policy import budget_policy_optimizer, policy_value_curve
-from deepuplift.core.predictor import score_top_fraction
-from deepuplift.core.readiness import decision_readiness
+from .evaluation import calibration_metrics, ranking_metrics
+from .experiment import build_experiment_plan
+from .optimization import simulate_budget
+from .policy import build_binary_policy
+from .targeting import rank_users, select_top_k
+from .treatment_selection import build_continuous_policy, build_multi_policy
+from .ope import clipping_sensitivity, effective_sample_size, evaluate_ope_policy
 
 __all__ = [
-    "budget_policy_optimizer",
+    "build_binary_policy",
+    "build_experiment_plan",
+    "calibration_metrics",
     "clipping_sensitivity",
-    "decision_readiness",
     "effective_sample_size",
-    "evaluate_uplift_predictions",
     "evaluate_ope_policy",
-    "policy_value_curve",
-    "score_top_fraction",
+    "rank_users",
+    "ranking_metrics",
+    "select_top_k",
+    "simulate_budget",
+    "build_multi_policy",
+    "build_continuous_policy",
 ]

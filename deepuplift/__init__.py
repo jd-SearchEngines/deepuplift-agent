@@ -1,3 +1,3 @@
 """DeepUplift package."""
 
-__version__ = "v1.0"
+__version__ = "0.5.0b1"

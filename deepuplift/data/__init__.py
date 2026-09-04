@@ -1,21 +1,43 @@
-"""Public data-layer API for DeepUplift.
+"""Public data-layer API for DeepUplift."""
 
-The implementation remains in ``deepuplift.core`` for backwards compatibility.
-This package gives open-source users a stable place to discover data contracts,
-profiling, preprocessing, and causal-design diagnostics.
-"""
-
-from deepuplift.core.data_profile import build_feature_profile, compare_feature_profile
-from deepuplift.core.dataset_registry import load_dataset_manifest
-from deepuplift.core.diagnostics import diagnose_uplift_data
-from deepuplift.core.preprocess import TabularPreprocessor
-from deepuplift.core.schema import UpliftConfig
+from .backends import PandasBackend, PolarsBackend, polars_available
+from .diagnostics import diagnose_dataset
+from .preprocessing import TabularPreprocessor
+from .registry import DatasetRegistry, load_dataset_manifest
+from .schema import create_causal_dataset, infer_treatment_type
+from .split import split_dataset
+from .nuisance import NuisanceResult, apply_weighting, estimate_nuisance, estimate_propensity, effective_sample_size, overlap_report
+from .public import controlled_observational_stress_test, load_criteo, load_hillstrom, load_public_dataset, load_retail, synthetic_ground_truth
+from .datasets import observational_dataset, randomized_dataset
+from deepuplift.contracts import AssignmentType, CausalDataset, DataDiagnostics, TreatmentType
 
 __all__ = [
+    "AssignmentType",
+    "CausalDataset",
+    "DataDiagnostics",
+    "DatasetRegistry",
+    "PandasBackend",
+    "PolarsBackend",
     "TabularPreprocessor",
-    "UpliftConfig",
-    "build_feature_profile",
-    "compare_feature_profile",
-    "diagnose_uplift_data",
+    "TreatmentType",
+    "create_causal_dataset",
+    "diagnose_dataset",
+    "infer_treatment_type",
     "load_dataset_manifest",
+    "polars_available",
+    "split_dataset",
+    "NuisanceResult",
+    "estimate_nuisance",
+    "estimate_propensity",
+    "apply_weighting",
+    "effective_sample_size",
+    "overlap_report",
+    "synthetic_ground_truth",
+    "load_public_dataset",
+    "load_hillstrom",
+    "load_criteo",
+    "load_retail",
+    "randomized_dataset",
+    "observational_dataset",
+    "controlled_observational_stress_test",
 ]
