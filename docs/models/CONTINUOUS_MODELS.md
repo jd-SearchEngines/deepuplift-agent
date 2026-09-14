@@ -29,6 +29,18 @@ TransTEE's official MIT-licensed source supports continuous/dosage settings, but
 
 The benchmark uses MISE (integrated squared response-curve error), dose-response RMSE, integrated absolute error, ADRF and ICTE/CATE curve RMSE, maximum-effect dose error/regret, and economic dose error/regret. Economic regret uses the benchmark's explicit demonstration cost curve; it is an evaluation assumption, not an empirical cost claim. Qini and AUUC are not continuous-treatment metrics here.
 
+## Treatment Support
+
+Each fitted continuous estimator records `observed_dose_min` and `observed_dose_max` from complete factual training rows. By default, its predicted dose curve stays inside that observed interval. The default baseline is dose 0 only when factual training rows actually contain dose 0; otherwise the estimator uses the observed lower endpoint as a supported reference and records `no_treatment_supported: false`. A caller who explicitly supplies an unsupported baseline or dose grid gets a clear error unless `allow_extrapolation=True` is set.
+
+For example, if training doses run from 5 to 20 RMB and a caller asks about 0 to 30 RMB, default fitting and decision support stay within 5 to 20 RMB. The model cannot establish outcomes for the unobserved no-treatment arm at 0 from those rows. Explicit extrapolation adds the requested doses but marks `extrapolation_enabled`, `unsupported_doses`, and a warning in prediction metadata. It does not create empirical overlap. `build_continuous_policy()` filters dose candidates to observed support by default, refuses positive treatment recommendations when the no-treatment baseline is unsupported, and can additionally filter each user's candidates using the local empirical treatment support diagnostic.
+
+`diagnose_continuous_treatment()` reports observed dose quantiles, histogram bins, and dose coverage by selected feature segments. `local_treatment_support()` reports a standardized-feature kNN dose interval and support score per prediction row. These are empirical coverage summaries, not positivity proofs or guarantees of causal identification.
+
+## Next Research Stage
+
+DRNet and VCNet primarily estimate `E[Y | X,T]`; GIKS augments their counterfactual supervision with gradient interpolation and GP smoothing. Stronger continuous-treatment causal identification remains future work: generalized propensity scores (GPS), Continuous DR, and VCNet-TR. They are not implemented or claimed by this release.
+
 Continuous benchmark runs write configuration, dataset provenance, per-model curves and policies, metrics, environment versions, and a Markdown report to `runs/continuous/<run_id>/`. The runner is offline by default. Real raw-data files must already be available locally. Install `deepuplift[benchmark]` to sample per-model peak process RSS; without it, the report records the process high-water RSS method.
 
 Run the offline synthetic matrix with:

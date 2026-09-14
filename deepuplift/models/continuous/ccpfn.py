@@ -9,7 +9,7 @@ import pandas as pd
 
 from deepuplift.contracts import CausalDataset, EffectPrediction, TreatmentType
 from deepuplift.data.preprocessing import TabularPreprocessor
-from .contracts import effect_prediction_from_curve
+from .contracts import effect_prediction_from_curve, resolve_dose_support
 
 
 class CCPFNAdapter:
@@ -38,6 +38,9 @@ class CCPFNAdapter:
         max_query_length: int = 4096,
         cache_dir: str | None = None,
         backend: Any | None = None,
+        baseline_dose: float | None = None,
+        dose_grid: Any | None = None,
+        allow_extrapolation: bool = False,
     ) -> None:
         self.device = device
         self.model_path = model_path
@@ -47,6 +50,9 @@ class CCPFNAdapter:
         self.max_query_length = max(1, int(max_query_length))
         self.cache_dir = cache_dir
         self.backend = backend
+        self.requested_baseline_dose = baseline_dose
+        self.requested_dose_grid = dose_grid
+        self.allow_extrapolation = bool(allow_extrapolation)
         self._backend_injected = backend is not None
         self._fitted = False
 
@@ -64,9 +70,15 @@ class CCPFNAdapter:
         outcome = frame[dataset.outcome_col].to_numpy(dtype="float64")
         if not np.isfinite(x).all() or not np.isfinite(treatment).all() or not np.isfinite(outcome).all():
             raise ValueError("CCPFN context features, treatment, and outcome must be finite.")
-        self.baseline_dose = 0.0
-        self.dose_grid = np.unique(np.append(np.linspace(min(0.0, treatment.min()), max(0.0, treatment.max()), self.grid_size), self.baseline_dose))
-        self.training_dose_range = [float(treatment.min()), float(treatment.max())]
+        self.observed_dose_min, self.observed_dose_max = float(treatment.min()), float(treatment.max())
+        self.no_treatment_observed = bool(np.isclose(treatment, 0.0, atol=1e-12).any())
+        self.dose_grid, self.baseline_dose, self.dose_support = resolve_dose_support(
+            self.observed_dose_min, self.observed_dose_max, grid_size=self.grid_size,
+            baseline_dose=self.requested_baseline_dose, dose_grid=self.requested_dose_grid,
+            allow_extrapolation=self.allow_extrapolation,
+            no_treatment_observed=self.no_treatment_observed,
+        )
+        self.training_dose_range = [self.observed_dose_min, self.observed_dose_max]
         self.context_size = min(len(x), self.max_context_length)
         if len(x) > self.context_size:
             rng = np.random.default_rng(self.random_state)
@@ -95,16 +107,23 @@ class CCPFNAdapter:
         self._fitted = True
         return self
 
-    def predict(self, dataset: CausalDataset) -> EffectPrediction:
+    def predict(self, dataset: CausalDataset, *, dose_grid=None) -> EffectPrediction:
         if not self._fitted:
             raise RuntimeError("Model must be fitted before predict.")
         if dataset.treatment_type != TreatmentType.CONTINUOUS:
             raise ValueError("CCPFNAdapter requires continuous treatment.")
+        grid, baseline, support = resolve_dose_support(
+            self.observed_dose_min, self.observed_dose_max, grid_size=self.grid_size,
+            baseline_dose=self.baseline_dose,
+            dose_grid=self.dose_grid if dose_grid is None else dose_grid,
+            allow_extrapolation=self.allow_extrapolation,
+            no_treatment_observed=self.no_treatment_observed,
+        )
         frame = dataset.to_pandas()
         x = self.preprocessor.transform(frame[self.feature_cols]).to_numpy(dtype="float64", copy=True)
-        n, k = len(x), len(self.dose_grid)
+        n, k = len(x), len(grid)
         outcomes = np.empty((n, k), dtype="float64")
-        for column, dose in enumerate(self.dose_grid):
+        for column, dose in enumerate(grid):
             column_values = np.empty(n, dtype="float64")
             for start in range(0, n, self.max_query_length):
                 end = min(start + self.max_query_length, n)
@@ -125,6 +144,9 @@ class CCPFNAdapter:
             "context_size": self.context_size,
             "seed": self.random_state,
             "training_dose_range": self.training_dose_range,
+            "observed_dose_min": self.observed_dose_min,
+            "observed_dose_max": self.observed_dose_max,
+            "dose_support": support,
             "requires_network_on_first_use": not self._backend_injected,
             "maturity": "OPTIONAL/FRONTIER_EXPERIMENTAL",
             "status": "EXPERIMENTAL",
@@ -132,9 +154,9 @@ class CCPFNAdapter:
         }
         return effect_prediction_from_curve(
             unit_id=dataset.unit_ids.to_numpy(),
-            dose_grid=self.dose_grid.copy(),
+            dose_grid=grid.copy(),
             dose_outcomes=outcomes,
-            baseline_dose=self.baseline_dose,
+            baseline_dose=baseline,
             metadata=metadata,
         )
 

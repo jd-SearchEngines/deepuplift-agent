@@ -10,6 +10,7 @@ from typing import Any
 import numpy as np
 
 from deepuplift.contracts import CausalDataset
+from deepuplift.data import local_treatment_support
 from deepuplift.decision import build_continuous_policy
 from deepuplift.models import build_model, model_info
 from .datasets import SyntheticContinuousData, continuous_dose_cost
@@ -115,6 +116,10 @@ def run_continuous_model(
         start = time.perf_counter()
         prediction = model.predict(test)
         predict_seconds = time.perf_counter() - start
+        train_dose = train.to_pandas()[train.treatment_col].to_numpy(dtype="float64")
+        test_dose = test.to_pandas()[test.treatment_col].to_numpy(dtype="float64")
+        local_diagnostics = local_treatment_support(train, test, dose_grid=prediction.dose_grid)
+        prediction.metadata["local_treatment_support"] = local_diagnostics
         start = time.perf_counter()
         cost_fn = continuous_dose_cost if dose_cost is None else dose_cost
         policy = build_continuous_policy(
@@ -128,15 +133,35 @@ def run_continuous_model(
         memory_sampler.stop()
         raise
     peak_mb = memory_sampler.stop()
+    evaluation_grid = np.asarray(dose_grid, dtype="float64")
+    train_min, train_max = float(np.min(train_dose)), float(np.max(train_dose))
+    evaluation_mask = (evaluation_grid >= train_min) & (evaluation_grid <= train_max)
+    evaluation_grid = evaluation_grid[evaluation_mask]
+    response_curves = np.asarray(true_response_curves)[:, evaluation_mask]
+    effect_curves = np.asarray(true_effect_curves)[:, evaluation_mask]
+    if len(evaluation_grid) < 2:
+        raise ValueError("At least two shared evaluation doses must fall inside observed training support.")
+    truth_opt_effect = evaluation_grid[np.argmax(effect_curves, axis=1)]
+    cost_fn = continuous_dose_cost if dose_cost is None else dose_cost
+    truth_net = outcome_value * effect_curves - np.asarray(cost_fn(evaluation_grid), dtype="float64")[None, :]
+    no_treatment_supported = bool(prediction.metadata.get("dose_support", {}).get("no_treatment_supported", False))
+    if no_treatment_supported and np.any(np.isclose(evaluation_grid, 0.0)):
+        truth_net[:, int(np.argmin(np.abs(evaluation_grid)))] = np.maximum(
+            truth_net[:, int(np.argmin(np.abs(evaluation_grid)))], 0.0
+        )
+        truth_opt_economic = evaluation_grid[np.argmax(truth_net, axis=1)]
+    else:
+        truth_opt_economic = None
     metrics = continuous_curve_metrics(
         prediction,
-        dose_grid=dose_grid,
-        true_response_curves=true_response_curves,
-        true_effect_curves=true_effect_curves,
-        true_optimal_effect_dose=true_optimal_effect_dose,
-        true_optimal_economic_dose=true_optimal_economic_dose,
+        dose_grid=evaluation_grid,
+        true_response_curves=response_curves,
+        true_effect_curves=effect_curves,
+        true_optimal_effect_dose=truth_opt_effect,
+        true_optimal_economic_dose=truth_opt_economic,
         outcome_value=outcome_value,
         dose_cost=cost_fn,
+        causal_baseline_supported=no_treatment_supported,
     )
     info = model_info(model_name)
     preview_rows = []
@@ -154,7 +179,7 @@ def run_continuous_model(
         })
     return {
         "model": model_name,
-        "status": "PASS" if policy.rows and np.isfinite(list(metrics.values())[:-1]).all() else "INCONCLUSIVE",
+        "status": "PASS" if policy.rows and all(value is None or np.isfinite(value) for value in metrics.values()) else "INCONCLUSIVE",
         "maturity": info["maturity"],
         "backend": info["backend"],
         "runnable": info["runnable"],
@@ -165,6 +190,18 @@ def run_continuous_model(
         "memory_measurement": memory_sampler.method,
         "device": "cpu",
         "metrics": metrics,
+        "support_metrics": {
+            "observed_dose_range": [train_min, train_max],
+            "test_dose_range": [float(np.min(test_dose)), float(np.max(test_dose))],
+            "extrapolation_fraction": float(np.mean((test_dose < train_min) | (test_dose > train_max))),
+            "mean_local_support_score": local_diagnostics["mean_support_score"],
+            "giks_pseudo_extrapolation_fraction": (
+                prediction.metadata.get("giks", {}).get("pseudo_extrapolation_fraction")
+                if prediction.metadata.get("giks") else None
+            ),
+            "evaluation_dose_range": [float(evaluation_grid.min()), float(evaluation_grid.max())],
+            "truth_extrapolation_fraction": float(1.0 - np.mean(evaluation_mask)),
+        },
         "prediction_metadata": prediction.metadata,
         "curve_preview": preview_rows,
         "policy": {"rows": policy.rows, "summary": policy.summary, "metadata": policy.metadata},

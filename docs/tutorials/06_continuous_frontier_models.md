@@ -39,6 +39,32 @@ for item in result["models"]:
 
 The maximum-effect dose is a property of the estimated effect curve. The policy instead chooses the dose with the highest estimated net value, `effect * outcome_value - cost(dose)`, and applies the optional budget constraint after ranking users. The benchmark reports the two doses separately because they need not match.
 
+## Treatment support and safe decisions
+
+Inspect the range that the model actually observed before interpreting a curve. With training data from 5 to 20 RMB, the default model curve and policy candidates stay between 5 and 20 RMB. A request for 0 to 30 RMB is rejected unless extrapolation is explicitly enabled; enabling it marks every unsupported dose and attaches a warning. Since 0 is not observed in the 5 to 20 example, the model also cannot claim a supported no-treatment baseline, and the default policy returns no treatment with reason `unsupported_no_treatment_baseline`.
+
+```python
+from deepuplift.data import diagnose_continuous_treatment, local_treatment_support
+from deepuplift.decision import build_continuous_policy
+from deepuplift.models.continuous import VCNet
+
+# `train` has observed doses from 5 to 20; `test` contains prediction features.
+diagnostics = diagnose_continuous_treatment(train, segment_cols=[train.feature_cols[0]])
+model = VCNet(epochs=60).fit(train)
+prediction = model.predict(test)
+prediction.metadata["local_treatment_support"] = local_treatment_support(
+    train, test, dose_grid=prediction.dose_grid
+)
+support = prediction.metadata["dose_support"]
+print(support["observed_min"], support["observed_max"], support["warning"] if support.get("warning") else None)
+print("maximum-effect dose:", prediction.recommended_treatment[0])
+policy = build_continuous_policy(prediction, dose_cost=lambda dose: 0.015 * dose + 0.0025 * dose**2)
+print("maximum-net-value dose:", policy.rows[0]["recommended_treatment"])
+print("decision reason:", policy.rows[0]["reason"])
+```
+
+“效果最大”不等于“经济收益最大”：the model's `recommended_treatment` is only a maximum-effect reference, while the policy maximizes effect times outcome value minus dose cost. A model can produce a numerical prediction at any dose after explicit extrapolation, but that does not mean the training data supports a causal interpretation there. Local kNN coverage is a practical empirical diagnostic, not an identification guarantee.
+
 Use `load_ihdp()`, `load_news()`, or `load_tcga()` only after obtaining the relevant upstream data and converting it to a local CSV with `dose`, `outcome`, and feature columns. Loaders do not download or redistribute raw files. The upstream continuous benchmark dataset licenses have not been established by this release.
 
 When the official GIKS release files are already available locally, the benchmark runner can use the fixed IHDP or NEWS split and stored response curves directly:

@@ -134,8 +134,8 @@ class GIKSEstimator:
         factual_t = frame[dataset.treatment_col].to_numpy(dtype="float64")
         factual_y = frame[dataset.outcome_col].to_numpy(dtype="float64")
         lower, upper = float(factual_t.min()), float(factual_t.max())
-        if upper <= lower:
-            raise ValueError("GIKS requires at least two distinct observed doses.")
+        if upper - lower <= 1e-8 * max(1.0, abs(lower), abs(upper)):
+            raise ValueError("GIKS requires a non-degenerate observed treatment support; near-constant doses are unsupported.")
         self.dose_lower, self.dose_upper = lower, upper
         self.feature_cols = list(dataset.feature_cols)
         factual = CausalDataset(
@@ -208,6 +208,15 @@ class GIKSEstimator:
         far_confidence = np.clip(1.0 - variance_full[accepted], 0.0, 1.0)
         pseudo_weights = np.where(near[accepted], 1.0, np.maximum(far_confidence, 1e-3))
         sample_weight = np.concatenate([np.ones(len(frame), dtype="float64"), pseudo_weights])
+        accepted_doses = cf_dose[accepted]
+        edge_width = 0.05 * (upper - lower)
+        edge_mask = (accepted_doses <= lower + edge_width) | (accepted_doses >= upper - edge_width)
+        edge_fraction = float(edge_mask.mean()) if len(edge_mask) else 0.0
+        if far.any():
+            mean_gp_variance = float(np.mean(far_variance))
+            p95_gp_variance = float(np.quantile(far_variance, 0.95))
+        else:
+            mean_gp_variance = p95_gp_variance = None
 
         # Stage two continues optimization from factual weights on the mixed
         # factual and pseudo-counterfactual sample.
@@ -223,6 +232,23 @@ class GIKSEstimator:
             "kernel_bandwidth": self.kernel_bandwidth,
             "pseudo_label_count": int(count),
             "accepted_pseudo_label_count": int(accepted.sum()),
+            "observed_support": {"observed_min": lower, "observed_max": upper},
+            "pseudo_dose_support": {
+                "min": float(accepted_doses.min()), "max": float(accepted_doses.max()),
+                "contains_extrapolation": bool(np.any((accepted_doses < lower) | (accepted_doses > upper))),
+            },
+            "pseudo_extrapolation_fraction": float(np.mean((accepted_doses < lower) | (accepted_doses > upper))),
+            "near_pseudo_count": int((accepted & near).sum()),
+            "far_pseudo_count": int((accepted & far).sum()),
+            "accepted_ratio": float(accepted.mean()),
+            "mean_gp_variance": mean_gp_variance,
+            "p95_gp_variance": p95_gp_variance,
+            "effective_pseudo_weight_sum": float(pseudo_weights.sum()),
+            "accepted_pseudo_support_edge_fraction": edge_fraction,
+            "support_warning": (
+                "Many accepted pseudo-labels are near factual support edges; local support is weaker there."
+                if edge_fraction >= 0.25 else None
+            ),
             "gradient_interpolation_attempted": int(near.sum()),
             "gradient_interpolation_accepted": int((accepted & near).sum()),
             "kernel_smoothing_attempted": int(far.sum()),

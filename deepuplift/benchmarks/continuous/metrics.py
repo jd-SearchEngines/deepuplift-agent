@@ -17,6 +17,8 @@ def _matrix_on_grid(prediction: EffectPrediction, dose_grid: Any, *, effects: bo
     source_dose = np.asarray(sorted(float(x) for x in mapping), dtype="float64")
     source_values = np.column_stack([np.asarray(mapping[float(dose)], dtype="float64") for dose in source_dose])
     target = np.asarray(dose_grid, dtype="float64").reshape(-1)
+    if target.min() < source_dose.min() - 1e-10 or target.max() > source_dose.max() + 1e-10:
+        raise ValueError("Continuous metrics cannot extrapolate beyond the predicted dose curve.")
     return np.vstack([np.interp(target, source_dose, row) for row in source_values])
 
 
@@ -30,6 +32,7 @@ def continuous_curve_metrics(
     outcome_value: float = 1.0,
     dose_cost: Callable[[Any], Any] | None = None,
     true_optimal_economic_dose: Any | None = None,
+    causal_baseline_supported: bool = True,
 ) -> dict[str, float | None]:
     """Counterfactual curve and policy metrics on one shared dose grid."""
     grid = np.asarray(dose_grid, dtype="float64").reshape(-1)
@@ -46,6 +49,24 @@ def continuous_curve_metrics(
     integrate = np.trapezoid if hasattr(np, "trapezoid") else np.trapz
     mise = float(np.mean(integrate(squared_error, x=grid, axis=1) / interval)) if interval > 0 else float(np.mean(squared_error))
     iae = float(np.mean(integrate(absolute_error, x=grid, axis=1) / interval)) if interval > 0 else float(np.mean(absolute_error))
+    if not causal_baseline_supported:
+        true_adrf = truth_y.mean(axis=0)
+        pred_adrf = pred_y.mean(axis=0)
+        return {
+            "mise": mise,
+            "dose_response_rmse": float(np.sqrt(np.mean(squared_error))),
+            "integrated_absolute_error": iae,
+            "cate_icte_rmse": None,
+            "adrf_rmse": float(np.sqrt(np.mean((pred_adrf - true_adrf) ** 2))),
+            "optimal_dose_error": None,
+            "optimal_dose_regret": None,
+            "economic_optimal_dose_error": None,
+            "economic_policy_regret": None,
+            "predicted_max_effect_dose_mean": None,
+            "predicted_max_net_value_dose_mean": None,
+            "true_max_effect_dose_mean": None,
+            "true_max_net_value_dose_mean": None,
+        }
     predicted_opt = grid[np.argmax(pred_tau, axis=1)]
     opt_positions = np.abs(grid[None, :] - predicted_opt[:, None]).argmin(axis=1)
     rows = np.arange(len(pred_y))

@@ -27,7 +27,8 @@ def test_drnet_fits_stratified_heads_and_emits_full_curve_for_decision():
     prediction = model.predict(dataset.subset(np.arange(8)))
     assert len(model.model.heads) == 4
     assert len(prediction.dose_outcome_predictions) == len(prediction.dose_grid)
-    assert prediction.baseline_dose == 0.0
+    assert prediction.baseline_dose == model.observed_dose_min
+    assert prediction.metadata["dose_support"]["no_treatment_supported"] is False
     assert all(np.isfinite(values).all() for values in prediction.dose_effect_predictions.values())
     policy = build_continuous_policy(prediction, dose_cost=lambda dose: 0.01 * dose)
     assert policy.rows and policy.metadata["decision_rule"].startswith("for each user")

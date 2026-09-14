@@ -8,7 +8,7 @@ import pandas as pd
 
 from deepuplift.contracts import CausalDataset, EffectPrediction, TreatmentType
 from deepuplift.data.preprocessing import TabularPreprocessor
-from .contracts import effect_prediction_from_curve
+from .contracts import effect_prediction_from_curve, resolve_dose_support
 
 
 def _require_torch():
@@ -35,7 +35,9 @@ class TorchContinuousEstimator:
         hidden_dim: int = 32,
         learning_rate: float = 0.01,
         weight_decay: float = 1e-4,
-        baseline_dose: float = 0.0,
+        baseline_dose: float | None = None,
+        dose_grid: Any | None = None,
+        allow_extrapolation: bool = False,
     ) -> None:
         if task not in {"regression", "classification"}:
             raise ValueError("task must be 'regression' or 'classification'.")
@@ -47,7 +49,9 @@ class TorchContinuousEstimator:
         self.hidden_dim = max(4, int(hidden_dim))
         self.learning_rate = float(learning_rate)
         self.weight_decay = float(weight_decay)
-        self.baseline_dose = float(baseline_dose)
+        self.requested_baseline_dose = baseline_dose
+        self.requested_dose_grid = dose_grid
+        self.allow_extrapolation = bool(allow_extrapolation)
         self._fitted = False
 
     def _new_network(self, input_dim: int, dose_boundaries: np.ndarray):
@@ -70,11 +74,17 @@ class TorchContinuousEstimator:
             encoded = self.preprocessor.fit_transform(frame[self.feature_cols])
             self.observed_dose_min = float(frame[treatment_col].min())
             self.observed_dose_max = float(frame[treatment_col].max())
-            self.dose_min = min(self.observed_dose_min, self.baseline_dose)
-            self.dose_max = max(self.observed_dose_max, self.baseline_dose)
+            self.no_treatment_observed = bool(np.isclose(frame[treatment_col].to_numpy(dtype="float64"), 0.0, atol=1e-12).any())
+            self.dose_min = self.observed_dose_min
+            self.dose_max = self.observed_dose_max
             if not np.isfinite([self.dose_min, self.dose_max]).all() or self.dose_max <= self.dose_min:
                 raise ValueError("Continuous treatment must contain at least two finite, distinct doses.")
-            self.dose_grid = np.unique(np.append(np.linspace(self.dose_min, self.dose_max, self.grid_size), self.baseline_dose))
+            self.dose_grid, self.baseline_dose, self.dose_support = resolve_dose_support(
+                self.observed_dose_min, self.observed_dose_max, grid_size=self.grid_size,
+                baseline_dose=self.requested_baseline_dose, dose_grid=self.requested_dose_grid,
+                allow_extrapolation=self.allow_extrapolation,
+                no_treatment_observed=self.no_treatment_observed,
+            )
             self.dose_scale = self.dose_max - self.dose_min
             normalized_dose = (frame[treatment_col].to_numpy(dtype="float64") - self.dose_min) / self.dose_scale
             bins = max(1, int(getattr(self, "num_dose_bins", 1)))
@@ -176,20 +186,27 @@ class TorchContinuousEstimator:
         _, grad = self._predict_raw(x, doses, gradient=True)
         return grad
 
-    def predict(self, dataset: CausalDataset) -> EffectPrediction:
+    def predict(self, dataset: CausalDataset, *, dose_grid: Any | None = None) -> EffectPrediction:
         if dataset.treatment_type != TreatmentType.CONTINUOUS:
             raise ValueError(f"{self.name} requires continuous treatment.")
+        grid, baseline, support = resolve_dose_support(
+            self.observed_dose_min, self.observed_dose_max, grid_size=self.grid_size,
+            baseline_dose=self.baseline_dose,
+            dose_grid=self.dose_grid if dose_grid is None else dose_grid,
+            allow_extrapolation=self.allow_extrapolation,
+            no_treatment_observed=self.no_treatment_observed,
+        )
         frame = dataset.to_pandas()
         x = self._encoded(frame[self.feature_cols])
-        n, k = len(x), len(self.dose_grid)
+        n, k = len(x), len(grid)
         x_grid = np.tile(x, (k, 1))
-        dose_grid_rows = np.repeat(self.dose_grid, n)
+        dose_grid_rows = np.repeat(grid, n)
         outcome = self._predict_raw(x_grid, dose_grid_rows).reshape(k, n).T
         return effect_prediction_from_curve(
             unit_id=dataset.unit_ids.to_numpy(),
-            dose_grid=self.dose_grid.copy(),
+            dose_grid=grid.copy(),
             dose_outcomes=outcome,
-            baseline_dose=self.baseline_dose,
+            baseline_dose=baseline,
             metadata={
                 "model_name": self.name,
                 "maturity": "OPTIONAL/EXPERIMENTAL",
@@ -197,6 +214,9 @@ class TorchContinuousEstimator:
                 "recommendation_type": "maximum_effect_reference_only",
                 "device": "cpu",
                 "seed": self.random_state,
+                "observed_dose_min": self.observed_dose_min,
+                "observed_dose_max": self.observed_dose_max,
+                "dose_support": support,
                 **self.architecture_metadata,
             },
         )

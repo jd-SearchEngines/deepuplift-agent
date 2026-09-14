@@ -41,6 +41,16 @@ def continuous_benchmark_report(result: dict[str, Any]) -> str:
         elif model.get("prediction_metadata", {}).get("giks"):
             giks = model["prediction_metadata"]["giks"]
             lines.append(f"- `{model['model']}` GIKS: base={giks.get('base_model')}; GI={giks.get('gradient_interpolation_accepted')}/{giks.get('gradient_interpolation_attempted')}; GP smoothing={giks.get('kernel_smoothing_accepted')}/{giks.get('kernel_smoothing_attempted')}; accepted pseudo-labels={giks.get('accepted_pseudo_label_count')}/{giks.get('pseudo_label_count')}.")
+    lines += ["", "## Treatment support", "", "Observed and local-support summaries are empirical coverage diagnostics. Evaluation curves are scored only over the intersection of the truth grid and training dose support; unsupported causal baselines leave causal and economic regret metrics unavailable.", ""]
+    for model in result.get("models", []):
+        support = model.get("support_metrics", {})
+        if support:
+            lines.append(
+                f"- `{model.get('model')}`: train={support.get('observed_dose_range')}; "
+                f"test={support.get('test_dose_range')}; out-of-range test fraction={support.get('extrapolation_fraction')}; "
+                f"mean local support score={support.get('mean_local_support_score')}; "
+                f"GIKS pseudo extrapolation fraction={support.get('giks_pseudo_extrapolation_fraction')}."
+            )
     lines.append("")
     return "\n".join(lines)
 

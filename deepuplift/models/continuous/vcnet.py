@@ -54,7 +54,7 @@ class VCNet(TorchContinuousEstimator):
             def forward(self, x, dose):
                 representation = self.representation(x)
                 coefficients = self.coefficients(representation)
-                t = dose.clamp(0.0, 1.0).unsqueeze(-1)
+                t = dose.unsqueeze(-1)
                 powers = torch.arange(basis_dim, dtype=t.dtype, device=t.device)
                 left = (1.0 - t).pow(degree - powers)
                 right = t.pow(powers)

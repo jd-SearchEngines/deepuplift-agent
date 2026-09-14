@@ -1,0 +1,42 @@
+name: continuous-frontier
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  continuous-frontier:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install continuous frontier test dependencies
+        run: python -m pip install --upgrade pip setuptools wheel && python -m pip install -e ".[dev,continuous,giks,benchmark]"
+      - name: Run continuous model and support gates
+        run: >-
+          python -m pytest -q
+          tests/models/continuous/test_drnet.py
+          tests/models/continuous/test_vcnet.py
+          tests/models/continuous/test_giks.py
+          tests/models/continuous/test_dose_support.py
+          tests/data/test_continuous_diagnostics.py
+          tests/e2e/test_continuous_frontier_decision.py
+          tests/benchmarks/test_continuous_metrics.py
+          tests/benchmarks/test_continuous_suite.py
+      - name: Run bounded synthetic continuous benchmark
+        run: python scripts/run_continuous_ci_benchmark.py
+      - name: Upload continuous CI benchmark evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: continuous-ci-evidence-${{ github.sha }}
+          path: |
+            continuous-ci-benchmark.json
+            CONTINUOUS_CI_REPORT.md
+          if-no-files-found: warn
+          retention-days: 30

@@ -2,6 +2,7 @@
 
 from .backends import PandasBackend, PolarsBackend, polars_available
 from .diagnostics import diagnose_dataset
+from .continuous_diagnostics import diagnose_continuous_treatment, local_treatment_support
 from .preprocessing import TabularPreprocessor
 from .registry import DatasetRegistry, load_dataset_manifest
 from .schema import create_causal_dataset, infer_treatment_type
@@ -22,6 +23,8 @@ __all__ = [
     "TreatmentType",
     "create_causal_dataset",
     "diagnose_dataset",
+    "diagnose_continuous_treatment",
+    "local_treatment_support",
     "infer_treatment_type",
     "load_dataset_manifest",
     "polars_available",
