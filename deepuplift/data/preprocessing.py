@@ -47,15 +47,22 @@ class TabularPreprocessor:
     def _transform_unaligned(self, frame: pd.DataFrame) -> pd.DataFrame:
         parts = []
         if self.numeric_cols:
-            numeric = pd.DataFrame(index=frame.index)
-            for col in self.numeric_cols:
-                values = pd.to_numeric(frame[col], errors="coerce")
-                numeric[col] = values.fillna(self.medians.get(col, 0.0))
+            numeric = pd.DataFrame(
+                {
+                    col: pd.to_numeric(frame[col], errors="coerce").fillna(self.medians.get(col, 0.0))
+                    for col in self.numeric_cols
+                },
+                index=frame.index,
+            )
             parts.append(numeric.astype("float32"))
         if self.fitted_categorical_cols:
-            categorical = pd.DataFrame(index=frame.index)
-            for col in self.fitted_categorical_cols:
-                categorical[col] = frame[col].astype("object").where(frame[col].notna(), "__missing__").astype(str)
+            categorical = pd.DataFrame(
+                {
+                    col: frame[col].astype("object").where(frame[col].notna(), "__missing__").astype(str)
+                    for col in self.fitted_categorical_cols
+                },
+                index=frame.index,
+            )
             parts.append(pd.get_dummies(categorical, prefix=self.fitted_categorical_cols, dtype="float32"))
         if not parts:
             raise ValueError("No usable feature columns after preprocessing.")

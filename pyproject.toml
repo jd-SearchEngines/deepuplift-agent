@@ -42,6 +42,10 @@ causalml = ["causalml==0.16.0"]
 sklift = ["scikit-uplift>=0.5.1"]
 lightgbm = ["lightgbm>=4.0"]
 torch = ["torch>=1.12", "geomloss>=0.2.6"]
+continuous = ["torch>=1.12"]
+giks = ["torch>=1.12"]
+benchmark = ["psutil>=5.9"]
+ccpfn = ["ccpfn==0.1.2", "numpy<2"]
 all = [
   "streamlit>=1.32",
   "matplotlib>=3.7",

@@ -6,6 +6,7 @@ import pandas as pd
 from deepuplift.contracts import CausalDataset, EffectPrediction, TreatmentType
 from deepuplift.data.preprocessing import TabularPreprocessor
 from deepuplift.models.binary.base import OutcomeEstimator
+from .contracts import effect_prediction_from_curve
 
 
 class DoseResponseGBM:
@@ -18,10 +19,18 @@ class DoseResponseGBM:
         self.random_state = random_state
         self.grid_size = max(3, int(grid_size))
 
-    def fit(self, dataset: CausalDataset) -> "DoseResponseGBM":
+    def fit(self, dataset: CausalDataset, *, sample_weight=None, warm_start: bool = False) -> "DoseResponseGBM":
         if dataset.treatment_type != TreatmentType.CONTINUOUS:
             raise ValueError("DoseResponseGBM requires continuous treatment.")
-        frame = dataset.to_pandas().dropna(subset=[dataset.treatment_col, dataset.outcome_col]).reset_index(drop=True)
+        frame = dataset.to_pandas()
+        keep = frame[[dataset.treatment_col, dataset.outcome_col]].notna().all(axis=1).to_numpy()
+        weights = None
+        if sample_weight is not None:
+            supplied_weights = np.asarray(sample_weight, dtype="float64").reshape(-1)
+            if len(supplied_weights) != len(frame):
+                raise ValueError("sample_weight must match the number of dataset rows.")
+            weights = supplied_weights[keep]
+        frame = frame.loc[keep].reset_index(drop=True)
         dose = pd.to_numeric(frame[dataset.treatment_col], errors="coerce")
         if dose.nunique() < 3:
             raise ValueError("Continuous treatment needs at least three distinct numeric doses.")
@@ -33,13 +42,27 @@ class DoseResponseGBM:
             raise ValueError("Outcome must be numeric for DoseResponseGBM.")
         if self.task == "classification" and len(np.unique(y)) > 2:
             self.task = "regression"
-        self.model = OutcomeEstimator(self.task, self.random_state).fit(x, y)
+        self.model = OutcomeEstimator(self.task, self.random_state).fit(x, y, sample_weight=weights)
         lower, upper = float(dose.quantile(0.01)), float(dose.quantile(0.99))
         # Dose applications use a non-negative intervention scale. Keep the
         # requested grid size while reserving the first point for no-treatment.
         self.dose_grid = np.linspace(0.0, max(upper, 0.0), self.grid_size)
         self.feature_cols = list(dataset.feature_cols)
         return self
+
+    def _predict_at_raw_features(self, features: pd.DataFrame, doses: np.ndarray) -> np.ndarray:
+        if not getattr(self, "model", None):
+            raise RuntimeError("Model must be fitted before prediction.")
+        x = self.preprocessor.transform(features[self.feature_cols])
+        x["__dose__"] = np.asarray(doses, dtype="float64").reshape(-1)
+        return self.model.predict(x)
+
+    def _predict_dose_gradient(self, features: pd.DataFrame, doses: np.ndarray) -> np.ndarray:
+        doses = np.asarray(doses, dtype="float64").reshape(-1)
+        step = max(float(np.ptp(self.dose_grid)) * 1e-4, 1e-5)
+        right = self._predict_at_raw_features(features, doses + step)
+        left = self._predict_at_raw_features(features, doses - step)
+        return (right - left) / (2.0 * step)
 
     def predict(self, dataset: CausalDataset) -> EffectPrediction:
         if not getattr(self, "model", None):
@@ -51,23 +74,16 @@ class DoseResponseGBM:
             x["__dose__"] = float(dose)
             predictions.append(self.model.predict(x))
         values = np.vstack(predictions).T
-        baseline_idx = int(np.argmin(np.abs(self.dose_grid - 0.0)))
-        baseline = values[:, baseline_idx]
-        effects = values - baseline[:, None]
-        best_idx = effects.argmax(axis=1)
-        recommended = values[np.arange(len(values)), best_idx]
-        outcome_by_dose = {float(dose): values[:, index] for index, dose in enumerate(self.dose_grid)}
-        effect_by_dose = {float(dose): effects[:, index] for index, dose in enumerate(self.dose_grid)}
-        return EffectPrediction(
+        return effect_prediction_from_curve(
             unit_id=dataset.unit_ids.to_numpy(),
-            treatment_type=TreatmentType.CONTINUOUS,
-            y0=baseline,
-            y1=recommended,
-            uplift=recommended - baseline,
-            recommended_effect=recommended - baseline,
-            recommended_treatment=self.dose_grid[best_idx],
             dose_grid=self.dose_grid,
-            dose_outcome_predictions=outcome_by_dose,
-            dose_effect_predictions=effect_by_dose,
-            metadata={"model_name": self.name, "dose_grid": self.dose_grid.tolist(), "baseline_dose": float(self.dose_grid[baseline_idx]), "maturity": "EXPERIMENTAL", "status": "EXPERIMENTAL", "offline_only": True},
+            dose_outcomes=values,
+            baseline_dose=0.0,
+            metadata={
+                "model_name": self.name,
+                "maturity": "EXPERIMENTAL",
+                "status": "EXPERIMENTAL",
+                "offline_only": True,
+                "dose_grid": self.dose_grid.tolist(),
+            },
         )

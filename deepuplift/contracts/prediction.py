@@ -39,8 +39,10 @@ class EffectPrediction:
     upper_bound: Any | None = None
     propensity: Any | None = None
     dose_grid: Any | None = None
+    baseline_dose: float | None = None
     dose_outcome_predictions: Mapping[Any, Any] = field(default_factory=dict)
     dose_effect_predictions: Mapping[Any, Any] = field(default_factory=dict)
+    uncertainty_by_dose: Mapping[Any, Any] = field(default_factory=dict)
     metadata: Dict[str, Any] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
@@ -69,7 +71,22 @@ class EffectPrediction:
             for dose, values in mapping.items():
                 value_length = _length(values)
                 if expected is not None and value_length is not None and value_length != expected:
-                    raise ValueError(f"EffectPrediction field '{name}[{dose}]' has length {value_length}; expected {expected}.")
+                        raise ValueError(f"EffectPrediction field '{name}[{dose}]' has length {value_length}; expected {expected}.")
+        for dose, values in self.uncertainty_by_dose.items():
+            value_length = _length(values)
+            if expected is not None and value_length is not None and value_length != expected:
+                raise ValueError(f"EffectPrediction field 'uncertainty_by_dose[{dose}]' has length {value_length}; expected {expected}.")
+        if self.dose_grid is not None:
+            grid = np.asarray(self.dose_grid, dtype="float64")
+            if grid.ndim != 1 or not np.isfinite(grid).all() or (len(grid) > 1 and np.any(np.diff(grid) <= 0)):
+                raise ValueError("EffectPrediction dose_grid must be a finite, strictly increasing one-dimensional array.")
+            grid_keys = {float(dose) for dose in grid}
+            for name in ["dose_outcome_predictions", "dose_effect_predictions", "uncertainty_by_dose"]:
+                mapping = getattr(self, name)
+                if mapping and not {float(dose) for dose in mapping}.issubset(grid_keys):
+                    raise ValueError(f"EffectPrediction field '{name}' contains a dose absent from dose_grid.")
+        if self.baseline_dose is not None and not np.isfinite(float(self.baseline_dose)):
+            raise ValueError("EffectPrediction baseline_dose must be finite.")
         for treatment, effects in self.treatment_effects.items():
             value_length = _length(effects)
             if expected is not None and value_length is not None and value_length != expected:
