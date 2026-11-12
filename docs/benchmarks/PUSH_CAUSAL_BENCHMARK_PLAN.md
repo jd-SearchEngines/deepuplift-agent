@@ -1,8 +1,8 @@
 # Push MRT Causal Benchmark & Optimization Validation Plan
 
 **Status:** implementation specification; no production or causal-performance claim is made by this document.  
-**Target base:** \`codex/v06-frontier-causal-models\`  
-**Work branch:** \`codex/push-mrt-causal-benchmark\`  
+**Target base:** `codex/v06-frontier-causal-models`  
+**Work branch:** `codex/push-mrt-causal-benchmark`  
 **Repository:** https://github.com/jd-SearchEngines/deepuplift-agent
 
 ## 1. Objective
@@ -84,7 +84,7 @@ Hillstrom is email marketing, not a push trial or a coupon-redemption experiment
 
 ## 3. Repository audit and implementation boundaries
 
-The latest frontier branch inspected is \`codex/v06-frontier-causal-models\` at commit \`53b676dfd27aaf57935c56fc2f48881726bb6561\`.
+The latest frontier branch inspected is `codex/v06-frontier-causal-models` at commit `53b676dfd27aaf57935c56fc2f48881726bb6561`.
 
 Existing capabilities confirmed on that branch:
 - public dataset adapters: Hillstrom, Criteo, generic retail;
