@@ -43,6 +43,15 @@ def effective_sample_size(weights: Any) -> float:
     return float(np.sum(values) ** 2 / denom)
 
 
+def _bootstrap_indices(rng: np.random.Generator, size: int, clusters: np.ndarray | None = None) -> np.ndarray:
+    if clusters is None:
+        return rng.integers(0, size, size)
+    unique_clusters = pd.unique(clusters)
+    sampled_clusters = rng.choice(unique_clusters, size=len(unique_clusters), replace=True)
+    pieces = [np.flatnonzero(clusters == cluster) for cluster in sampled_clusters]
+    return np.concatenate(pieces) if pieces else np.empty(0, dtype="int64")
+
+
 def evaluate_ope_policy(
     *,
     logged_action: Any,
@@ -51,6 +60,7 @@ def evaluate_ope_policy(
     target_action: Any,
     target_reward_pred: Any | None = None,
     logged_reward_pred: Any | None = None,
+    cluster_id: Any | None = None,
     clip_min: float = 0.02,
     clip_max: float = 1.0,
     n_bootstrap: int = 0,
@@ -62,21 +72,36 @@ def evaluate_ope_policy(
     can support binary uplift, multi-treatment coupons, and LLM routing logs.
     For DR, pass the direct-method prediction for the target action and the
     logged action. Without those two arrays, the function reports IPS/SNIPS
-    only and marks DR as unavailable.
+    only and marks DR as unavailable. For repeated-decision data, pass
+    ``cluster_id`` to bootstrap complete participants/users instead of iid
+    decision rows.
     """
 
     logged = _as_series(logged_action, "logged_action").astype(str)
     target = _as_series(target_action, "target_action").astype(str)
     y = pd.to_numeric(_as_series(reward, "reward"), errors="coerce").astype("float64")
     p_raw = pd.to_numeric(_as_series(logged_propensity, "logged_propensity"), errors="coerce").astype("float64")
+    original_size = len(logged)
     if not (len(logged) == len(target) == len(y) == len(p_raw)):
         raise ValueError("logged_action, reward, logged_propensity, and target_action must have the same length.")
+    if target_reward_pred is not None and len(_as_series(target_reward_pred, "target_reward_pred")) != original_size:
+        raise ValueError("target_reward_pred must have the same length as logged_action.")
+    if logged_reward_pred is not None and len(_as_series(logged_reward_pred, "logged_reward_pred")) != original_size:
+        raise ValueError("logged_reward_pred must have the same length as logged_action.")
+    if cluster_id is not None and len(_as_series(cluster_id, "cluster_id")) != original_size:
+        raise ValueError("cluster_id must have the same length as logged_action.")
 
     mask = logged.notna() & target.notna() & y.notna() & p_raw.notna()
+    clusters = None
+    if cluster_id is not None:
+        clusters = _as_series(cluster_id, "cluster_id")
+        mask = mask & clusters.notna()
     logged = logged[mask].reset_index(drop=True)
     target = target[mask].reset_index(drop=True)
     y = y[mask].reset_index(drop=True)
     p_raw = p_raw[mask].reset_index(drop=True)
+    if clusters is not None:
+        clusters = clusters[mask].astype(str).reset_index(drop=True)
     if len(y) == 0:
         return {"status": "empty", "rows": 0, "metrics": {}, "diagnostics": {"valid_rows": 0}}
 
@@ -126,6 +151,8 @@ def evaluate_ope_policy(
         "clipped_rate": _clean_float(((p_raw < clip_min) | (p_raw > clip_max)).mean()),
         "effective_sample_size": _clean_float(effective_sample_size(weights)),
         "effective_sample_fraction": _clean_float(effective_sample_size(weights) / len(y)),
+        "cluster_count": int(clusters.nunique()) if clusters is not None else None,
+        "bootstrap_unit": "cluster" if clusters is not None else "row",
     }
 
     bootstrap = {}
@@ -136,7 +163,7 @@ def evaluate_ope_policy(
         dr_samples = []
         y_np = y.to_numpy(dtype="float64")
         for _ in range(int(n_bootstrap)):
-            indices = rng.integers(0, len(y_np), len(y_np))
+            indices = _bootstrap_indices(rng, len(y_np), clusters.to_numpy() if clusters is not None else None)
             w_b = weights[indices]
             y_b = y_np[indices]
             ips_samples.append(float(np.mean(w_b * y_b)))
@@ -146,6 +173,7 @@ def evaluate_ope_policy(
                 dr_samples.append(float(np.mean(dr_values[indices])))
         bootstrap = {
             "n_bootstrap": int(n_bootstrap),
+            "bootstrap_unit": "cluster" if clusters is not None else "row",
             "ips": _ci(np.asarray(ips_samples, dtype="float64")),
             "snips": _ci(np.asarray(snips_samples, dtype="float64")),
         }
@@ -183,6 +211,7 @@ def clipping_sensitivity(
     target_action: Any,
     target_reward_pred: Any | None = None,
     logged_reward_pred: Any | None = None,
+    cluster_id: Any | None = None,
     clip_grid: list[float] | None = None,
 ) -> list[dict[str, Any]]:
     rows = []
@@ -194,6 +223,7 @@ def clipping_sensitivity(
             target_action=target_action,
             target_reward_pred=target_reward_pred,
             logged_reward_pred=logged_reward_pred,
+            cluster_id=cluster_id,
             clip_min=float(clip),
         )
         rows.append(
