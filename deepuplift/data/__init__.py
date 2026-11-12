@@ -8,7 +8,7 @@ from .registry import DatasetRegistry, load_dataset_manifest
 from .schema import create_causal_dataset, infer_treatment_type
 from .split import split_dataset
 from .nuisance import NuisanceResult, apply_weighting, estimate_nuisance, estimate_propensity, effective_sample_size, overlap_report
-from .public import controlled_observational_stress_test, load_criteo, load_hillstrom, load_public_dataset, load_retail, synthetic_ground_truth
+from .public import MRTDataset, audit_mrt_dataset, controlled_observational_stress_test, export_mrt_causal_snapshot, load_criteo, load_hillstrom, load_mybpmylife_mrt, load_public_dataset, load_retail, participant_group_split, synthetic_ground_truth
 from .datasets import observational_dataset, randomized_dataset
 from deepuplift.contracts import AssignmentType, CausalDataset, DataDiagnostics, TreatmentType
 
@@ -43,4 +43,9 @@ __all__ = [
     "randomized_dataset",
     "observational_dataset",
     "controlled_observational_stress_test",
+    "MRTDataset",
+    "load_mybpmylife_mrt",
+    "audit_mrt_dataset",
+    "export_mrt_causal_snapshot",
+    "participant_group_split",
 ]

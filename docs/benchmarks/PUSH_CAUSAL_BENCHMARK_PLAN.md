@@ -1,9 +1,21 @@
 # Push MRT Causal Benchmark & Optimization Validation Plan
 
-**Status:** implementation specification; no production or causal-performance claim is made by this document.  
+**Status:** P0 PASS for the audited upstream snapshot; P1–P6 pending; no production or causal-performance claim is made by this document.
 **Target base:** `codex/v06-frontier-causal-models`  
 **Work branch:** `codex/push-mrt-causal-benchmark`  
 **Repository:** https://github.com/jd-SearchEngines/deepuplift-agent
+
+## Execution status
+
+| Phase | Status | Evidence |
+|---|---|---|
+| P0 | PASS for supplied local upstream snapshot | [`PUSH_CAUSAL_P0_AUDIT.md`](PUSH_CAUSAL_P0_AUDIT.md) |
+| P1 | PASS for supplied local upstream snapshot | [`PUSH_CAUSAL_P1_BASELINE.md`](PUSH_CAUSAL_P1_BASELINE.md) |
+| P2 | PASS for reproducible 5,000-row Push-derived semi-synthetic suite | [`PUSH_CAUSAL_P2_SEMISYNTHETIC.md`](PUSH_CAUSAL_P2_SEMISYNTHETIC.md) |
+| P3 | PASS for real three-arm handling and Push-context continuous suite | [`PUSH_CAUSAL_P3_CONTINUOUS.md`](PUSH_CAUSAL_P3_CONTINUOUS.md) |
+| P4 | PASS for monotone/fatigue calibration comparison | [`PUSH_CAUSAL_P4_CALIBRATION.md`](PUSH_CAUSAL_P4_CALIBRATION.md) |
+| P5 | PASS for exact small reference and sparse 1K/10K/100K stress | [`PUSH_CAUSAL_P5_OPTIMIZER.md`](PUSH_CAUSAL_P5_OPTIMIZER.md) |
+| P6 | OPTIONAL / NOT_STARTED | — |
 
 ## 1. Objective
 
