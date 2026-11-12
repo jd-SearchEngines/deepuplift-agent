@@ -36,18 +36,20 @@ bootstrap repetitions. Report stored outside Git at
 
 | Metric | Value |
 |---|---:|
-| True target mean trajectory value | 3.725000 |
-| Per-decision IPS | 0.977640 |
-| Trajectory IPS | 543.484981 |
-| Trajectory SNIPS | 3.702522 |
+| True target mean trajectory value | 3.525000 |
+| One-step contextual IPS | 0.467026 |
+| Cumulative per-decision IPS | 3.973792 |
+| Trajectory IPS | 3.330880 |
+| Trajectory SNIPS | 3.502522 |
 | Cluster count | 100 |
-| Maximum trajectory importance weight | 14,678.778144 |
+| Maximum trajectory importance weight | 95.099466 |
 
-The trajectory IPS point estimate is visibly unstable because cumulative
-importance weights explode. Trajectory SNIPS is closer to the generated truth
-in this smoke, but it is not unbiased by construction and cannot be promoted
-without multi-seed bias/coverage analysis. These are semi-synthetic values,
-not real MRT policy value or online business lift.
+The cumulative per-decision and trajectory estimators have different variance
+profiles; the trajectory ESS in this smoke is `1.0` despite 100 users. The
+trajectory SNIPS estimate is close to the generated truth, but it is not
+unbiased by construction and cannot be promoted without multi-seed
+bias/coverage analysis. These are semi-synthetic values, not real MRT policy
+value or online business lift.
 
 ## Five-seed support stress
 

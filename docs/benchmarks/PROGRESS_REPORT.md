@@ -28,11 +28,12 @@
 - Full test suite after this batch: `83 passed, 2 skipped`.
 - Decision schema and longitudinal laboratory tests: `5 passed`.
 - Longitudinal smoke: 4 scenarios × 6 policies, 100 users × 8 decision points,
-  seed `20261113`; report stored outside Git at `/tmp/deepuplift-longitudinal-smoke.json`.
-- Sequential OPE smoke: trajectory IPS `543.484981`, trajectory SNIPS `3.702522`,
-  generated target mean trajectory value `3.725000`, maximum trajectory weight
-  `14678.778144`; this is explicit weight-explosion evidence, not a pass for
-  sequential policy evaluation.
+  seed `20261113`; report stored outside Git at `/tmp/deepuplift-longitudinal-smoke-v2.json`.
+- Sequential OPE smoke: one-step contextual IPS `0.467026`, cumulative
+  per-decision IPS `3.973792`, trajectory IPS `3.330880`, trajectory SNIPS
+  `3.502522`, generated target mean trajectory value `3.525000`, maximum
+  trajectory weight `95.099466`, and trajectory ESS `1.0`; this is explicit
+  low-ESS evidence, not a pass for unrestricted sequential policy evaluation.
 - Five-seed sequential support stress: 100 users, horizons 8 and 16, seeds
   `11,22,33,44,55`; horizon-8 trajectory SNIPS finite for 4/5 seeds with mean
   finite-seed bias `0.023671` and trajectory ESS `0–2`; horizon-16 trajectory

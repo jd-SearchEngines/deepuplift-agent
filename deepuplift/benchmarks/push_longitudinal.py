@@ -194,6 +194,9 @@ class LongitudinalPushWorld:
                 rows.append(
                     {
                         "user_id": self.user_context.iloc[user_index]["user_id"],
+                        "x0": float(self.user_context.iloc[user_index]["x0"]),
+                        "x1": float(self.user_context.iloc[user_index]["x1"]),
+                        "x2": float(self.user_context.iloc[user_index]["x2"]),
                         "decision_time": time_index,
                         "availability": available,
                         "treatment_assignment": action,

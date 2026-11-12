@@ -26,16 +26,16 @@ Implemented scenarios:
 Run configuration: 100 synthetic users, 8 decision points per user, seed
 `20261113`, policies `logged`, `no_push`, `random_push`, `rule_based`,
 `fatigue_aware`, and `oracle`. Full JSON was written outside the repository to
-`/tmp/deepuplift-longitudinal-smoke.json`.
+`/tmp/deepuplift-longitudinal-smoke-v2.json`.
 
 | Scenario | Policy | Cumulative value | Incremental vs no-push | Pushes | Negative-effect pushes |
 |---|---:|---:|---:|---:|---:|
-| fatigue | logged | 365.721117 | 41.721117 | 199 | 0 |
-| fatigue | fatigue-aware | 372.500000 | 48.500000 | 200 | 0 |
-| heterogeneous fatigue | logged | 363.462757 | 39.462757 | 205 | 11 |
-| heterogeneous fatigue | fatigue-aware | 370.000000 | 46.000000 | 200 | 0 |
-| spacing | logged | 375.048160 | 51.048160 | 217 | 2 |
-| spacing | fatigue-aware | 381.500000 | 57.500000 | 200 | 0 |
+| fatigue | logged | 348.721117 | 24.721117 | 199 | 0 |
+| fatigue | fatigue-aware | 352.500000 | 28.500000 | 200 | 0 |
+| heterogeneous fatigue | logged | 345.662757 | 21.662757 | 205 | 11 |
+| heterogeneous fatigue | fatigue-aware | 350.000000 | 26.000000 | 200 | 0 |
+| spacing | logged | 355.948160 | 31.948160 | 217 | 2 |
+| spacing | fatigue-aware | 361.500000 | 37.500000 | 200 | 0 |
 | carryover | logged | 368.083180 | 44.083180 | 192 | 0 |
 | carryover | fatigue-aware | 372.500000 | 48.500000 | 200 | 0 |
 
