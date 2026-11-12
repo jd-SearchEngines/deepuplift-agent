@@ -14,6 +14,8 @@ This roadmap is an execution record, not a promise that an unrun method is suppo
 | P5 optimizer V1.1 | PASS feasibility; quality/convergence separated | `docs/benchmarks/PUSH_CAUSAL_P5_OPTIMIZER.md` |
 | Public dataset registry | PASS metadata smoke | `examples/datasets/manifest.json`, `scripts/build_dataset_registry.py` |
 | Cluster-aware OPE | PASS reusable API smoke | `deepuplift/core/ope.py`, `tests/decision/test_ope.py` |
+| Canonical Push decision points | PASS schema smoke | `deepuplift/data/push.py`, `tests/data/test_push_decision_schema.py` |
+| Longitudinal fatigue/carryover lab | PASS semi-synthetic smoke | `deepuplift/benchmarks/push_longitudinal.py` |
 
 ## Next executable sequence
 
@@ -22,7 +24,8 @@ This roadmap is an execution record, not a promise that an unrun method is suppo
 3. Run a multi-seed semi-synthetic identification matrix: naive, outcome regression, IPW, overlap weighting, DR, and cross-fitting under measured confounding, SSB, and overlap failure.
 4. Extend the policy layer with OPE confidence gates and policy-value/regret comparisons on held-out data.
 5. Optimize Coordinate Iterator and implement a valid Lagrangian upper bound before reporting primal-dual gaps.
-6. Expand model comparisons only after baseline and failure-mode evidence are stable.
+6. Connect the longitudinal lab to learned proximal effects and sequential OPE.
+7. Expand model comparisons only after baseline and failure-mode evidence are stable.
 
 ## Execution rules
 
