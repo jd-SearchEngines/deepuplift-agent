@@ -31,6 +31,12 @@ def load_dataset_manifest(path: str | Path = "examples/datasets/manifest.json") 
 
 
 def _license_policy(item: dict[str, Any]) -> dict[str, str]:
+    if item.get("license_status") or item.get("reuse_policy"):
+        return {
+            "license_status": str(item.get("license_status") or "unverified"),
+            "reuse_policy": str(item.get("reuse_policy") or "review_upstream_terms"),
+            "note": str(item.get("license_note") or "Keep raw data local and retain the upstream license citation."),
+        }
     source = str(item.get("source_url") or "")
     kind = str(item.get("kind") or "")
     if not source:
@@ -138,6 +144,13 @@ def build_dataset_card(item: dict[str, Any], root: str | Path = ".") -> dict[str
     elif item.get("path"):
         load_error = f"file not found: {data_path}"
 
+    if load_error:
+        availability_status = "FAIL"
+    elif frame is not None:
+        availability_status = "PASS"
+    else:
+        availability_status = str(item.get("availability") or "NOT_AVAILABLE")
+
     feature_cols = list(item.get("feature_cols") or [])
     columns_for_hash = [col for col in [item.get("treatment_col"), item.get("outcome_col"), *feature_cols] if col]
     data_profile: dict[str, Any] = {
@@ -174,9 +187,13 @@ def build_dataset_card(item: dict[str, Any], root: str | Path = ".") -> dict[str
             "feature_count": len(feature_cols),
         },
         "recommended_models": item.get("recommended_models") or [],
+        "assignment_type": item.get("assignment_type"),
+        "ground_truth_status": item.get("ground_truth_status") or "NOT_AVAILABLE",
+        "evaluation_metrics": item.get("evaluation_metrics") or [],
         "quick_train": item.get("quick_train") or {},
         "causal_assumptions": _causal_assumption_card(item, frame),
         "data_profile": data_profile,
+        "availability_status": availability_status,
         "validation": {
             "missing_manifest_fields": missing_fields,
             "status": "fail" if missing_fields or load_error else "ok",
