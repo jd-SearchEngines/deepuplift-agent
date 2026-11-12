@@ -12,16 +12,20 @@ The public entry points are:
 
 The sequential evaluator reports:
 
-- per-decision IPS and SNIPS;
+- one-step contextual IPS/SNIPS;
+- cumulative per-decision IPS/SNIPS using `W_t = product_{s<=t} rho_s`;
 - trajectory IPS and SNIPS;
 - per-decision DR when direct-method predictions are supplied;
-- trajectory weight maximum and variance diagnostics;
+- step, cumulative, and trajectory weight maximum/variance/ESS diagnostics;
 - cluster bootstrap intervals.
 
 It rejects duplicate `(cluster_id, decision_time)` rows and sorts each
-trajectory by decision time. It does not label a one-step DR correction as a
-full sequential DR estimator. A continuation-value model is required before
-that estimator can be enabled.
+trajectory by decision time. Logged propensities must be
+`P(observed logged action | history)`; raw invalid values fail before clipping.
+A stochastic target policy may pass `target_logged_action_probability` for the
+probability assigned to each logged action. The evaluator does not label a
+one-step DR correction as a full sequential DR estimator. A continuation-value
+model is required before that estimator can be enabled.
 
 ## Synthetic sequential smoke
 
@@ -44,6 +48,21 @@ importance weights explode. Trajectory SNIPS is closer to the generated truth
 in this smoke, but it is not unbiased by construction and cannot be promoted
 without multi-seed bias/coverage analysis. These are semi-synthetic values,
 not real MRT policy value or online business lift.
+
+## Five-seed support stress
+
+Configuration: 100 users, seeds `11,22,33,44,55`, fatigue DGP, horizons 8 and
+16, 200 cluster bootstrap repetitions. Full JSON:
+`/tmp/deepuplift-sequential-ope-5seed-v2.json`.
+
+| Horizon | Non-zero trajectory SNIPS seeds | Mean SNIPS bias on finite seeds | Trajectory ESS range |
+|---:|---:|---:|---:|
+| 8 | 4/5 | 0.023671 | 0–2 |
+| 16 | 0/5 | NOT_AVAILABLE | 0–0 |
+
+The horizon-16 result is an explicit support failure, not a successful policy
+evaluation. Per-decision estimators remain the appropriate next comparison;
+full-trajectory IS must be reported as unsupported at this overlap level.
 
 Next gate: evaluate five seeds and positivity-stress scenarios, then add a
 continuation-value contract for sequential DR only where its assumptions and

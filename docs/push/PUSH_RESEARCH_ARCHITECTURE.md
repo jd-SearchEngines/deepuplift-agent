@@ -46,8 +46,8 @@ local MRT source
 | Participant-held-out split | PASS | `participant_group_split()` |
 | Proximal randomized baseline | PASS | `deepuplift/benchmarks/push_mrt.py` |
 | Known-truth static identification stress | PASS | `deepuplift/benchmarks/push_semisynthetic.py` |
-| Repeated-decision bootstrap OPE | PASS API smoke | `deepuplift/core/ope.py` |
-| Longitudinal fatigue/carryover policy lab | NOT_RUN | next implementation gate |
+| Repeated-decision bootstrap OPE | PASS API; long-horizon support failure documented | `deepuplift/core/ope.py` |
+| Longitudinal fatigue/carryover policy lab | PASS semi-synthetic smoke; dynamic oracle diagnostic | `deepuplift/benchmarks/push_longitudinal.py` |
 
 The architecture is deliberately fail-closed: a missing upstream field is
 reported as `NOT_AVAILABLE`, not replaced by an inferred production value.

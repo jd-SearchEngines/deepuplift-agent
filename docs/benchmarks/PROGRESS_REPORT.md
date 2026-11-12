@@ -15,6 +15,11 @@
   heterogeneous effects, temporal drift, negative effects, and positivity stress.
 - Added repeated-decision OPE with per-decision/trajectory IPS and SNIPS,
   trajectory-weight diagnostics, duplicate-time validation, and cluster bootstrap.
+- Corrected logged propensity semantics to `P(observed action | history)`, added
+  stochastic target-policy support, cumulative per-decision weights, and raw
+  propensity fail-closed validation.
+- Corrected the longitudinal DGP so no-carryover is truly zero, and added
+  cumulative/rolling/decayed fatigue plus myopic versus dynamic oracle labels.
 
 ### Measured evidence
 
@@ -28,6 +33,10 @@
   generated target mean trajectory value `3.725000`, maximum trajectory weight
   `14678.778144`; this is explicit weight-explosion evidence, not a pass for
   sequential policy evaluation.
+- Five-seed sequential support stress: 100 users, horizons 8 and 16, seeds
+  `11,22,33,44,55`; horizon-8 trajectory SNIPS finite for 4/5 seeds with mean
+  finite-seed bias `0.023671` and trajectory ESS `0–2`; horizon-16 trajectory
+  SNIPS finite for 0/5 seeds and trajectory ESS `0`.
 
 ### Not claimed
 
@@ -36,6 +45,7 @@
 - Dataset registration does not mean the data is locally available or license-cleared.
 - Longitudinal policy values are generated-truth evidence, not real MRT or online business outcomes.
 - Full sequential DR remains `NOT_AVAILABLE` because no continuation-value nuisance model is supplied.
+- Full-trajectory IS is `BLOCKED` for the tested horizon-16 deterministic target because complete-trajectory support is absent.
 
 ### Next gate
 

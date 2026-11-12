@@ -14,6 +14,7 @@ Implemented scenarios:
 
 - no fatigue / no carryover
 - homogeneous and heterogeneous fatigue
+- cumulative, rolling-window, and decayed fatigue state
 - spacing-dependent effects
 - carryover
 - temporal drift
@@ -40,12 +41,16 @@ Run configuration: 100 synthetic users, 8 decision points per user, seed
 
 The values above are generated-truth policy values, not observed MRT outcomes,
 not OPE estimates, and not online business lift. The `oracle` policy is an
-upper-bound diagnostic and is not a deployable policy.
+upper-bound myopic diagnostic and is not a deployable policy. The longitudinal
+module also exposes `dynamic_oracle`, which searches the full finite-horizon
+action sequence under the generated state transition; it is a truth-only upper
+bound, not a learned policy.
 
 ## Remaining research gate
 
-The current laboratory validates state transitions and policy comparison. It
-does not yet establish a sequential DR estimator or a production candidate
-builder. The next gate is to connect the canonical decision-point frame to a
-learned proximal effect surface, then compare replay/OPE estimates with the
-known cumulative truth under multiple seeds and positivity stress.
+The current laboratory validates state transitions, scenario isolation, and
+policy comparison. It does not yet establish a sequential DR estimator or a
+production candidate builder. The next gate is to connect the canonical
+decision-point frame to a learned proximal effect surface, then compare
+replay/OPE estimates with the known cumulative truth under multiple seeds and
+positivity stress.

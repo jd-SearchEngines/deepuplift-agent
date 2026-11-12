@@ -48,3 +48,22 @@ def test_ope_validates_prediction_and_cluster_lengths():
         evaluate_ope_policy(**kwargs, target_reward_pred=[1.0])
     with pytest.raises(ValueError, match="cluster_id"):
         evaluate_ope_policy(**kwargs, cluster_id=["u1"])
+
+
+def test_one_step_ope_rejects_invalid_raw_propensity_and_supports_stochastic_target():
+    with pytest.raises(ValueError, match="raw values are not silently clipped"):
+        evaluate_ope_policy(
+            logged_action=["a", "b"],
+            reward=[1.0, 2.0],
+            logged_propensity=[0.0, 1.2],
+            target_action=["a", "b"],
+        )
+    result = evaluate_ope_policy(
+        logged_action=["a", "b"],
+        reward=[1.0, 2.0],
+        logged_propensity=[0.6, 0.4],
+        target_action=["a", "a"],
+        target_logged_action_probability=[0.7, 0.2],
+    )
+    assert result["diagnostics"]["target_policy_type"] == "stochastic"
+    assert result["diagnostics"]["target_support_rate"] == 1.0

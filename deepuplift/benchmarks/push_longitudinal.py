@@ -9,6 +9,7 @@ effects or online business lift.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from functools import lru_cache
 from typing import Any
 
 import numpy as np
@@ -22,13 +23,24 @@ LONGITUDINAL_SCENARIOS = (
     "no_fatigue_no_carryover",
     "fatigue",
     "heterogeneous_fatigue",
+    "rolling_fatigue",
+    "decayed_fatigue",
     "spacing",
     "carryover",
     "temporal_drift",
     "negative_effect",
     "positivity_failure",
 )
-_POLICIES = ("logged", "no_push", "random_push", "rule_based", "fatigue_aware", "oracle")
+_POLICIES = (
+    "logged",
+    "no_push",
+    "random_push",
+    "rule_based",
+    "fatigue_aware",
+    "oracle",
+    "myopic_oracle",
+    "dynamic_oracle",
+)
 
 
 @dataclass(frozen=True)
@@ -48,18 +60,39 @@ class LongitudinalPushWorld:
     def users(self) -> int:
         return int(len(self.user_context))
 
-    def _state(self, user_index: int, time_index: int, prior_pushes: int, last_push: int, previous_push: int) -> dict[str, float]:
+    def _state(
+        self,
+        user_index: int,
+        time_index: int,
+        prior_pushes: int,
+        last_push: int,
+        previous_push: int,
+        push_history: tuple[int, ...] = (),
+    ) -> dict[str, float]:
         row = self.user_context.iloc[user_index]
         gap = time_index - last_push if last_push >= 0 else self.horizon + 1
         x0 = float(row["x0"])
         x1 = float(row["x1"])
         x2 = float(row["x2"])
-        baseline = 0.30 + 0.08 * x1 + 0.03 * time_index + 0.10 * previous_push
+        cumulative_fatigue = float(len(push_history))
+        rolling_window = int(self.parameters.get("rolling_window", 3))
+        rolling_fatigue = float(sum(time_index - push_time < rolling_window for push_time in push_history))
+        decay_rate = float(self.parameters.get("decay_rate", 0.5))
+        decayed_fatigue = float(sum(np.exp(-decay_rate * (time_index - push_time)) for push_time in push_history))
+        fatigue_mode = self.parameters.get("fatigue_mode", "cumulative")
+        fatigue_load = {
+            "none": 0.0,
+            "cumulative": cumulative_fatigue,
+            "rolling": rolling_fatigue,
+            "decayed": decayed_fatigue,
+        }[fatigue_mode]
+        baseline = 0.30 + 0.08 * x1 + 0.03 * time_index
+        baseline += float(self.parameters.get("carryover_baseline_coef", 0.0)) * previous_push
         effect = 0.16 + 0.10 * np.tanh(x0) - 0.04 * x1 + 0.02 * x2
         fatigue_coef = float(self.parameters["fatigue_coef"])
         if self.scenario == "heterogeneous_fatigue":
             fatigue_coef *= 1.0 + 0.5 * np.tanh(x0)
-        effect -= fatigue_coef * prior_pushes
+        effect -= fatigue_coef * fatigue_load
         effect += float(self.parameters["carryover_coef"]) * previous_push
         if self.parameters["spacing_coef"]:
             effect += float(self.parameters["spacing_coef"]) * (1.0 if gap >= 3 else -0.5)
@@ -71,7 +104,43 @@ class LongitudinalPushWorld:
             "true_proximal_effect": effect,
             "time_since_last_push": float(gap),
             "prior_push_count": float(prior_pushes),
+            "cumulative_fatigue": cumulative_fatigue,
+            "rolling_fatigue": rolling_fatigue,
+            "decayed_fatigue": decayed_fatigue,
+            "fatigue_load": fatigue_load,
         }
+
+    def _dynamic_oracle_actions(self, user_index: int) -> tuple[int, ...]:
+        """Return the globally best binary action sequence for one user."""
+
+        @lru_cache(maxsize=None)
+        def solve(time_index: int, push_history: tuple[int, ...]) -> tuple[float, tuple[int, ...]]:
+            if time_index >= self.horizon:
+                return 0.0, ()
+            last_push = push_history[-1] if push_history else -1
+            previous_push = int(last_push == time_index - 1)
+            state = self._state(
+                user_index,
+                time_index,
+                len(push_history),
+                last_push,
+                previous_push,
+                push_history,
+            )
+            future_zero, actions_zero = solve(time_index + 1, push_history)
+            candidates = [(state["baseline_no_current_push"] + future_zero, (0, *actions_zero))]
+            if self.availability[user_index, time_index]:
+                next_history = (*push_history, time_index)
+                future_one, actions_one = solve(time_index + 1, next_history)
+                candidates.append(
+                    (
+                        state["baseline_no_current_push"] + state["true_proximal_effect"] + future_one,
+                        (1, *actions_one),
+                    )
+                )
+            return max(candidates, key=lambda item: item[0])
+
+        return solve(0, ())[1]
 
     def rollout(self, policy: str, *, noise_sd: float = 0.0) -> pd.DataFrame:
         """Simulate one policy with common exogenous availability and truth."""
@@ -83,8 +152,17 @@ class LongitudinalPushWorld:
             prior_pushes = 0
             last_push = -1
             previous_push = 0
+            push_history: list[int] = []
+            dynamic_actions = self._dynamic_oracle_actions(user_index) if policy == "dynamic_oracle" else None
             for time_index in range(self.horizon):
-                state = self._state(user_index, time_index, prior_pushes, last_push, previous_push)
+                state = self._state(
+                    user_index,
+                    time_index,
+                    prior_pushes,
+                    last_push,
+                    previous_push,
+                    tuple(push_history),
+                )
                 available = bool(self.availability[user_index, time_index])
                 if policy == "no_push":
                     action = 0
@@ -102,20 +180,26 @@ class LongitudinalPushWorld:
                         and state["prior_push_count"] < 2
                         and state["time_since_last_push"] >= 3
                     )
-                else:  # oracle is allowed only because this is known-truth data.
+                elif policy in {"oracle", "myopic_oracle"}:  # truth-only diagnostic.
                     action = int(state["true_proximal_effect"] > 0.0)
+                else:  # dynamic_oracle is allowed only because this is known-truth data.
+                    action = int(dynamic_actions[time_index])
                 y0 = state["baseline_no_current_push"]
                 y1 = y0 + state["true_proximal_effect"]
                 observed = y1 if action else y0
                 if noise_sd > 0:
                     observed += float(np.random.default_rng(self.seed + user_index * 1009 + time_index).normal(0.0, noise_sd))
+                push_probability = self._assignment_probability(user_index, time_index)
+                action_probability = push_probability if action else 1.0 - push_probability
                 rows.append(
                     {
                         "user_id": self.user_context.iloc[user_index]["user_id"],
                         "decision_time": time_index,
                         "availability": available,
                         "treatment_assignment": action,
-                        "assignment_probability": self._assignment_probability(user_index, time_index),
+                        "push_probability": push_probability,
+                        "assignment_probability": action_probability if policy == "logged" else np.nan,
+                        "logged_action_probability": action_probability if policy == "logged" else np.nan,
                         "previous_treatments": prior_pushes,
                         "time_since_last_push": state["time_since_last_push"],
                         "baseline_y0": y0,
@@ -124,6 +208,10 @@ class LongitudinalPushWorld:
                         "true_proximal_effect": state["true_proximal_effect"],
                         "observed_outcome": observed,
                         "fatigue_state": prior_pushes,
+                        "cumulative_fatigue": state["cumulative_fatigue"],
+                        "rolling_fatigue": state["rolling_fatigue"],
+                        "decayed_fatigue": state["decayed_fatigue"],
+                        "fatigue_load": state["fatigue_load"],
                         "carryover_state": previous_push,
                         "evidence_class": "SEMI_SYNTHETIC_KNOWN_TRUTH",
                     }
@@ -131,6 +219,7 @@ class LongitudinalPushWorld:
                 if action:
                     prior_pushes += 1
                     last_push = time_index
+                    push_history.append(time_index)
                 previous_push = action
         return pd.DataFrame(rows)
 
@@ -169,11 +258,19 @@ def generate_push_longitudinal_dgp(
     logging_uniform = rng.random((users, horizon))
     random_policy_uniform = rng.random((users, horizon))
     parameters = {
+        "fatigue_mode": {
+            "no_fatigue_no_carryover": "none",
+            "rolling_fatigue": "rolling",
+            "decayed_fatigue": "decayed",
+        }.get(scenario, "cumulative"),
         "fatigue_coef": 0.0 if scenario == "no_fatigue_no_carryover" else (0.035 if scenario != "heterogeneous_fatigue" else 0.06),
-        "carryover_coef": 0.0 if scenario in {"no_fatigue_no_carryover", "fatigue", "heterogeneous_fatigue", "spacing", "temporal_drift", "negative_effect", "positivity_failure"} else 0.045,
+        "carryover_coef": 0.045 if scenario == "carryover" else 0.0,
+        "carryover_baseline_coef": 0.10 if scenario == "carryover" else 0.0,
         "spacing_coef": 0.045 if scenario == "spacing" else 0.0,
         "temporal_drift_coef": 0.06 if scenario == "temporal_drift" else 0.0,
         "negative_user_coef": 0.14 if scenario == "negative_effect" else 0.0,
+        "rolling_window": 3,
+        "decay_rate": 0.5,
     }
     if scenario == "heterogeneous_fatigue":
         parameters["fatigue_heterogeneity"] = "0.06 * (1 + 0.5*tanh(x0))"

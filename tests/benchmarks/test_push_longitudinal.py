@@ -38,3 +38,25 @@ def test_longitudinal_suite_reports_policy_truth_without_real_claims(tmp_path: P
         assert len(scenario["policies"]) == 3
         assert all(np.isfinite(row["cumulative_policy_value"]) for row in scenario["policies"])
     assert "real MRT causal effects" in result["limitations"][0]
+
+
+def test_longitudinal_scenario_isolation_and_dynamic_oracle(tmp_path: Path):
+    mrt = load_mybpmylife_mrt(_fixture(tmp_path))
+    no_carry = generate_push_longitudinal_dgp(mrt, scenario="no_fatigue_no_carryover", users=10, horizon=6, seed=21)
+    carry = generate_push_longitudinal_dgp(mrt, scenario="carryover", users=10, horizon=6, seed=21)
+    no_random = no_carry.rollout("random_push")
+    no_none = no_carry.rollout("no_push")
+    carry_random = carry.rollout("random_push")
+    assert np.allclose(no_random["potential_outcome_no_push"], no_none["potential_outcome_no_push"])
+    assert carry_random["potential_outcome_no_push"].to_numpy().max() > no_random["potential_outcome_no_push"].to_numpy().max()
+    rolling = generate_push_longitudinal_dgp(mrt, scenario="rolling_fatigue", users=10, horizon=6, seed=21)
+    decayed = generate_push_longitudinal_dgp(mrt, scenario="decayed_fatigue", users=10, horizon=6, seed=21)
+    assert rolling.parameters["fatigue_mode"] == "rolling"
+    assert decayed.parameters["fatigue_mode"] == "decayed"
+    assert np.any(rolling.rollout("random_push")["rolling_fatigue"] > 0)
+    assert np.any(decayed.rollout("random_push")["decayed_fatigue"] > 0)
+    myopic = carry.rollout("myopic_oracle")
+    dynamic = carry.rollout("dynamic_oracle")
+    myopic_value = float((myopic["baseline_y0"] + myopic["treatment_assignment"] * myopic["true_proximal_effect"]).sum())
+    dynamic_value = float((dynamic["baseline_y0"] + dynamic["treatment_assignment"] * dynamic["true_proximal_effect"]).sum())
+    assert dynamic_value >= myopic_value - 1e-12
