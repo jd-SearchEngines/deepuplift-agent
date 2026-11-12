@@ -16,7 +16,7 @@ from deepuplift.decision.optimization import run_constrained_optimizer_suite
 def _jsonable(value):
     if isinstance(value, dict):
         return {str(key): _jsonable(item) for key, item in value.items()}
-    if isinstance(value, (list, tuple)):
+    if isinstance(value, (list, tuple, set)):
         return [_jsonable(item) for item in value]
     if hasattr(value, "item"):
         return value.item()
@@ -30,8 +30,17 @@ def main() -> int:
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--scale", type=int, action="append", dest="scales")
+    parser.add_argument("--memory-budget-mb", type=float, default=None)
+    parser.add_argument("--isolated", action="store_true", help="run each scale solver in a separate process for isolated RSS")
+    parser.add_argument("--allow-oversize", action="store_true", help="allow scales above 1M after the resource guard")
     args = parser.parse_args()
-    report = run_constrained_optimizer_suite(seed=args.seed, scales=tuple(args.scales or [1000, 10000]))
+    report = run_constrained_optimizer_suite(
+        seed=args.seed,
+        scales=tuple(args.scales or [1000, 10000]),
+        isolate_scales=args.isolated,
+        memory_budget_mb=args.memory_budget_mb,
+        allow_oversize=args.allow_oversize,
+    )
     rendered = json.dumps(_jsonable(report), ensure_ascii=False, indent=2, allow_nan=False)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(rendered + "\n", encoding="utf-8")
@@ -41,9 +50,12 @@ def main() -> int:
     for row in report["small_instance"]["solvers"]:
         print(f"small {row['solver']}: status={row['status']} objective={row.get('objective_net_value')} gap={row.get('optimality_gap_vs_exact')} feasible={row.get('feasibility', {}).get('feasible')}")
     for scale in report["scales"]:
+        if scale["status"] == "RESOURCE_GUARD_SKIPPED":
+            print(f"scale={scale['size']} status=RESOURCE_GUARD_SKIPPED reason={scale['resource_guard']['reason']}")
+            continue
         print(f"scale={scale['size']} memory_bytes={scale['candidate_memory_bytes']} peak_rss_mb={scale['peak_rss_mb']:.2f}")
         for row in scale["solvers"]:
-            print(f"  {row['solver']}: objective={row['objective_net_value']:.4f} runtime={row['runtime_seconds']:.4f} feasible={row['feasibility']['feasible']}")
+            print(f"  {row['solver']}: objective={row['objective_net_value']:.4f} gap={row.get('relative_heuristic_gap')} runtime={row['runtime_seconds']:.4f} rss={row.get('process_peak_rss_mb')} feasible={row['feasibility']['feasible']}")
     return 0 if report["status"] == "PASS" else 2
 
 

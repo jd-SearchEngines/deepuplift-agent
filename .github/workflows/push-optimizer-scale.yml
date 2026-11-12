@@ -51,6 +51,7 @@ jobs:
           python scripts/run_push_optimizer_benchmark.py
           --seed 42
           --scale ${{ matrix.scale }}
+          --isolated
           --output scale-artifacts/optimizer-${{ matrix.scale }}.json
       - name: Upload scale evidence
         if: always()
@@ -81,6 +82,8 @@ jobs:
           python scripts/run_push_optimizer_benchmark.py
           --seed 42
           --scale 10000000
+          --isolated
+          --allow-oversize
           --output scale-artifacts/optimizer-10000000.json
       - name: Upload 10M evidence
         if: always()

@@ -2,42 +2,75 @@
 
 **Phase:** P5 — Lagrangian and scale-aware allocation solvers
 **Evidence class:** `SYNTHETIC_SCALE_STRESS`
-**Status:** `PASS` for exact small reference and 1K/10K/100K sparse stress runs
+**Status:** `PASS` for correctness gates and the requested 100K/500K/1M runs; Coordinate Iterator remains a deliberately slower research baseline.
 
-The existing Top-K budget simulator remains unchanged. The new research API uses sparse candidate rows with identical values, costs, users, slots, actions, eligibility, and constraints for every solver:
+This report covers the remediation specified in `P5_OPTIMIZER_REMEDIATION_PROMPT.md`. It does not claim business uplift, causal validity on the real Push data, or production readiness.
 
-- global budget;
-- per-slot capacity;
-- per-user frequency cap;
-- minimum interval;
-- action quota;
-- at most one action per user-time.
+## Scope and objective
 
-The inspectable reduced utility is `incremental_value - resource_cost - lambda_budget*resource_cost - lambda_slot*slot_usage - lambda_action*action_usage`. The named primal-dual variants are transparent engineering implementations inspired by the algorithm families; they are not claims of reproducing proprietary implementations.
+All solvers use the same sparse candidate arrays, objective, seed, and constraints:
 
-## Exact small instance
+`sum(incremental_value - resource_cost)`
 
-The 18-candidate enumeration reference produced net objective `4.93754`. All solvers passed an independent feasibility check:
+The constraints are global budget, per-slot capacity, per-user frequency, minimum interval, optional action quota, at-most-one action per user-time, and eligibility. `simulate_budget` and existing public APIs remain unchanged.
 
-| Solver | Net objective | Gap to exact | Feasible |
-|---|---:|---:|---|
-| Exact enumeration | 4.93754 | 0.00000 | yes |
-| Greedy Top-K | 4.82454 | 0.11301 | yes |
-| Primal-dual | 0.00000 | 4.93754 | yes |
-| Line-search primal-dual | 2.06259 | 2.87496 | yes |
-| Heap | 4.82454 | 0.11301 | yes |
-| Coordinate iterator | 3.07654 | 1.86101 | yes |
+The independent feasibility checker is O(K log K): it groups selected rows by user, sorts each user's time slots, and checks adjacent intervals. It does not enumerate selected-row pairs. Per-index eligibility checks use a cached boolean mask. Candidate construction validates one-dimensional equal-length finite arrays, non-negative costs, and boolean/integer eligibility.
 
-The gap table is intentionally not promoted as a quality win for primal-dual. It shows the current baseline behavior and gives the next optimization target.
+## Exact small-instance acceptance
 
-## Sparse scale results
+Seed 42, 18 candidates, exhaustive enumeration. The corrected solvers all returned the exact objective `4.9375443709` and a feasible selected set.
 
-| Candidates | Candidate-array memory | Peak RSS MB | Greedy s | Primal-dual s | Line-search s | Heap s | Coordinate s | All feasible |
-|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| 1,000 | 64 KB | 81.09 | 0.0037 | 0.0041 | 0.0170 | 0.0040 | 0.0109 | yes |
-| 10,000 | 640 KB | 82.64 | 0.1552 | 0.0466 | 0.1924 | 0.1610 | 0.3577 | yes |
-| 100,000 | 6.4 MB | 117.20 | 12.8147 | 1.2351 | 3.8101 | 12.9816 | 17.4252 | yes |
+| Solver | Net objective | Gap to exact | Feasible | Stopping / mode |
+|---|---:|---:|---|---|
+| Exact enumeration | 4.937544 | 0.000000 | yes | enumeration complete |
+| Greedy Top-K | 4.937544 | 0.000000 | yes | static net order |
+| Primal-Dual | 4.937544 | 0.000000 | yes | projected dual tolerance |
+| Line Search | 4.937544 | 0.000000 | yes | merit-based line search |
+| Heap | 4.937544 | 0.000000 | yes | static net heap |
+| Coordinate Iterator | 4.937544 | 0.000000 | yes | sequential coordinate updates |
 
-The 100K run took 56.01 s wall time for the full 1K/10K/100K suite. A 1M run was not started because the current 100K profile shows that further profiling and vectorized state updates are needed before claiming 1M readiness; 10M remains out of scope until sparse memory and runtime gates pass. No dense tensor was allocated.
+Five additional random seeds were checked in unit tests; every heuristic output was feasible and no heuristic objective exceeded its exact reference. Ties are deterministic through stable sorting.
 
-`P5 PASS` means exact small-instance comparison, independent feasibility checks, common candidate/objective definitions, dual traces, runtime, memory, and scale evidence exist. It does not mean the current primal-dual variants dominate greedy or heap.
+## Dual and solver remediation
+
+- Budget, slot, and action residuals are signed `(used - limit) / max(limit, 1)` values.
+- Dual ascent is projected: `lambda <- max(0, lambda + step * signed_residual)`. Under-used resources can reduce prices, and prices remain non-negative.
+- Results expose actual selected-set `primal_constraint_violation`, relaxed-selection residuals, signed residuals, dual prices, complementarity, dual step, stopping reason, iteration count, and incumbent fallback use.
+- Objective accounting applies the budget multiplier to `resource_cost`; the base objective is not double-counted.
+- Repair is independently feasibility-preserving and compares against the Greedy incumbent. If a candidate update is worse, the incumbent is retained and recorded.
+- Line Search evaluates a merit function containing primal violation, complementarity, and dual-step size; accepted steps do not worsen that merit.
+- Coordinate Iterator recomputes selection and residuals after every coordinate. At 100K+ scale, the benchmark budget is two cycles at 100K and one cycle at 500K/1M; this is recorded in each JSON report and is not presented as full convergence.
+
+## Scale results — seed 42
+
+Every row below had selected-set feasibility `yes` and actual max constraint violation `0.0`. Gap is relative to the best feasible heuristic objective within that scale. RSS is peak RSS from the Solver's isolated process, not cumulative parent RSS. Candidate-array memory is the raw sparse array footprint.
+
+| Candidates | Solver | Objective | Relative gap | Time (s) | Peak RSS (MB) | Candidates/s |
+|---:|---|---:|---:|---:|---:|---:|
+| 100,000 | Greedy | 36,212.6341 | 0.0159% | 1.946 | 29.02 | 51,381 |
+| 100,000 | Primal-Dual | 36,218.4055 | 0.0000% | 8.195 | 86.03 | 12,202 |
+| 100,000 | Line Search | 36,212.6341 | 0.0159% | 3.567 | 94.58 | 28,039 |
+| 100,000 | Heap | 36,212.6341 | 0.0159% | 0.228 | 80.08 | 438,596 |
+| 100,000 | Coordinate | 36,212.6341 | 0.0159% | 32.219 | 123.28 | 3,104 |
+| 500,000 | Greedy | 181,154.4305 | 0.0182% | 41.510 | 119.94 | 12,045 |
+| 500,000 | Primal-Dual | 181,187.4076 | 0.0000% | 74.479 | 226.47 | 6,713 |
+| 500,000 | Line Search | 181,154.4305 | 0.0182% | 50.090 | 278.66 | 9,982 |
+| 500,000 | Heap | 181,154.4305 | 0.0182% | 1.773 | 213.66 | 282,011 |
+| 500,000 | Coordinate | 181,154.4305 | 0.0182% | 120.221 | 333.03 | 4,159 |
+| 1,000,000 | Greedy | 362,688.7656 | 0.0164% | 225.466 | 195.25 | 4,435 |
+| 1,000,000 | Primal-Dual | 362,748.2474 | 0.0000% | 294.168 | 411.78 | 3,399 |
+| 1,000,000 | Line Search | 362,688.7656 | 0.0164% | 230.536 | 518.42 | 4,338 |
+| 1,000,000 | Heap | 362,688.7656 | 0.0164% | 5.038 | 385.92 | 198,492 |
+| 1,000,000 | Coordinate | 362,688.7656 | 0.0164% | 395.577 | 629.61 | 2,528 |
+
+Raw candidate-array memory was 6.4 MB, 32.0 MB, and 64.0 MB respectively. Resource guard status was `PASS` for all three scales. The 1M run was completed with one Coordinate cycle and a 20-iteration Primal-Dual budget; see the machine-readable report generated by the benchmark script for signed residuals, prices, complementarity, and stopping diagnostics.
+
+## Multi-seed evidence required by the plan
+
+Seeds 1, 2, and 3 were run at 10K and 100K. All 30 Solver-scale rows were feasible. At 100K, the Primal-Dual objective was the best heuristic on all three seeds; the other four methods were between `0.01396%` and `0.02348%` below the best. At 10K, Primal-Dual or Coordinate was best on each seed; the non-best gap ranged from `0.02158%` to `0.03643%`.
+
+## Tests and limitations
+
+The focused optimizer suite passed 8 tests, including exact comparisons, candidate validation, eligibility and zero-budget edges, negative net value, duplicate user-time, interval boundaries, signed price decrease, coordinate recomputation, and a 20K independent checker run. The full repository test result is recorded in the release handoff.
+
+The Heap and Coordinate implementations are static-data-structure and sequential-coordinate baselines respectively. They are useful comparison points but are not claimed to be dynamic sublinear optimizers. Coordinate's repeated full sorting is O(I·N log N), not pairwise O(N²); its 1M runtime is the main follow-up performance target. No raw MRT data, model weights, or generated machine-specific benchmark artifacts are committed.
