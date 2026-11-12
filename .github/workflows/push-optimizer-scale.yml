@@ -49,7 +49,11 @@ jobs:
         run: >-
           mkdir -p scale-artifacts &&
           python scripts/run_push_optimizer_benchmark.py
-          --seed 42
+          --seed 1
+          --seed 2
+          --seed 3
+          --seed 4
+          --seed 5
           --scale ${{ matrix.scale }}
           --isolated
           --output scale-artifacts/optimizer-${{ matrix.scale }}.json

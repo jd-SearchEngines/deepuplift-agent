@@ -2,75 +2,103 @@
 
 **Phase:** P5 — Lagrangian and scale-aware allocation solvers
 **Evidence class:** `SYNTHETIC_SCALE_STRESS`
-**Status:** `PASS` for correctness gates and the requested 100K/500K/1M runs; Coordinate Iterator remains a deliberately slower research baseline.
+**V1.1 status:** `PASS` for feasibility and benchmark execution; solution quality is exact on the small reference and measured against the best feasible heuristic at large scale; convergence is reported separately and is not universally achieved.
 
-This report covers the remediation specified in `P5_OPTIMIZER_REMEDIATION_PROMPT.md`. It does not claim business uplift, causal validity on the real Push data, or production readiness.
+This report covers the V1.1 remediation. It makes no business-uplift, causal-validity, or production-readiness claim.
 
-## Scope and objective
+## 1. Contracts and complexity
 
-All solvers use the same sparse candidate arrays, objective, seed, and constraints:
+All solvers use identical sparse candidate arrays and objective:
 
 `sum(incremental_value - resource_cost)`
 
-The constraints are global budget, per-slot capacity, per-user frequency, minimum interval, optional action quota, at-most-one action per user-time, and eligibility. `simulate_budget` and existing public APIs remain unchanged.
+Constraints are global budget, slot capacity, user frequency, minimum interval, optional action quota, at-most-one action per user-time, and eligibility. `simulate_budget` and existing public APIs remain unchanged.
 
-The independent feasibility checker is O(K log K): it groups selected rows by user, sorts each user's time slots, and checks adjacent intervals. It does not enumerate selected-row pairs. Per-index eligibility checks use a cached boolean mask. Candidate construction validates one-dimensional equal-length finite arrays, non-negative costs, and boolean/integer eligibility.
+The independent feasibility checker is O(K log K): selected rows are grouped by user, each user's slots are sorted, and only adjacent intervals are checked. No selected-row pair enumeration remains. Eligibility is cached per candidate. Candidate arrays are validated for one-dimensional equal length, finite values, non-negative costs, and boolean/integer eligibility.
 
-## Exact small-instance acceptance
+The main V1.1 O(N²) defect was repeated full-array `net_value` computation inside selection and incumbent loops. The affected solvers now cache `net_value` and `resource_cost` once per solve. A regression test uses a property spy to verify Greedy reads `net_value` once.
 
-Seed 42, 18 candidates, exhaustive enumeration. The corrected solvers all returned the exact objective `4.9375443709` and a feasible selected set.
+## 2. Separate acceptance dimensions
 
-| Solver | Net objective | Gap to exact | Feasible | Stopping / mode |
+Each result now reports:
+
+- `feasibility_status` and actual selected-set `primal_residual`;
+- `quality_status`, `relative_optimality_gap`, `relative_heuristic_gap`, and reference type;
+- `convergence_status`, `stopping_reason`, `convergence_metrics`;
+- `dual_step_norm` for price-change norm;
+- `dual_feasibility_residual` and `dual_feasibility` for non-negative prices;
+- `complementarity`, signed residuals, incumbent fallback, and `primal_dual_gap_valid`.
+
+The historical `dual_residual` key is retained for compatibility but now means dual-feasibility violation. It no longer stores price-change norm; that value is `dual_step_norm`. `max_iterations` and `line_search_no_improvement` are `NOT_CONVERGED`, never convergence PASS.
+
+For large instances, no exact upper bound is available. Therefore `relative_heuristic_gap` is reported against the best feasible heuristic in that run, while `relative_optimality_gap` and `primal_dual_gap` remain unavailable. This distinction is encoded in the machine-readable JSON.
+
+## 3. Exact reference
+
+The exact small reference now prefers `scipy.optimize.milp`; if SciPy MILP is unavailable or fails, it falls back to exhaustive enumeration. Seed 42, 18 candidates, returned method `scipy_milp`, objective `4.9375443709`, and all five heuristics matched it exactly.
+
+| Solver | Objective | Relative optimality gap | Feasibility | Convergence |
 |---|---:|---:|---|---|
-| Exact enumeration | 4.937544 | 0.000000 | yes | enumeration complete |
-| Greedy Top-K | 4.937544 | 0.000000 | yes | static net order |
-| Primal-Dual | 4.937544 | 0.000000 | yes | projected dual tolerance |
-| Line Search | 4.937544 | 0.000000 | yes | merit-based line search |
-| Heap | 4.937544 | 0.000000 | yes | static net heap |
-| Coordinate Iterator | 4.937544 | 0.000000 | yes | sequential coordinate updates |
+| Exact MILP | 4.937544 | 0 | PASS | N/A |
+| Greedy | 4.937544 | 0 | PASS | N/A |
+| Primal-Dual | 4.937544 | 0 | PASS | PASS |
+| Line Search | 4.937544 | 0 | PASS | NOT_CONVERGED (`line_search_no_improvement`) |
+| Heap | 4.937544 | 0 | PASS | N/A |
+| Coordinate Iterator | 4.937544 | 0 | PASS | PASS |
 
-Five additional random seeds were checked in unit tests; every heuristic output was feasible and no heuristic objective exceeded its exact reference. Ties are deterministic through stable sorting.
+## 4. V1.1 scale results
 
-## Dual and solver remediation
+All rows below used isolated solver processes. Actual selected-set feasibility was PASS with max constraint violation 0. RSS is process-local peak RSS. Gaps are relative to the best feasible heuristic at that scale, not an exact optimality claim.
 
-- Budget, slot, and action residuals are signed `(used - limit) / max(limit, 1)` values.
-- Dual ascent is projected: `lambda <- max(0, lambda + step * signed_residual)`. Under-used resources can reduce prices, and prices remain non-negative.
-- Results expose actual selected-set `primal_constraint_violation`, relaxed-selection residuals, signed residuals, dual prices, complementarity, dual step, stopping reason, iteration count, and incumbent fallback use.
-- Objective accounting applies the budget multiplier to `resource_cost`; the base objective is not double-counted.
-- Repair is independently feasibility-preserving and compares against the Greedy incumbent. If a candidate update is worse, the incumbent is retained and recorded.
-- Line Search evaluates a merit function containing primal violation, complementarity, and dual-step size; accepted steps do not worsen that merit.
-- Coordinate Iterator recomputes selection and residuals after every coordinate. At 100K+ scale, the benchmark budget is two cycles at 100K and one cycle at 500K/1M; this is recorded in each JSON report and is not presented as full convergence.
+| Scale | Solver | Objective | Relative heuristic gap | Time | Peak RSS | Convergence |
+|---:|---|---:|---:|---:|---:|---|
+| 100K* | Greedy | 36,316.6113 | 0.01396% | 0.164s | 79.59MB | N/A |
+| 100K* | Primal-Dual | 36,321.6825 | 0 | 5.948s | 107.92MB | NOT_CONVERGED / max_iterations |
+| 100K* | Line Search | 36,316.6113 | 0.01396% | 1.580s | 118.59MB | NOT_CONVERGED |
+| 100K* | Heap | 36,316.6113 | 0.01396% | 0.216s | 44.58MB | N/A |
+| 100K* | Coordinate | 36,316.6113 | 0.01396% | 22.948s | 146.50MB | NOT_CONVERGED / max_iterations |
+| 500K | Greedy | 181,154.4305 | 0.01820% | 0.876s | 135.52MB | N/A |
+| 500K | Primal-Dual | 181,187.4076 | 0 | 35.670s | 250.11MB | NOT_CONVERGED / max_iterations |
+| 500K | Line Search | 181,154.4305 | 0.01820% | 10.660s | 300.25MB | NOT_CONVERGED |
+| 500K | Heap | 181,154.4305 | 0.01820% | 2.154s | 231.25MB | N/A |
+| 500K | Coordinate | 181,154.4305 | 0.01820% | 81.367s | 360.23MB | NOT_CONVERGED / max_iterations |
+| 1M | Greedy | 362,688.7656 | 0.01640% | 1.943s | 295.55MB | N/A |
+| 1M | Primal-Dual | 362,748.2474 | 0 | 75.658s | 504.55MB | NOT_CONVERGED / max_iterations |
+| 1M | Line Search | 362,688.7656 | 0.01640% | 20.779s | 623.47MB | NOT_CONVERGED |
+| 1M | Heap | 362,688.7656 | 0.01640% | 4.621s | 476.20MB | N/A |
+| 1M | Coordinate | 362,688.7656 | 0.01640% | 185.404s | 714.48MB | NOT_CONVERGED / coordinate budget |
 
-## Scale results — seed 42
+`*` 100K row is seed 1 from the five-seed run. The 500K/1M rows are seed 42. Candidate-array memory was 6.4MB, 32.0MB, and 64.0MB respectively. Resource guard passed for all requested scales.
 
-Every row below had selected-set feasibility `yes` and actual max constraint violation `0.0`. Gap is relative to the best feasible heuristic objective within that scale. RSS is peak RSS from the Solver's isolated process, not cumulative parent RSS. Candidate-array memory is the raw sparse array footprint.
+## 5. Five-seed stability run
 
-| Candidates | Solver | Objective | Relative gap | Time (s) | Peak RSS (MB) | Candidates/s |
-|---:|---|---:|---:|---:|---:|---:|
-| 100,000 | Greedy | 36,212.6341 | 0.0159% | 1.946 | 29.02 | 51,381 |
-| 100,000 | Primal-Dual | 36,218.4055 | 0.0000% | 8.195 | 86.03 | 12,202 |
-| 100,000 | Line Search | 36,212.6341 | 0.0159% | 3.567 | 94.58 | 28,039 |
-| 100,000 | Heap | 36,212.6341 | 0.0159% | 0.228 | 80.08 | 438,596 |
-| 100,000 | Coordinate | 36,212.6341 | 0.0159% | 32.219 | 123.28 | 3,104 |
-| 500,000 | Greedy | 181,154.4305 | 0.0182% | 41.510 | 119.94 | 12,045 |
-| 500,000 | Primal-Dual | 181,187.4076 | 0.0000% | 74.479 | 226.47 | 6,713 |
-| 500,000 | Line Search | 181,154.4305 | 0.0182% | 50.090 | 278.66 | 9,982 |
-| 500,000 | Heap | 181,154.4305 | 0.0182% | 1.773 | 213.66 | 282,011 |
-| 500,000 | Coordinate | 181,154.4305 | 0.0182% | 120.221 | 333.03 | 4,159 |
-| 1,000,000 | Greedy | 362,688.7656 | 0.0164% | 225.466 | 195.25 | 4,435 |
-| 1,000,000 | Primal-Dual | 362,748.2474 | 0.0000% | 294.168 | 411.78 | 3,399 |
-| 1,000,000 | Line Search | 362,688.7656 | 0.0164% | 230.536 | 518.42 | 4,338 |
-| 1,000,000 | Heap | 362,688.7656 | 0.0164% | 5.038 | 385.92 | 198,492 |
-| 1,000,000 | Coordinate | 362,688.7656 | 0.0164% | 395.577 | 629.61 | 2,528 |
+Seeds 1–5 were run at 1K, 10K, and 100K. All 15 scale runs and all 75 Solver rows were feasible. Exact-reference quality was PASS for every seed. At 100K, Primal-Dual had the best heuristic objective for all five seeds; the non-best heuristic gap range was `0.01267%–0.02148%`. Convergence was not universal: 100K Primal-Dual and Coordinate runs used the scale iteration budget, and Line Search frequently stopped with `line_search_no_improvement`.
 
-Raw candidate-array memory was 6.4 MB, 32.0 MB, and 64.0 MB respectively. Resource guard status was `PASS` for all three scales. The 1M run was completed with one Coordinate cycle and a 20-iteration Primal-Dual budget; see the machine-readable report generated by the benchmark script for signed residuals, prices, complementarity, and stopping diagnostics.
+The JSON was generated by:
 
-## Multi-seed evidence required by the plan
+```bash
+python scripts/run_push_optimizer_benchmark.py \
+  --seed 1 --seed 2 --seed 3 --seed 4 --seed 5 \
+  --scale 1000 --scale 10000 --scale 100000 --isolated \
+  --output optimizer-seeds1-5-small-scales.json
+```
 
-Seeds 1, 2, and 3 were run at 10K and 100K. All 30 Solver-scale rows were feasible. At 100K, the Primal-Dual objective was the best heuristic on all three seeds; the other four methods were between `0.01396%` and `0.02348%` below the best. At 10K, Primal-Dual or Coordinate was best on each seed; the non-best gap ranged from `0.02158%` to `0.03643%`.
+Machine-specific JSON is intentionally not committed. GitHub Actions uploads the JSON artifact for each scale.
 
-## Tests and limitations
+## 6. Historical pre-V1.1 measurements
 
-The focused optimizer suite passed 8 tests, including exact comparisons, candidate validation, eligibility and zero-budget edges, negative net value, duplicate user-time, interval boundaries, signed price decrease, coordinate recomputation, and a 20K independent checker run. The full repository test result is recorded in the release handoff.
+The following numbers are retained for comparison and are not overwritten. They were produced before the repeated `net_value` fix and before the separated convergence semantics:
 
-The Heap and Coordinate implementations are static-data-structure and sequential-coordinate baselines respectively. They are useful comparison points but are not claimed to be dynamic sublinear optimizers. Coordinate's repeated full sorting is O(I·N log N), not pairwise O(N²); its 1M runtime is the main follow-up performance target. No raw MRT data, model weights, or generated machine-specific benchmark artifacts are committed.
+| Scale | Greedy (s) | Primal-Dual (s) | Line Search (s) | Heap (s) | Coordinate (s) |
+|---:|---:|---:|---:|---:|---:|
+| 1K | 0.0037 | 0.0041 | 0.0170 | 0.0040 | 0.0109 |
+| 10K | 0.1552 | 0.0466 | 0.1924 | 0.1610 | 0.3577 |
+| 100K | 12.8147 | 1.2351 | 3.8101 | 12.9816 | 17.4252 |
+| 500K | not run | not run | not run | not run | not run |
+| 1M | not run | not run | not run | not run | not run |
+
+For the comparable Greedy path, V1.1 is approximately 78x faster at 100K, 47x faster at 500K, and 116x faster at 1M. Primal-Dual is approximately 2.1x faster at 500K and 3.9x faster at 1M under the recorded iteration budgets. These are local benchmark comparisons, not CI measurements.
+
+## 7. Remaining limitations
+
+Heap is a static net-order baseline, not a dynamic incremental optimizer. Coordinate remains O(I·N log N) because each coordinate recomputes a full utility order; it is no longer using pairwise O(N²) feasibility checks, but its 1M runtime remains the main follow-up target. Large-scale convergence requires a principled dual upper-bound/duality-gap implementation rather than simply increasing iteration limits.

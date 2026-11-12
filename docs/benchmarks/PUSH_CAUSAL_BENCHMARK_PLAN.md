@@ -1,6 +1,6 @@
 # Push MRT Causal Benchmark & Optimization Validation Plan
 
-**Status:** P0–P5 PASS for the audited and validated benchmark evidence; P6 optional / not started; no production or causal-performance claim is made by this document.
+**Status:** P0–P5 PASS for feasibility and benchmark execution; P5 solution quality/convergence are reported as separate evidence dimensions; P6 optional / not started; no production or causal-performance claim is made by this document.
 **Target base:** `codex/v06-frontier-causal-models`  
 **Work branch:** `codex/push-mrt-causal-benchmark`  
 **Repository:** https://github.com/jd-SearchEngines/deepuplift-agent
@@ -14,7 +14,7 @@
 | P2 | PASS for reproducible 5,000-row Push-derived semi-synthetic suite | [`PUSH_CAUSAL_P2_SEMISYNTHETIC.md`](PUSH_CAUSAL_P2_SEMISYNTHETIC.md) |
 | P3 | PASS for real three-arm handling and Push-context continuous suite | [`PUSH_CAUSAL_P3_CONTINUOUS.md`](PUSH_CAUSAL_P3_CONTINUOUS.md) |
 | P4 | PASS for monotone/fatigue calibration comparison | [`PUSH_CAUSAL_P4_CALIBRATION.md`](PUSH_CAUSAL_P4_CALIBRATION.md) |
-| P5 | PASS for remediation, exact comparison, independent feasibility, 10K/100K multi-seed, and 100K/500K/1M isolated stress | [`PUSH_CAUSAL_P5_OPTIMIZER.md`](PUSH_CAUSAL_P5_OPTIMIZER.md) |
+| P5 | PASS for V1.1 O(N²) remediation, MILP/enumeration exact reference, independent feasibility, 1K/10K/100K five-seed stability, and 500K/1M isolated stress; convergence remains solver-specific | [`PUSH_CAUSAL_P5_OPTIMIZER.md`](PUSH_CAUSAL_P5_OPTIMIZER.md) |
 | P6 | OPTIONAL / NOT_STARTED | — |
 
 ## 1. Objective

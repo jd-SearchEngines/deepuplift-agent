@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import numpy as np
+from unittest.mock import PropertyMock, patch
 
 from deepuplift.decision.optimization import AllocationCandidates, AllocationConstraints, check_feasibility, exact_small_reference, greedy_topk, run_constrained_optimizer_suite, solve_coordinate_iterator, solve_heap, solve_line_search_primal_dual, solve_primal_dual
 from deepuplift.decision.optimization.constrained import _projected_dual_update
@@ -97,3 +98,36 @@ def test_large_independent_feasibility_checker_does_not_use_pairwise_selection_c
     result = check_feasibility(candidates, constraints, list(range(size)))
     assert result["feasible"]
     assert result["minimum_interval_violation_count"] == 0
+
+
+def test_greedy_reads_net_value_once_and_keeps_quality_separate_from_feasibility():
+    candidates, constraints = _small()
+    with patch.object(type(candidates), "net_value", new_callable=PropertyMock) as net_value:
+        net_value.return_value = np.array([3.0, 2.0, 1.0, 0.0])
+        row = greedy_topk(candidates, constraints)
+        assert net_value.call_count == 1
+    assert row["feasibility_status"] == "PASS"
+    assert row["convergence_status"] == "NOT_APPLICABLE"
+    assert row["quality_status"] == "UNASSESSED"
+
+
+def test_convergence_diagnostics_do_not_promote_iteration_limit_to_pass():
+    candidates, constraints = _small()
+    row = solve_primal_dual(candidates, constraints, max_iterations=1)
+    assert row["feasibility_status"] == "PASS"
+    assert row["convergence_status"] == "NOT_CONVERGED"
+    assert row["stopping_reason"] == "max_iterations"
+    assert "dual_step_norm" in row
+    assert "dual_feasibility" in row
+    assert row["dual_residual_semantics"].startswith("dual feasibility")
+    assert row["primal_dual_gap_valid"] is False
+
+
+def test_exact_reference_declares_solver_method_and_small_quality_gap():
+    candidates, constraints = _small()
+    exact = exact_small_reference(candidates, constraints)
+    assert exact["reference_method"] in {"scipy_milp", "exhaustive_enumeration"}
+    report = run_constrained_optimizer_suite(seed=3, scales=())
+    assert report["quality_status"] == "PASS"
+    assert report["small_instance"]["exact_reference"]["reference_method"] in {"scipy_milp", "exhaustive_enumeration"}
+    assert all(row["relative_optimality_gap"] <= 1e-9 for row in report["small_instance"]["solvers"])
