@@ -20,7 +20,7 @@ mapping is a claim about revenue or profit.
 Configuration: fatigue DGP, 100 users, 8 synthetic slots, seed `20261113`, 800
 candidates, participant-group 5-fold OOF WCLS-style model, capacity budget 80,
 per-user frequency cap 2, minimum interval 2, `value_multiplier=10`.
-Report: `/tmp/deepuplift-model-optimizer-smoke-v2.json`.
+Report: `/tmp/deepuplift-model-optimizer-smoke-v3.json`.
 
 | Solver | Selected | Objective net value | Independent feasibility |
 |---|---:|---:|---|
