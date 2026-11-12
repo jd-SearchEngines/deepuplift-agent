@@ -7,3 +7,10 @@ Evidence bundles contain `config.json`, `dataset_manifest.json`, `diagnostics.js
 ## Offline policy evaluation and repeated decisions
 
 `evaluate_ope_policy()` reports IPS, SNIPS, DR (when direct-method predictions are supplied), propensity clipping, effective sample size, and bootstrap intervals. For repeated decision data such as MRT, pass `cluster_id` to resample complete users/participants rather than treating decision rows as iid. The JSON result records `diagnostics.bootstrap_unit=cluster`, `cluster_count`, and `bootstrap.bootstrap_unit=cluster`. Without `cluster_id`, bootstrap is explicitly labeled `row` and must not be presented as participant-level uncertainty.
+
+`evaluate_sequential_ope_policy()` additionally reports per-decision and
+trajectory IPS/SNIPS, cumulative trajectory-weight diagnostics, and cluster
+bootstrap. It reports `per_decision_dr` only when direct-method predictions are
+provided. A full sequential DR estimator requires a continuation-value model;
+the result therefore records `sequential_dr_status=NOT_AVAILABLE` until that
+additional nuisance contract is supplied.

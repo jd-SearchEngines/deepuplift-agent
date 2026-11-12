@@ -190,6 +190,154 @@ def evaluate_ope_policy(
     }
 
 
+def _sequential_metrics(
+    ratios: np.ndarray,
+    rewards: np.ndarray,
+    clusters: np.ndarray,
+    target_reward_pred: np.ndarray | None = None,
+    logged_reward_pred: np.ndarray | None = None,
+) -> dict[str, float | None]:
+    row_ips = float(np.mean(ratios * rewards))
+    ratio_sum = float(np.sum(ratios))
+    row_snips = float(np.sum(ratios * rewards) / ratio_sum) if ratio_sum > 1e-12 else None
+    trajectory_weights: list[float] = []
+    trajectory_returns: list[float] = []
+    for cluster in pd.unique(clusters):
+        indices = np.flatnonzero(clusters == cluster)
+        trajectory_weights.append(float(np.prod(ratios[indices])))
+        trajectory_returns.append(float(np.sum(rewards[indices])))
+    trajectory_w = np.asarray(trajectory_weights, dtype="float64")
+    trajectory_y = np.asarray(trajectory_returns, dtype="float64")
+    trajectory_ips = float(np.mean(trajectory_w * trajectory_y)) if len(trajectory_y) else None
+    trajectory_sum = float(np.sum(trajectory_w))
+    trajectory_snips = float(np.sum(trajectory_w * trajectory_y) / trajectory_sum) if trajectory_sum > 1e-12 else None
+    result: dict[str, float | None] = {
+        "per_decision_ips": row_ips,
+        "per_decision_snips": row_snips,
+        "trajectory_ips": trajectory_ips,
+        "trajectory_snips": trajectory_snips,
+    }
+    if target_reward_pred is not None and logged_reward_pred is not None:
+        result["per_decision_dr"] = float(
+            np.mean(target_reward_pred + ratios * (rewards - logged_reward_pred))
+        )
+    return result
+
+
+def evaluate_sequential_ope_policy(
+    *,
+    logged_action: Any,
+    reward: Any,
+    logged_propensity: Any,
+    target_action: Any,
+    cluster_id: Any,
+    decision_time: Any,
+    target_reward_pred: Any | None = None,
+    logged_reward_pred: Any | None = None,
+    clip_min: float = 0.02,
+    clip_max: float = 1.0,
+    n_bootstrap: int = 0,
+    random_state: int = 42,
+) -> Dict[str, Any]:
+    """Evaluate a target policy on repeated decision trajectories.
+
+    The evaluator reports per-decision IPS/SNIPS, trajectory IPS/SNIPS, and a
+    per-decision DR correction when direct-method predictions are supplied.
+    A full sequential DR estimator needs continuation-value models and is not
+    silently substituted here. Bootstrap resamples complete clusters.
+    """
+
+    logged = _as_series(logged_action, "logged_action").astype(str)
+    target = _as_series(target_action, "target_action").astype(str)
+    y = pd.to_numeric(_as_series(reward, "reward"), errors="coerce").astype("float64")
+    p_raw = pd.to_numeric(_as_series(logged_propensity, "logged_propensity"), errors="coerce").astype("float64")
+    clusters = _as_series(cluster_id, "cluster_id")
+    times = _as_series(decision_time, "decision_time")
+    lengths = {len(logged), len(target), len(y), len(p_raw), len(clusters), len(times)}
+    if len(lengths) != 1:
+        raise ValueError("sequential OPE inputs must have the same length.")
+    original_size = len(logged)
+    if target_reward_pred is not None and len(_as_series(target_reward_pred, "target_reward_pred")) != original_size:
+        raise ValueError("target_reward_pred must have the same length as logged_action.")
+    if logged_reward_pred is not None and len(_as_series(logged_reward_pred, "logged_reward_pred")) != original_size:
+        raise ValueError("logged_reward_pred must have the same length as logged_action.")
+    mask = logged.notna() & target.notna() & y.notna() & p_raw.notna() & clusters.notna() & times.notna()
+    if not mask.any():
+        return {"status": "empty", "rows": 0, "metrics": {}, "diagnostics": {"valid_rows": 0}}
+    frame = pd.DataFrame(
+        {
+            "logged": logged[mask].to_numpy(),
+            "target": target[mask].to_numpy(),
+            "reward": y[mask].to_numpy(dtype="float64"),
+            "propensity": p_raw[mask].to_numpy(dtype="float64"),
+            "cluster": clusters[mask].astype(str).to_numpy(),
+            "time": times[mask].to_numpy(),
+        }
+    )
+    if target_reward_pred is not None:
+        frame["target_reward_pred"] = pd.to_numeric(_as_series(target_reward_pred, "target_reward_pred")[mask], errors="coerce").to_numpy()
+    if logged_reward_pred is not None:
+        frame["logged_reward_pred"] = pd.to_numeric(_as_series(logged_reward_pred, "logged_reward_pred")[mask], errors="coerce").to_numpy()
+    frame = frame.sort_values(["cluster", "time"], kind="mergesort").reset_index(drop=True)
+    if frame.duplicated(["cluster", "time"]).any():
+        raise ValueError("Each cluster must have at most one row per decision_time.")
+    p = frame["propensity"].clip(lower=float(clip_min), upper=float(clip_max)).to_numpy(dtype="float64")
+    match = (frame["logged"].to_numpy() == frame["target"].to_numpy()).astype("float64")
+    ratios = match / p
+    rewards = frame["reward"].to_numpy(dtype="float64")
+    target_pred = frame["target_reward_pred"].to_numpy(dtype="float64") if "target_reward_pred" in frame else None
+    logged_pred = frame["logged_reward_pred"].to_numpy(dtype="float64") if "logged_reward_pred" in frame else None
+    metrics = _sequential_metrics(ratios, rewards, frame["cluster"].to_numpy(), target_pred, logged_pred)
+    diagnostics = {
+        "valid_rows": int(len(frame)),
+        "cluster_count": int(frame["cluster"].nunique()),
+        "max_horizon": int(frame.groupby("cluster", sort=False).size().max()),
+        "coverage_rate": _clean_float(match.mean()),
+        "raw_propensity_min": _clean_float(frame["propensity"].min()),
+        "raw_propensity_max": _clean_float(frame["propensity"].max()),
+        "clipped_rate": _clean_float(((frame["propensity"] < clip_min) | (frame["propensity"] > clip_max)).mean()),
+        "per_decision_weight_max": _clean_float(np.max(ratios)),
+        "per_decision_weight_variance": _clean_float(np.var(ratios)),
+        "trajectory_weight_max": _clean_float(max(np.prod(ratios[frame["cluster"].to_numpy() == cluster]) for cluster in pd.unique(frame["cluster"]))),
+        "bootstrap_unit": "cluster",
+        "sequential_dr_status": "NOT_AVAILABLE; continuation-value model not supplied",
+    }
+    bootstrap: dict[str, Any] = {}
+    if n_bootstrap > 0:
+        rng = np.random.default_rng(random_state)
+        unique_clusters = pd.unique(frame["cluster"])
+        samples: dict[str, list[float]] = {key: [] for key, value in metrics.items() if value is not None}
+        groups = {cluster: np.flatnonzero(frame["cluster"].to_numpy() == cluster) for cluster in unique_clusters}
+        for _ in range(int(n_bootstrap)):
+            sampled_clusters = rng.choice(unique_clusters, size=len(unique_clusters), replace=True)
+            pieces = [groups[cluster] for cluster in sampled_clusters]
+            indices = np.concatenate(pieces) if pieces else np.empty(0, dtype="int64")
+            boot_group = np.concatenate([np.full(len(piece), position, dtype="int64") for position, piece in enumerate(pieces)])
+            values = _sequential_metrics(
+                ratios[indices],
+                rewards[indices],
+                boot_group,
+                target_pred[indices] if target_pred is not None else None,
+                logged_pred[indices] if logged_pred is not None else None,
+            )
+            for key in samples:
+                if values.get(key) is not None:
+                    samples[key].append(float(values[key]))
+        bootstrap = {
+            "n_bootstrap": int(n_bootstrap),
+            "bootstrap_unit": "cluster",
+            **{key: _ci(np.asarray(values, dtype="float64")) for key, values in samples.items()},
+        }
+    return {
+        "status": "ok",
+        "rows": int(len(frame)),
+        "metrics": metrics,
+        "diagnostics": diagnostics,
+        "bootstrap": bootstrap,
+        "guidance": _ope_guidance(diagnostics, metrics),
+    }
+
+
 def _ope_guidance(diagnostics: dict[str, Any], metrics: dict[str, Any]) -> list[str]:
     rows = []
     if (diagnostics.get("coverage_rate") or 0.0) < 0.05:
