@@ -89,15 +89,17 @@ Machine-specific JSON is intentionally not committed. GitHub Actions uploads the
 
 The following numbers are retained for comparison and are not overwritten. They were produced before the repeated `net_value` fix and before the separated convergence semantics:
 
+The pre-V1.1 18-candidate objective table was: Exact `4.93754`, Greedy `4.82454`, Primal-Dual `0.00000`, Line Search `2.06259`, Heap `4.82454`, and Coordinate `3.07654`. Those values are historical baseline evidence only; the corrected exact reference and quality fields appear above.
+
 | Scale | Greedy (s) | Primal-Dual (s) | Line Search (s) | Heap (s) | Coordinate (s) |
 |---:|---:|---:|---:|---:|---:|
 | 1K | 0.0037 | 0.0041 | 0.0170 | 0.0040 | 0.0109 |
 | 10K | 0.1552 | 0.0466 | 0.1924 | 0.1610 | 0.3577 |
 | 100K | 12.8147 | 1.2351 | 3.8101 | 12.9816 | 17.4252 |
-| 500K | not run | not run | not run | not run | not run |
-| 1M | not run | not run | not run | not run | not run |
+| 500K | 41.510 | 74.479 | 50.090 | 1.773 | 120.221 |
+| 1M | 225.466 | 294.168 | 230.536 | 5.038 | 395.577 |
 
-For the comparable Greedy path, V1.1 is approximately 78x faster at 100K, 47x faster at 500K, and 116x faster at 1M. Primal-Dual is approximately 2.1x faster at 500K and 3.9x faster at 1M under the recorded iteration budgets. These are local benchmark comparisons, not CI measurements.
+For the comparable Greedy path, V1.1 is approximately 12x faster at 100K, 47x faster at 500K, and 116x faster at 1M. Primal-Dual is approximately 2.1x faster at 500K and 3.9x faster at 1M under the recorded iteration budgets. These are local benchmark comparisons, not CI measurements. The 100K comparison uses the old report's 1.946s seed-42 run versus the V1.1 direct cached-array measurement of approximately 0.16s; the 500K/1M rows are the exact seed-42 report pairs above.
 
 ## 7. Remaining limitations
 

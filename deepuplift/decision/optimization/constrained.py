@@ -352,14 +352,14 @@ def _dual_violations(
     slot_keys = set(constraints.slot_capacity) | set(usage["slot"])
     slot_residual = {
         slot: (usage["slot"].get(slot, 0) - int(constraints.slot_capacity.get(slot, 0))) / max(int(constraints.slot_capacity.get(slot, 0)), 1)
-        for slot in slot_keys
+        for slot in sorted(slot_keys, key=str)
     }
     action_residual: dict[Any, float] = {}
     if constraints.action_quota is not None:
         action_keys = set(constraints.action_quota) | set(usage["action"])
         action_residual = {
             action: (usage["action"].get(action, 0) - int(constraints.action_quota.get(action, 0))) / max(int(constraints.action_quota.get(action, 0)), 1)
-            for action in action_keys
+            for action in sorted(action_keys, key=str)
         }
     signed = {"budget": float(budget_residual), "slot": slot_residual, "action": action_residual}
     all_residuals = [budget_residual, *slot_residual.values(), *action_residual.values()]
