@@ -22,7 +22,7 @@ permissions:
 
 jobs:
   scale:
-    name: optimizer scale \${{ matrix.scale }}
+    name: optimizer scale ${{ matrix.scale }}
     runs-on: ubuntu-latest
     timeout-minutes: 45
     strategy:
@@ -50,19 +50,19 @@ jobs:
           mkdir -p scale-artifacts &&
           python scripts/run_push_optimizer_benchmark.py
           --seed 42
-          --scale \${{ matrix.scale }}
-          --output scale-artifacts/optimizer-\${{ matrix.scale }}.json
+          --scale ${{ matrix.scale }}
+          --output scale-artifacts/optimizer-${{ matrix.scale }}.json
       - name: Upload scale evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: push-optimizer-scale-\${{ matrix.scale }}-\${{ github.sha }}
+          name: push-optimizer-scale-${{ matrix.scale }}-${{ github.sha }}
           path: scale-artifacts/
           if-no-files-found: warn
           retention-days: 30
 
   opt-in-10m:
-    if: \${{ github.event_name == 'workflow_dispatch' && inputs.run_10m }}
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.run_10m }}
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
@@ -86,7 +86,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: push-optimizer-scale-10000000-\${{ github.sha }}
+          name: push-optimizer-scale-10000000-${{ github.sha }}
           path: scale-artifacts/
           if-no-files-found: warn
           retention-days: 30
