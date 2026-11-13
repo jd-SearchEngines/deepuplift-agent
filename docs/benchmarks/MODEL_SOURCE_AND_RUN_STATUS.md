@@ -14,13 +14,28 @@ name is not treated as evidence of a faithful paper reproduction.
 | DoseResponseGBM | native dose-conditioned GBM | **PASS** | factual holdout only; causal truth unavailable |
 | DRNet | native dose-stratified PyTorch network; source metadata points to VCNet project; no code copied | **PASS** | 8-epoch NHEFS factual smoke; not faithful full paper reproduction |
 | VCNet | native varying-coefficient Bernstein basis; VCNet-TR not included | **PASS** | 8-epoch NHEFS factual smoke; not VCNet-TR evidence |
-| CFRNet | representation/IPM balance | **NOT_RUN** | existing experimental adapter; no real NHEFS run in this phase |
+| TarNet | shared representation + treatment-specific outcome heads | **PASS** | 15 known-truth synthetic rows across 3 sizes × 5 seeds; MPS; architecture-inspired adapter |
+| CFRNet | representation/IPM balance | **PASS / PARTIAL** | balance=0/1 ablation ran on known-truth synthetic data; official TensorFlow source not run; no real NHEFS neural run |
+| DragonNet | propensity head + optional targeted regularization | **PASS / PARTIAL** | targeted on/off ablation ran on known-truth synthetic data; official TensorFlow source not run; no real NHEFS neural run |
 | EFIN | treatment-aware interaction and intervention constraint | **NOT_RUN** | no faithful real-data adapter in this phase |
 | DESCN | propensity/response/pseudo-effect heads and consistency constraints | **NOT_RUN** | no faithful real-data adapter in this phase |
 | MEMENTO / HydraNet / M3TN / MTMT | frontier multi-treatment architectures | **NOT_RUN** | required treatment contract/data not available |
 | CRNet/WDBN / HNet / GIKS real lane | continuous/frontier candidates | **NOT_RUN** | NHEFS truth and verified adapter gate not met |
 
-The real-data PASS labels above mean “the declared computation ran and emitted
+The new neural PASS labels mean “the declared architecture-inspired adapter
+ran and emitted finite known-truth diagnostics”; they are not official source
+reproductions. The real-data PASS labels above mean “the declared computation ran and emitted
 finite auditable diagnostics.” They do not mean causal validity, model
 superiority or business value. The authoritative aggregate artifact is
 [`bias_diagnostics.json`](bias_diagnostics.json).
+
+## Hillstrom randomized execution update (2026-11-14)
+
+The local real-data runner now executes Hillstrom pairwise baselines for
+conversion, visit and spend. All three outcomes completed 50/50 PASS rows
+(five seeds × two active-arm comparisons × five learners), using the known
+randomized probability rather than an estimated propensity model. These are
+`REAL_RANDOMIZED_EXTERNAL` results: ITT, Qini/AUUC, calibration and design-
+based policy value are reported, while PEHE and individual-effect bias remain
+`NOT_AVAILABLE`. See [EXPERIMENT_A_REPRODUCTION_LOG.md](EXPERIMENT_A_REPRODUCTION_LOG.md)
+for the source hash, commands, model table and warnings.

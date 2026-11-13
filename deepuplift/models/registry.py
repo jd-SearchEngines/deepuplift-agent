@@ -1,12 +1,18 @@
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Any, Callable
+from typing import Any
 
-from .adapters import CausalMLAdapter, CausalForestDMLAdapter, EconMLAdapter, SkLiftAdapter
+from .adapters import (
+    CausalForestDMLAdapter,
+    CausalMLAdapter,
+    SkLiftAdapter,
+)
 from .binary import DRLearner, IPWLearner, RLearner, SLearner, TLearner, XLearner
+from .binary.torch_causal import TorchBinaryCausalEstimator
 from .capabilities import DEFAULT_BINARY_CAPABILITIES, ModelCapabilities
-from .continuous import CCPFNAdapter, DRNet, DoseResponseGBM, GIKSEstimator, VCNet
+from .continuous import CCPFNAdapter, DoseResponseGBM, DRNet, GIKSEstimator, VCNet
 from .continuous.transtee import TransTEEContinuousAdapter
 from .multi import MultiTreatmentOutcomeModel
 
@@ -58,7 +64,22 @@ MODEL_REGISTRY: dict[str, ModelSpec] = {
     "SkLiftTwoModels": ModelSpec("SkLiftTwoModels", SkLiftAdapter, ModelCapabilities(backend="scikit-uplift"), "scikit-uplift", "sklift", "OPTIONAL", False, "Interface-only; no silent native fallback."),
 }
 
-for _deep_name in ("TarNet", "CFRNet", "DragonNet", "CEVAE", "GANITE", "DESCN", "EFIN", "EUEN", "EEUEN", "ContrastiveUpliftNet"):
+for _torch_causal_name in ("TarNet", "CFRNet", "DragonNet"):
+    MODEL_REGISTRY[_torch_causal_name] = ModelSpec(
+        _torch_causal_name,
+        lambda *, _name=_torch_causal_name, task="regression", random_state=42, **kwargs: TorchBinaryCausalEstimator(model_name=_name, task=task, random_state=random_state, **kwargs),
+        DEFAULT_BINARY_CAPABILITIES,
+        backend="native",
+        dependency="torch",
+        maturity="ARCHITECTURE_INSPIRED_VARIANT",
+        runnable=True,
+        notes="Unified adapter over retained DeepUplift network/loss definitions; not an official external repository reproduction.",
+        extra="torch",
+        paper={"TarNet": "Shalit et al., 2017", "CFRNet": "Shalit et al., 2017", "DragonNet": "Curth & van der Schaar, 2021"}[_torch_causal_name],
+        license="MIT (DeepUplift adapter); external source terms apply to referenced papers/repositories.",
+    )
+
+for _deep_name in ("CEVAE", "GANITE", "DESCN", "EFIN", "EUEN", "EEUEN", "ContrastiveUpliftNet"):
     MODEL_REGISTRY[_deep_name] = ModelSpec(_deep_name, lambda **kwargs: None, ModelCapabilities(), "legacy", None, "EXPERIMENTAL", False, "Deep implementation is retained for research compatibility; it is not a v0.3 runnable EffectPrediction adapter.")
 
 ALIASES = {"SLearnerGBM": "S-Learner", "TLearnerGBM": "T-Learner", "XLearnerGBM": "X-Learner", "DRLearnerGBM": "DR-Learner", "EconMLCausalForest": "CausalForestDML", "CausalForest": "CausalForestDML", "CausalMLUpliftRF": "CausalMLUpliftRandomForest"}
@@ -128,4 +149,4 @@ def build_model(model_name: str, *, task: str = "classification", random_state: 
     return spec.factory(task=task, random_state=random_state, **kwargs)
 
 
-__all__ = ["MODEL_REGISTRY", "ModelSpec", "available_models", "model_info", "build_model", "is_model_available", "missing_dependencies"]
+__all__ = ["MODEL_REGISTRY", "ModelSpec", "available_models", "build_model", "is_model_available", "missing_dependencies", "model_info"]

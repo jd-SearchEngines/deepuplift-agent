@@ -180,3 +180,47 @@ ground-truth ATE bias, causal model ranking and policy value remain
 `NOT_AVAILABLE`. The requested real Push MRT, Hillstrom, Criteo and X5 lanes
 remain `BLOCKED_ON_DATA` until their locally licensed files and target-trial
 contracts are supplied.
+
+## A1 neural mechanism run (2026-11-14)
+
+The first unified neural adapters now run independently through the stable
+`CausalDataset → fit → EffectPrediction` interface. The run used the existing
+known-truth binary fixture only, with sizes 1k/5k/10k, seeds 42/52/62/72/82,
+eight epochs, and MPS. It produced 75/75 PASS rows. Results and source audit
+are recorded in [EXPERIMENT_A_REPRODUCTION_LOG.md](EXPERIMENT_A_REPRODUCTION_LOG.md).
+
+The adapters are labelled `ARCHITECTURE_INSPIRED_VARIANT`, not official
+repository reproductions. TarNet PEHE was 0.0673 ± 0.0287. CFR balance=1 was
+0.0730 ± 0.0196 with paired delta +0.0057 and CI [-0.0028, 0.0142]. DragonNet
+without targeted regularization was 0.0682 ± 0.0253 with paired delta +0.0008
+and CI [-0.0018, 0.0034]. The short targeted-regularization setting was
+unstable in this run (PEHE 2.8896 ± 1.6812); this is a failed tuning result,
+not evidence that DragonNet is intrinsically inferior.
+
+Official CFRNet, DragonNet, EFIN and DESCN source repositories were inspected
+at pinned commits, but their legacy TensorFlow/CUDA/distributed/data stacks
+were not silently installed into the native MPS environment. EFIN, DESCN,
+EUEN/EEUEN, HydraNet, M3TN, SCIGAN and TransTEE remain blocked or not run with
+explicit reasons in the reproduction log.
+
+## Real randomized Hillstrom baseline (2026-11-14)
+
+Hillstrom is now available locally and was run with the known randomized
+assignment probability, pairwise Mens-vs-control and Womens-vs-control
+comparisons, five seeds and three outcomes. Each lane completed 50/50 PASS
+rows. The raw CSV and aggregate per-seed JSON remain outside Git; the source
+hash and command are in [EXPERIMENT_A_REPRODUCTION_LOG.md](EXPERIMENT_A_REPRODUCTION_LOG.md).
+
+| Outcome / arm | ITT | Qini/AUUC leader | Policy-increment leader | Evidence boundary |
+|---|---:|---|---:|---|
+| conversion / Mens | 0.007734 | T 21.5415 | S 0.007622 | randomized; no PEHE |
+| conversion / Womens | 0.002784 | S 9.2951 | S 0.002463 | randomized; no PEHE |
+| visit / Mens | 0.077830 | S 217.8461 | S 0.077755 | randomized; no PEHE |
+| visit / Womens | 0.044156 | X 165.0595 | X 0.044435 | randomized; no PEHE |
+| spend / Mens | 0.812912 | R 2394.4343 | DR 0.611201 | continuous outcome; no PEHE |
+| spend / Womens | 0.454647 | S/T/X 1223.2044 | DR 0.360620 | continuous outcome; no PEHE |
+
+The table is a model-selection diagnostic on a single randomized dataset, not
+a claim that the selected learner is causally superior. R-Learner's low target
+rate and the spend-lane Ridge conditioning warnings are retained as observed
+diagnostics. There is still no real Push/MRT result.

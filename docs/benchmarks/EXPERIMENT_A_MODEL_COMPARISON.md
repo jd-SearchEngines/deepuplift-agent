@@ -354,3 +354,13 @@ Real randomized data support design-based ITT, uplift ranking and valid policy e
 ## 13. Mandatory bias-diagnosis and repair mechanism
 
 See [BIAS_DIAGNOSIS_AND_REPAIR_PROTOCOL.md](BIAS_DIAGNOSIS_AND_REPAIR_PROTOCOL.md). Model comparison must include the mechanism-level bias diagnosis and correction ablations described there. A model's architecture or paper claim is not evidence that a bias was removed. Report the exact formula, nuisance models, diagnostics before/after, ESS and estimand changes, uncertainty, and residual assumptions for every correction. This applies across binary, multi-arm, continuous-dose and repeated-decision settings.
+
+## 2026-11-14 execution update
+
+The first five-seed neural mechanism lane is now executable through the stable
+adapter: TarNet, CFRNet balance ablations and DragonNet targeted-regularization
+ablations ran at 1k/5k/10k on MPS. They are recorded as
+`ARCHITECTURE_INSPIRED_VARIANT`, not official-source reproductions. Official
+legacy repositories were source-audited and their exact commits, dependencies
+and blockers are recorded in
+[EXPERIMENT_A_REPRODUCTION_LOG.md](EXPERIMENT_A_REPRODUCTION_LOG.md).

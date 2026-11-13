@@ -324,3 +324,14 @@ Experiment A is not complete because every model name appears in a table. It is 
 8. Model ranking is reported separately for effect accuracy, uplift ranking, calibration, policy value and efficiency.
 9. The report identifies where the simpler model is statistically indistinguishable from the frontier model.
 10. The result includes a recommendation for the actual CRM Push data regime, not a generic claim that the newest model is best.
+
+## 2026-11-14 measured status
+
+TarNet/CFRNet/DragonNet now have a runnable DeepUplift adapter and a
+five-seed, three-size mechanism run, but the maturity is explicitly
+`ARCHITECTURE_INSPIRED_VARIANT`. CFRNet and DragonNet official repositories
+remain separate legacy-source audits and are not claimed as reproduced. EFIN,
+DESCN, EUEN/EEUEN, HydraNet, M3TN, SCIGAN and TransTEE have concrete source or
+data/runtime blockers; see
+[EXPERIMENT_A_REPRODUCTION_LOG.md](EXPERIMENT_A_REPRODUCTION_LOG.md). This
+catalogue is not promoted to COMPLETE by model-name coverage.

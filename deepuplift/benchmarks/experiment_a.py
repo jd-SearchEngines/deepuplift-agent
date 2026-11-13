@@ -9,26 +9,26 @@ contract and does not alter the public model APIs.
 
 from __future__ import annotations
 
-from collections.abc import Iterable
 import hashlib
 import math
 import resource
 import sys
 import threading
 import time
+from collections.abc import Iterable
 from typing import Any
 
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-from deepuplift.contracts import AssignmentType, TreatmentType
-from deepuplift.data.public.datasets import synthetic_ground_truth
-from deepuplift.data.schema import create_causal_dataset
-from deepuplift.data.nuisance import estimate_nuisance
 from deepuplift.benchmarks.continuous.datasets import synthetic_dose_response
 from deepuplift.benchmarks.continuous.suite import run_continuous_suite
 from deepuplift.benchmarks.metrics import evaluate_prediction
+from deepuplift.contracts import AssignmentType, TreatmentType
+from deepuplift.data.nuisance import estimate_nuisance
+from deepuplift.data.public.datasets import synthetic_ground_truth
+from deepuplift.data.schema import create_causal_dataset
 from deepuplift.models import build_model, model_info
 from deepuplift.models.binary import TLearner
 
@@ -44,7 +44,7 @@ class _PeakRSS:
 
             self._process = psutil.Process()
             self.method = "psutil_rss_sampled"
-        except Exception:
+        except Exception:  # noqa: BLE001 - optional RSS sampler must not abort a benchmark
             self._process = None
             self.method = "ru_maxrss_process_lifetime"
 
@@ -101,7 +101,7 @@ def _aggregate_rows(rows: list[dict[str, Any]], metric: str) -> dict[str, Any]:
             result[model] = {"n": 0, "mean": None, "std": None, "ci95": None}
             continue
         array = np.asarray(values, dtype="float64")
-        result[model] = {"n": int(len(array)), "mean": float(array.mean()), "std": float(array.std(ddof=1)) if len(array) > 1 else 0.0, "ci95": _ci95(array)}
+        result[model] = {"n": len(array), "mean": float(array.mean()), "std": float(array.std(ddof=1)) if len(array) > 1 else 0.0, "ci95": _ci95(array)}
     return result
 
 
@@ -169,10 +169,82 @@ def run_binary_comparison(
                         "prediction_fingerprint": _fingerprint(prediction.cate),
                         "split": "stratified row split; deterministic seed",
                     })
-                except Exception as exc:
+                except Exception as exc:  # noqa: BLE001 - record per-model failures and continue
                     rows.append({"model": name, "size": int(size), "seed": int(seed), "status": "FAIL", "maturity": info["maturity"], "runtime_seconds": time.perf_counter() - started, "peak_rss_mb": sampler.stop(), "memory_measurement": sampler.method, "error": f"{type(exc).__name__}: {exc}"})
     metrics = ["pehe", "ate_bias", "qini", "auuc", "calibration_mae", "policy_net_value", "runtime_seconds", "peak_rss_mb"]
     return {"evidence_class": "SYNTHETIC_SCALE_STRESS", "config": {"sizes": list(map(int, sizes)), "seeds": list(map(int, seeds)), "models": list(models), "test_size": test_size}, "rows": rows, "aggregate": {metric: _aggregate_rows(rows, metric) for metric in metrics}, "paired_vs_s_learner": _paired_delta(rows, "pehe", "S-Learner"), "limitations": ["MRT raw data was not available locally; these rows are not Push-derived semi-synthetic evidence.", "Peak RSS is sampled process RSS and includes shared interpreter state.", "Real randomized datasets are not represented in this section."], "status": "PASS" if any(row.get("status") == "PASS" for row in rows) else "BLOCKED"}
+
+
+def run_binary_neural_comparison(
+    *,
+    sizes: Iterable[int] = (1000, 5000, 10000),
+    seeds: Iterable[int] = (42, 52, 62, 72, 82),
+    epochs: int = 8,
+    batch_size: int = 256,
+    hidden_dim: int = 32,
+    share_dim: int = 8,
+    neural_device: str = "auto",
+) -> dict[str, Any]:
+    """Run independent CATE predictions for the first neural A1 adapters."""
+    rows: list[dict[str, Any]] = []
+    variants = [
+        ("TarNet", "TarNet", {}),
+        ("CFRNet_balance0", "CFRNet", {"balance_strength": 0.0}),
+        ("CFRNet_balance1", "CFRNet", {"balance_strength": 1.0}),
+        ("DragonNet_plain", "DragonNet", {"targeted_regularization": False}),
+        ("DragonNet_targeted", "DragonNet", {"targeted_regularization": True}),
+    ]
+    for size in sizes:
+        for seed in seeds:
+            dataset = _binary_dataset(int(size), int(seed))
+            indices = np.arange(len(dataset.to_pandas()))
+            train_idx, test_idx = train_test_split(indices, test_size=.25, random_state=int(seed), stratify=dataset.treatment)
+            train, test = dataset.subset(train_idx), dataset.subset(test_idx)
+            for label, model_name, variant_options in variants:
+                sampler = _PeakRSS()
+                sampler.start()
+                started = time.perf_counter()
+                requested = neural_device
+                fallback_reason = None
+                try:
+                    model = build_model(model_name, task="regression", random_state=int(seed), epochs=epochs, batch_size=batch_size, hidden_dim=hidden_dim, share_dim=share_dim, device=requested, **variant_options)
+                    model.fit(train)
+                except (RuntimeError, FloatingPointError) as exc:
+                    if requested != "auto" and requested != "mps":
+                        rows.append({"model": label, "base_model": model_name, "size": int(size), "seed": int(seed), "status": "FAIL", "requested_device": requested, "runtime_seconds": time.perf_counter() - started, "peak_rss_mb": sampler.stop(), "error_type": type(exc).__name__, "error": str(exc)[:1000]})
+                        continue
+                    fallback_reason = f"{type(exc).__name__}: {exc}"
+                    try:
+                        model = build_model(model_name, task="regression", random_state=int(seed), epochs=epochs, batch_size=batch_size, hidden_dim=hidden_dim, share_dim=share_dim, device="cpu", **variant_options)
+                        model.fit(train)
+                    except Exception as fallback_exc:  # noqa: BLE001 - record fallback cause and continue
+                        rows.append({"model": label, "base_model": model_name, "size": int(size), "seed": int(seed), "status": "FAIL", "requested_device": requested, "runtime_seconds": time.perf_counter() - started, "peak_rss_mb": sampler.stop(), "error_type": type(fallback_exc).__name__, "error": str(fallback_exc)[:1000], "initial_error": fallback_reason})
+                        continue
+                try:
+                    prediction = model.predict(test)
+                    metrics = evaluate_prediction(prediction, test, true_effect_col="true_effect")
+                    truth = metrics["ground_truth"]
+                    rows.append({
+                        "model": label, "base_model": model_name, "size": int(size), "seed": int(seed), "status": "PASS",
+                        "maturity": "ARCHITECTURE_INSPIRED_VARIANT", "requested_device": requested,
+                        "device": prediction.metadata.get("device", getattr(model, "device", "cpu")), "fallback_reason": fallback_reason,
+                        "runtime_seconds": time.perf_counter() - started, "peak_rss_mb": sampler.stop(), "memory_measurement": sampler.method,
+                        "pehe": truth.get("pehe"), "ate_bias": truth.get("ate_bias"), "qini": metrics["ranking"].get("qini"), "auuc": metrics["ranking"].get("auuc"),
+                        "calibration_mae": metrics["calibration"].get("mae"), "policy_net_value": metrics["policy"].get("net_value"),
+                        "prediction_fingerprint": _fingerprint(prediction.cate), "training_epochs": epochs, "balance_strength": variant_options.get("balance_strength"), "targeted_regularization": variant_options.get("targeted_regularization"),
+                    })
+                except Exception as exc:  # noqa: BLE001 - record per-model failures and continue
+                    rows.append({"model": label, "base_model": model_name, "size": int(size), "seed": int(seed), "status": "FAIL", "runtime_seconds": time.perf_counter() - started, "peak_rss_mb": sampler.stop(), "error_type": type(exc).__name__, "error": str(exc)[:1000]})
+    metrics = ["pehe", "ate_bias", "qini", "auuc", "calibration_mae", "policy_net_value", "runtime_seconds", "peak_rss_mb"]
+    return {
+        "evidence_class": "SYNTHETIC_SCALE_STRESS",
+        "config": {"sizes": list(map(int, sizes)), "seeds": list(map(int, seeds)), "epochs": epochs, "batch_size": batch_size, "hidden_dim": hidden_dim, "share_dim": share_dim, "neural_device": neural_device, "variants": [label for label, _, _ in variants]},
+        "rows": rows,
+        "aggregate": {metric: _aggregate_rows(rows, metric) for metric in metrics},
+        "paired_vs_tarnet": _paired_delta(rows, "pehe", "TarNet"),
+        "limitations": ["These are architecture-inspired adapters over retained DeepUplift definitions, not official external repository reproductions.", "The DGP is known-truth synthetic scale stress, not real Push or semi-synthetic MRT evidence.", "CFR balance and Dragon targeted regularization are toggled and recorded separately."],
+        "status": "PASS" if rows and all(row.get("status") == "PASS" for row in rows) else "PARTIAL" if any(row.get("status") == "PASS" for row in rows) else "BLOCKED",
+    }
 
 
 def _multi_dataset(rows: int, seed: int):
@@ -226,7 +298,7 @@ def run_multi_comparison(*, sizes: Iterable[int] = (5000, 20000), seeds: Iterabl
             dataset = _multi_dataset(int(size), int(seed))
             indices = np.arange(len(dataset.to_pandas()))
             train_idx, test_idx = train_test_split(indices, test_size=.25, random_state=int(seed), stratify=dataset.treatment)
-            train_frame, test_frame = dataset.to_pandas().iloc[train_idx], dataset.to_pandas().iloc[test_idx]
+            test_frame = dataset.to_pandas().iloc[test_idx]
             test_mask = np.column_stack([np.ones(len(test_frame), dtype=bool), test_frame["eligible_1"].to_numpy().astype(bool), test_frame["eligible_2"].to_numpy().astype(bool)])
             # One-vs-control uses the same outer split and has one method-specific fit per arm.
             started, sampler = time.perf_counter(), _PeakRSS()
@@ -243,7 +315,7 @@ def run_multi_comparison(*, sizes: Iterable[int] = (5000, 20000), seeds: Iterabl
                 truth = {arm: test_frame[f"true_tau_{arm}"].to_numpy() for arm in (1, 2)}
                 arm_metrics = {str(arm): {"pehe": float(np.sqrt(np.mean((arm_effects[arm][test_mask[:, arm]] - truth[arm][test_mask[:, arm]]) ** 2))), "ate_bias": float(np.mean(arm_effects[arm][test_mask[:, arm]]) - np.mean(truth[arm][test_mask[:, arm]])), "eligible_test_rows": int(test_mask[:, arm].sum())} for arm in (1, 2)}
                 rows.append({"model": "One-vs-Control", "size": int(size), "seed": int(seed), "status": "PASS", "runtime_seconds": time.perf_counter() - started, "peak_rss_mb": sampler.stop(), "device": "cpu", "arm_metrics": arm_metrics, **policy})
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 - record the failed benchmark row
                 rows.append({"model": "One-vs-Control", "size": int(size), "seed": int(seed), "status": "FAIL", "runtime_seconds": time.perf_counter() - started, "peak_rss_mb": sampler.stop(), "error": f"{type(exc).__name__}: {exc}"})
             started, sampler = time.perf_counter(), _PeakRSS()
             sampler.start()
@@ -255,7 +327,7 @@ def run_multi_comparison(*, sizes: Iterable[int] = (5000, 20000), seeds: Iterabl
                 policy = _multi_policy_metrics(test_frame, effects, mask=test_mask)
                 arm_metrics = {str(arm): {"pehe": float(np.sqrt(np.mean((effects[arm][test_mask[:, arm]] - test_frame.loc[test_frame.index, f"true_tau_{arm}"].to_numpy()[test_mask[:, arm]]) ** 2))), "ate_bias": float(np.mean(effects[arm][test_mask[:, arm]]) - np.mean(test_frame[f"true_tau_{arm}"].to_numpy()[test_mask[:, arm]])), "eligible_test_rows": int(test_mask[:, arm].sum())} for arm in (1, 2)}
                 rows.append({"model": "MultiTreatmentOutcome", "size": int(size), "seed": int(seed), "status": "PASS", "runtime_seconds": time.perf_counter() - started, "peak_rss_mb": sampler.stop(), "device": "cpu", "arm_metrics": arm_metrics, **policy})
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 - record the failed benchmark row
                 rows.append({"model": "MultiTreatmentOutcome", "size": int(size), "seed": int(seed), "status": "FAIL", "runtime_seconds": time.perf_counter() - started, "peak_rss_mb": sampler.stop(), "error": f"{type(exc).__name__}: {exc}"})
     return {"evidence_class": "SYNTHETIC_SCALE_STRESS", "config": {"sizes": list(map(int, sizes)), "seeds": list(map(int, seeds)), "models": ["One-vs-Control", "MultiTreatmentOutcome"], "arms": [0, 1, 2], "eligibility_mask": True}, "rows": rows, "limitations": ["The MRT raw context was unavailable, so this is not Push-derived semi-synthetic evidence.", "The unified model is the existing shared API adapter, not MEMENTO/HydraNet/M3TN/MTMT or EFIN.", "Policy metrics use generated truth and an explicit eligibility mask."], "status": "PASS" if any(row.get("status") == "PASS" for row in rows) else "BLOCKED"}
 
@@ -311,4 +383,4 @@ def frontier_status() -> list[dict[str, Any]]:
     return statuses
 
 
-__all__ = ["run_binary_comparison", "run_multi_comparison", "run_continuous_comparison", "frontier_status"]
+__all__ = ["frontier_status", "run_binary_comparison", "run_binary_neural_comparison", "run_continuous_comparison", "run_multi_comparison"]

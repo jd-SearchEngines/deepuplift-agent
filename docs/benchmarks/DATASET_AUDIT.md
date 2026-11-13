@@ -33,3 +33,19 @@ hash for the raw file plus a field map for participant ID, decision time,
 candidate eligibility, assignment probability, actual delivery, outcome
 window and censoring. The loader must then run the existing data audit before
 any model or policy result is reported.
+
+## Audit update: Hillstrom retrieved and executed (2026-11-14)
+
+The previous audit correctly recorded Hillstrom as absent at audit time. A
+subsequent bounded retrieval added the public CSV to the local ignored path
+`.local/experiment-a/raw/hillstrom.csv`; it is not committed. SHA-256 is
+`0e5893329d8b93cefecc571777672028290ab69865718020c78c7284f291aece`.
+The real-randomized lane completed conversion, visit and spend outcomes with
+50/50 PASS rows per outcome. This changes Hillstrom from historical
+`BLOCKED_ON_DATA` to **RUN / REAL_RANDOMIZED_EXTERNAL** for the current local
+environment only. It does not change the status of myBPmyLife, Criteo, X5 or
+the Push longitudinal lane.
+
+The raw source was obtained from the MineThatData Hillstrom email experiment
+CSV and must be re-checked by a user before redistribution; only its hash,
+aggregate metrics and reproduction command are documented in Git.
