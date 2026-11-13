@@ -139,3 +139,8 @@ For each blocker, record the exact command, stack trace, environment, dataset si
 - Real paired: pair-level effect/contrast with assumptions.
 - Semi-synthetic: PEHE, ATE bias, dose-response curve error and oracle regret only in auxiliary lane.
 - No pooled leaderboard across evidence classes.
+
+
+## 9. Bias-diagnosis implementation companion
+
+Use [BIAS_DIAGNOSIS_AND_REPAIR_PROTOCOL.md](BIAS_DIAGNOSIS_AND_REPAIR_PROTOCOL.md) as the required companion for all dataset and model runs. The dataset register identifies where each evidence class is available; the companion protocol specifies how to diagnose measured confounding, selection, overlap, rare arms, continuous-dose support, repeated-decision bias, missingness, noncompliance and interference, and how to verify each correction.
