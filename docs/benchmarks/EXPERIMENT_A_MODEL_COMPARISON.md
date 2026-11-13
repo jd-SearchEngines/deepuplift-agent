@@ -315,3 +315,37 @@ Every model must have an explicit maturity status: official code reproduced, fai
 The Tier-1 catalogue models must be executed or have a concrete blocker. Tier-2 candidates should be implemented where practical; Tier-3 research-only candidates must be documented and must not block the core experiment. Report per-seed results, paired uncertainty intervals, sample-size and arm-imbalance stress, and separate rankings for CATE accuracy, uplift ranking, calibration, policy value and efficiency.
 
 The original Sections 4–6 and Section 10 remain applicable where they do not conflict with this expansion. Where they list a narrower model set, this Section 11 and the frontier catalogue take precedence.
+
+
+---
+
+## 12. Revised research policy — real data and runnable source code first (2026-11-13)
+
+This section supersedes any earlier wording that makes a Push-derived or CRM-specific semi-synthetic dataset the primary benchmark.
+
+### 12.1 General research scope
+
+Experiment A is a general causal inference / uplift model comparison across public application domains. Shopee CRM Push is a motivating example only. Do not force unrelated public data into a CRM campaign schema.
+
+### 12.2 Evidence priority
+
+1. Real randomized data: Criteo, Hillstrom, myBPmyLife MRT, and Jobs/NSW where design fields are verified.
+2. Real observational data: Lenta, X5 RetailHero, MegaFon, NHEFS continuous exposure. Use for confounding, overlap, balance and sensitivity diagnostics; do not claim randomized truth.
+3. Real paired-outcome data: Twins, with pair-level assumptions explicitly documented.
+4. Auxiliary semi-synthetic / synthetic data: only to validate PEHE, known-truth CATE, dose-response MISE and metric implementation. It is not the main leaderboard.
+
+### 12.3 Source-code priority
+
+Prefer official repositories or maintained libraries. A paper without a verified source repository is paper-only and must not block the core benchmark. Third-party code must be labeled as such. Record exact commit, license, dependencies, original data contract, training command and fidelity status.
+
+### 12.4 Downsampling and execution
+
+A full dataset or model failing to run is not a reason to abandon it immediately. Use a staged run ladder: all rows for small datasets, then 1k, 5k–10k, 50k–100k, and full data where feasible. Reduce sample size before changing the model. If a source requires CUDA-only operations, legacy dependencies or unavailable data, attempt an isolated environment or faithful port and log the exact blocker.
+
+### 12.5 Required blocker diagnostics
+
+Every blocked run must state whether the cause is data access, license, dependency conflict, CUDA-only code, MPS unsupported op, memory OOM, runtime, schema mismatch, missing reproduction details, numerical instability or invalid estimand/metric. Include command, stack trace, versions, sample size, device, elapsed time, memory peak and attempted remediation.
+
+### 12.6 Result interpretation
+
+Real randomized data support design-based ITT, uplift ranking and valid policy evaluation, but not individual PEHE unless individual counterfactuals are genuinely observed. Real observational data support diagnostics and sensitivity analyses, not a ground-truth model ranking. Keep each evidence class in a separate leaderboard.
