@@ -1,215 +1,145 @@
-# Codex Prompt — Execute Experiment A on the User's Local Mac (M3 Max, 64 GB)
+# Codex Prompt — Real-Data-First Experiment A on Local Mac
 
-You are running inside the user's local Codex environment on their Apple Silicon Mac. Execute the work locally. **Do not provision a cloud GPU, rent a server, use GitHub Actions as the training machine, or send the data to an external API.**
+You are running inside the user's local Codex environment on an Apple Silicon Mac M3 Max, 64 GB unified memory.
+
+**Research correction:** Real public data is the primary benchmark. Shopee CRM Push is only a motivating example, not the required data schema or research boundary. Use real randomized and real observational datasets first. Semi-synthetic data is auxiliary only for known-truth metric checks. Prefer models with accessible source code. If a full run does not fit or takes too long, reduce sample size and run the model; do not abandon it without a measured reason.
 
 Repository: `jd-SearchEngines/deepuplift-agent`  
 Branch: `codex/push-mrt-causal-benchmark`
 
-Read these documents completely before changing code:
+Read:
 1. `docs/benchmarks/EXPERIMENT_A_LOCAL_EXECUTION_PLAN.md`
-2. `docs/benchmarks/EXPERIMENT_A_MODEL_COMPARISON.md`
-3. `docs/benchmarks/EXPERIMENT_A_FRONTIER_MODEL_CATALOG.md`
-4. `docs/benchmarks/EXPERIMENT_A_EXECUTOR_PROMPT.md`
-5. `docs/benchmarks/PUSH_CAUSAL_BENCHMARK_PLAN.md`
-6. `docs/benchmarks/DATASETS.md`
-7. `examples/datasets/manifest.json`
+2. `docs/benchmarks/EXPERIMENT_A_REAL_DATA_AND_CODE_REGISTER.md`
+3. `docs/benchmarks/EXPERIMENT_A_MODEL_COMPARISON.md`
+4. `docs/benchmarks/EXPERIMENT_A_FRONTIER_MODEL_CATALOG.md`
+5. `docs/benchmarks/EXPERIMENT_A_EXECUTOR_PROMPT.md`
+6. `examples/datasets/manifest.json`
 
-The local execution plan is the source of truth for hardware, data, sample sizes, experiment stages and evidence boundaries.
+The revised local execution plan and real-data/source-code register supersede any older instruction that makes a synthetic CRM dataset the primary benchmark.
 
-## 1. First inspect; do not overwrite the existing project
+## 1. Inspect before changing anything
 
-Before doing anything:
-- run `pwd`, `git status --short --branch`, `git branch --show-current`, `git rev-parse HEAD`;
-- confirm the repository is the expected project and branch;
-- inspect `.gitignore`, current virtual environments, data directories and available disk space;
-- inspect the existing P0/P1/P2/P3 reports and relevant loaders/runners;
-- determine whether myBPmyLife, Hillstrom, Criteo, X5, IHDP and ACIC files are actually present locally;
-- do not assume a dataset is present because a report from an earlier machine says it was used.
+- Check `pwd`, `git status --short --branch`, current branch, HEAD SHA.
+- Preserve dirty worktree changes. Do not reset, clean, delete, force checkout or overwrite user files.
+- Inspect existing P0/P1/P2/P3/P4/P5 code, reports, loaders and tests.
+- Inspect local data directories, file sizes, available disk and existing virtual environments.
+- Verify every dataset exists before marking it available.
+- Inspect .gitignore and make sure raw data/checkpoints/logs are excluded.
 
-Do not reset, clean, force checkout, overwrite user changes, delete data, or change branches without explicit user approval. If the worktree is dirty, preserve the changes and work around them.
+## 2. Local environment
 
-## 2. Native Mac environment and MPS preflight
+- Use native macOS Python, isolated `.venv-experiment-a`.
+- Verify arm64, macOS, Python, PyTorch, MPS availability and an actual forward/backward smoke test.
+- Use CPU for classical models and unsupported methods; use MPS only for supported PyTorch operations.
+- Do not assume CUDA is available.
+- Do not blindly install old requirements. For legacy TensorFlow 1.x, old PyTorch, XDL, custom CUDA ops or incompatible Numba, isolate the source environment or port faithfully only when practical.
+- Log all versions and device/fallback information.
 
-Use native macOS Python, not a Linux Docker container for the MPS path.
+## 3. Real datasets first
 
-- Prefer a new isolated `.venv-experiment-a`; do not damage the existing `.venv`.
-- Inspect `pyproject.toml` and optional dependencies before installing.
-- Do not blindly install all of `requirements.txt`; old pinned numba/llvmlite packages may be incompatible with current Apple Silicon/Python.
-- Verify `uname -m`, macOS version, Python, RAM, disk, PyTorch version, MPS availability and a real forward/backward smoke test.
-- Use CPU for sklearn/EconML/CausalML/tree/forest models unless their implementation explicitly supports another backend.
-- Use MPS for supported PyTorch neural models.
-- PyTorch MPS does not support float64. Route float64-dependent methods to CPU or use a mathematically safe float32 implementation with a numerical-equivalence test.
-- If using `PYTORCH_ENABLE_MPS_FALLBACK=1`, record every model's fallback status; do not report a mixed CPU/MPS run as pure MPS.
-- Run neural jobs sequentially to avoid exhausting unified memory. Limit CPU thread counts and log them.
-- Save exact package versions and device/backend in every run manifest.
+Use the data and source register as the source of truth.
 
-Produce `docs/benchmarks/LOCAL_MAC_PREFLIGHT.md` and a machine-readable local environment manifest before the full benchmark.
+### A1 binary
+1. Criteo Uplift v2.1: real randomized advertising data; treatment assignment and exposure are separate. Try 10k/100k, then 500k/1m, then full 13.98m only if feasible.
+2. Hillstrom: 64k randomized email customers, three arms. Use pairwise treatment-vs-control comparisons.
+3. myBPmyLife MRT: real randomized repeated notification data, participant-clustered.
+4. Jobs/NSW and Twins: optional external causal validation with their own design caveats.
+5. X5/Lenta/MegaFon: real observational marketing data, only for overlap/confounding/robustness diagnostics unless assignment is verified.
 
-## 3. Data — use this exact plan
+### A2 multi-treatment
+1. Hillstrom three-arm randomized marketing experiment.
+2. myBPmyLife three-arm MRT, preserving separate outcome definitions.
+3. MultiTwins only after source and treatment encoding are verified.
+4. Lenta/X5/MegaFon only if true multi-arm assignment fields exist; otherwise keep in binary/observational lane.
 
-Do not invent or merge datasets. Follow `EXPERIMENT_A_LOCAL_EXECUTION_PLAN.md`.
+### A3 continuous treatment
+1. NHEFS real observational data: test baseline smoking intensity (cigarettes/day) as continuous exposure and follow-up weight change as outcome, after verifying raw fields and time ordering.
+2. Run GPS/spline and CausalGPS as interpretable baselines.
+3. Run source-backed DRNet, VCNet and GIKS where feasible.
+4. SCIGAN/TransTEE only if their source code and dependencies can run.
+5. Do not claim NHEFS provides randomized dose-response or individual counterfactual truth. Do not report PEHE.
 
-### Primary Push dataset: myBPmyLife MRT
-- Source: https://github.com/WIRED-L-um/MRT_myBPmyLife
-- Published scale: 187,517 decision points, 298 participants (287 with analyzable data).
-- Arms: none/activity/diet, declared assignment probabilities 0.75/0.125/0.125 after local schema verification.
-- Outcomes stay separate: activity → steps in next 60 minutes; diet → low-sodium choice in next 24 hours.
-- Participant-grouped split and participant-cluster uncertainty.
-- This is real repeated randomized Push-context evidence, not continuous-dose randomization and not individual counterfactual truth.
-- Keep raw data local-only. Treat participant-level health/behavior records as sensitive. Do not commit or upload them.
+### Auxiliary known-truth validation
+Use small IHDP/ACIC/benchmark-provided semi-synthetic data only for validating PEHE, known-truth CATE and dose-response metric implementations. Do not make this the main leaderboard.
 
-### Hillstrom RCT
-- Source: https://hillstorm1.s3.us-east-2.amazonaws.com/hillstorm_no_indices.csv.gz
-- 64,000 customers, approximately one-third each: men's email, women's email, no email.
-- Use as the main real three-arm randomized marketing benchmark (A2), and pairwise A1 checks.
-- Outcomes visit/conversion/spend remain separate.
-- No PEHE on real data.
+## 4. Source-code-first model execution
 
-### Criteo unbiased uplift v2.1
-- Official source: https://ailab.criteo.com/criteo-uplift-prediction-dataset/
-- Use unbiased v2.1 only: 13,979,592 rows, 12 dense features, treatment, exposure, visit and conversion.
-- Run 100k, 500k and 1m samples first. Full data only after memory/runtime preflight.
-- Keep treatment assignment and actual exposure separate. Do not infer exact propensity from observed treatment ratio.
-- Use uplift ranking metrics; no PEHE.
-- License is CC BY-NC-SA 4.0; never commit raw data and review terms before redistribution/commercial use.
+For each candidate:
+- locate the exact official repo first;
+- if no official repo exists, classify any third-party code as third-party reproduction;
+- record license, commit SHA, dependencies, dataset assumptions and training command;
+- do not confuse similarly named repositories or models;
+- do not call a simplified architecture the original paper implementation.
 
-### Push-derived semi-synthetic known-truth datasets
-This is the primary source for comparing CATE/response-curve accuracy:
-- derive pre-treatment context/history from myBPmyLife and optionally Hillstrom;
-- generate all potential outcomes before assignment;
-- keep truth out of model features in a separate evaluator object;
-- binary: constant/linear, nonlinear interaction, sparse high-uplift subgroup;
-- multi-treatment: 3-arm and 6-arm, with arm imbalance and per-user eligibility masks;
-- continuous: dose 0–5 assigned interventions in a fixed future 7-day policy window, holding content mix fixed in the DGP; include monotone, saturation and inverted-U fatigue curves;
-- include pre-decision history: prior 7d/30d push count, time since last push, prior response and activity;
-- main sizes 5k and 20k, at least five fixed seeds.
-- preserve participant/source-cluster IDs when resampling MRT context and use cluster-aware splitting. Do not claim synthetic repeated rows are new real people.
+Prioritize executable source-backed candidates:
+- A1: S/T/X/R/DR via maintained libraries; Causal Forest/GRF; EFIN; DESCN; EUEN/EEUEN; DragonNet/TARNet/CFRNet/FlexTENet where source is verified.
+- A2: One-vs-Control; multi-arm shared-head baseline; M3TN source/reproduction; HydraNet if exact repo is verified. MEMENTO/MTMT are not blockers if matching source code is unavailable.
+- A3: GPS/spline, CausalGPS, DoseResponseGBM, DRNet, VCNet, GIKS, SCIGAN, TransTEE where exact source is available and runs.
 
-### X5 RetailHero SMS
-Optional observational robustness only. Public assignment randomization is not established. Do not use as randomized truth, do not compute PEHE, and do not use it to rank causal estimators by true effect accuracy.
+HNet, DR²CE, DRVAE, CRNet/WDBN and any other frontier candidate must remain conditional until source code, dependencies and fidelity are verified. Do not implement paper-only candidates before the source-backed benchmark is running.
 
-### IHDP / ACIC
-Optional external semi-synthetic checks only if files are already available or can be obtained under verified terms. Do not let them block Push/Hillstrom/Criteo experiments.
+## 5. Run ladder: never just say “it doesn't run”
 
-Update `examples/datasets/manifest.json` with actual local availability and metadata, but never put private absolute paths, participant rows or raw data into Git. Do not change NOT_AVAILABLE to AVAILABLE unless files are verified locally.
+For each dataset × model:
+1. inspect README, license, requirements, data schema and official run command;
+2. environment import and model-instantiation smoke test;
+3. one forward/backward pass;
+4. 1k rows or full small dataset, one seed, one epoch/minimum schedule;
+5. 5k–10k rows, one seed;
+6. 50k–100k rows or full dataset if smaller;
+7. full data if memory/time allows;
+8. after stability, three seeds for initial results and five for final core comparisons.
 
-## 4. Execute the full experiment in stages
+If the model is too slow, reduce rows, epochs, batch size, hidden width, tuning budget or seeds. Record each reduction and preserve the original model objective/architecture. If the architecture itself must change, relabel it as an adaptation.
 
-Proceed across A1 → A2 → A3 in one coherent effort. Do not stop after writing a plan or only implementing scaffolding.
+## 6. Mandatory run-failure diagnosis
 
-### Stage 0 — preflight
-Complete the local environment audit and data availability audit. Do not launch model training until the MPS/CPU smoke tests pass.
+Every failure must be classified and documented:
+- DATA_DOWNLOAD_OR_ACCESS
+- LICENSE_OR_TERMS
+- DEPENDENCY_CONFLICT
+- CUDA_ONLY
+- MPS_UNSUPPORTED_OP
+- MEMORY_OOM
+- RUNTIME_TOO_SLOW
+- DATA_SCHEMA_MISMATCH
+- REPRODUCTION_GAP
+- NUMERICAL_FAILURE
+- METRIC_OR_ESTIMAND_INVALID
 
-### Stage 1 — reproduce existing baselines
-Re-run the current P1/P2/P3 smoke commands using the local environment and available data. Verify that historical results are reproducible or document why the current local data/code differs. Preserve old evidence; do not overwrite historical reports.
+For each failure include exact command, stack trace excerpt, environment versions, dataset size, backend, elapsed time, peak memory, attempted fixes, small-sample result and final status.
 
-### Stage 2 — A1 binary
-Compare:
-- S/T/X/R/DR;
-- Causal Forest/GRF where compatible;
-- TARNet/CFRNet;
-- DragonNet;
-- FlexTENet;
-- EFIN;
-- DESCN;
-- EUEN/EEUEN;
-- TransTEE/HyperITE if faithful local implementation is practical.
+Remediation order:
+- verify source and license;
+- isolate dependency environment;
+- run tiny data and short schedule;
+- remove unnecessary multi-GPU launcher assumptions only if the algorithm permits;
+- try CPU/MPS-compatible path;
+- reduce sample/epochs/batch/seeds;
+- make a faithful port only with tests;
+- otherwise mark BLOCKED with evidence and continue to the next model.
 
-Use Push-derived known-truth binary DGPs (5k/20k, five seeds) for PEHE and oracle policy regret. Use Hillstrom and myBPmyLife for real randomized validation. Use Criteo for 100k/500k/1m scale and Qini/AUUC.
+Never silently substitute a different model or fabricate metrics.
 
-EFIN needs meaningful treatment descriptors. Use actual documented action descriptors where available; otherwise mark the data-contract limitation. Do not invent real descriptors or leak outcomes into descriptors. Test a separate descriptor ablation only in clearly labeled synthetic data.
+## 7. Fair evaluation
 
-### Stage 3 — A2 multi-treatment
-Compare:
-- One-vs-Control;
-- multi-arm S/T or shared representation + action-specific heads;
-- MEMENTO;
-- HydraNet;
-- M3TN;
-- MTMT;
-- EFIN multi-treatment;
-- HyperITE if feasible.
-
-Use Hillstrom three-arm RCT, myBPmyLife three-arm MRT (two outcome definitions separately), and Push-derived 3-arm/6-arm known-truth data. Enforce each user's eligible-action mask. Include rare-arm imbalance. Verify whether MTMT's “whether to treat + which treatment type” decomposition matches the action ontology before using it.
-
-### Stage 4 — A3 continuous treatment
-Compare:
-- GPS/spline;
-- DoseResponseGBM;
-- DRNet;
-- VCNet;
-- GIKS-DRNet / GIKS-VCNet;
-- SCIGAN;
-- TransTEE;
-- HNet;
-- CRNet/WDBN;
-- DR²CE;
-- DRVAE as exploratory if available.
-
-Use Push-context semi-synthetic known-truth dose-response only; there is no verified public randomized continuous-frequency Push dataset in the current project. Run monotone, saturation and fatigue DGPs, sizes 5k/20k and five seeds. Enforce support guards; no extrapolated optimum claims.
-
-### Stage 5 — longitudinal overlay
-Compare WCLS, static CATE with pre-decision history features and one history-aware GRU/Transformer candidate if feasible. Use repeated-decision known-truth DGPs with carryover, fatigue, cooldown and temporal drift. Keep participant clusters intact. This is not full sequential policy optimization.
-
-## 5. Fair comparison protocol
-
-- identical train/validation/test splits for all models per dataset/DGP/seed;
-- participant-grouped splits for MRT and repeated-decision data;
-- stratified treatment splits for independent randomized customer datasets;
-- same pre-treatment features, outcome windows, eligible population and estimand;
-- tune only on train/validation; never tune on test;
-- at least five fixed seeds for main semi-synthetic runs;
-- paired confidence intervals for model differences;
-- report mean and standard deviation across seeds;
-- report every model's device/backend, wall time, peak RSS, training epochs and parameter count where available;
-- report accuracy, uplift ranking, calibration, policy value and runtime separately;
-- every model has a maturity label: official code reproduced, faithful reimplementation, library adapter, architecture-inspired, paper-only, or blocked;
-- do not treat test AUC or factual outcome prediction as proof of causal effect accuracy.
-
-Metrics:
-- known-truth synthetic: ATE bias/RMSE, PEHE, Qini/AUUC, calibration, oracle policy value/regret; continuous MISE and dose-response error;
-- real randomized: design-based ITT, valid randomized one-step policy value, cluster confidence intervals; no PEHE;
-- observational: overlap, ESS, balance and sensitivity; no causal ground-truth claim.
-
-## 6. Local resource management
-
-- Run a small 1k–5k smoke test per architecture before larger jobs.
-- Main semi-synthetic sizes: 5k and 20k; five seeds.
-- Criteo: 100k/500k/1m before full data.
-- Run neural models sequentially on MPS.
-- Do not parallelize all seeds at once.
-- Keep a per-model timeout and save checkpoints where the model supports it.
-- If a model is CUDA-only or requires unavailable legacy dependencies, first try a faithful CPU/MPS adapter; otherwise mark BLOCKED_ON_CUDA / BLOCKED_DEPENDENCY and continue.
-- Do not silently replace a named model with a simpler model and call it the original.
-- Do not rent cloud compute or ask the user to configure a cloud provider during this task.
-- At the end, report actual bottlenecks and whether CUDA would materially help. Do not speculate about speedup without a measured profile.
-
-## 7. Data and Git safety
-
-- Keep raw data under ignored local `data/raw/` paths.
-- Verify `.gitignore` covers raw files, generated semi-synthetic data, checkpoints, caches and run artifacts.
-- Never commit raw myBPmyLife, Hillstrom, Criteo, X5 or participant-level data.
-- Do not upload participant-level MRT data to external APIs.
-- Commit only code, metadata-only manifests, aggregate results and documentation that cannot reveal participant records.
-- Record source URL, license status, file SHA256 and row counts locally.
-- If a license is unknown, mark it UNVERIFIED and keep the dataset local-only.
+- Identical train/validation/test splits for each model within the same dataset and seed.
+- Group by participant/customer when repeated observations exist.
+- Do not leak post-treatment variables.
+- Real randomized data: ITT, arm-specific estimates, Qini/AUUC/uplift@K with design-aware uncertainty and valid one-step policy value.
+- Real observational data: overlap, propensity, balance, ESS, weight tails, sensitivity and robustness. Do not claim Qini alone proves causal validity.
+- Real paired-outcome data: pair-level estimands and assumptions; do not claim exact individual counterfactual truth without justification.
+- Auxiliary known-truth data only: PEHE, ATE bias, dose-response MISE and oracle regret.
+- Keep evidence classes and leaderboards separate.
 
 ## 8. Required deliverables
 
-1. `docs/benchmarks/LOCAL_MAC_PREFLIGHT.md`
-2. updated metadata-only `examples/datasets/manifest.json`
-3. reusable local commands / scripts for A1, A2, A3 and longitudinal overlay;
-4. `docs/benchmarks/EXPERIMENT_A_MODEL_COMPARISON_RESULTS.md`
-5. local ignored run artifacts with per-seed metrics and manifests;
-6. tests for dataset contracts, splits, leakage, eligibility masks, model-specific predictions and metrics.
+Create/update:
+- `docs/benchmarks/LOCAL_MAC_PREFLIGHT.md`
+- `docs/benchmarks/DATASET_AUDIT.md`
+- `docs/benchmarks/MODEL_SOURCE_AND_RUN_STATUS.md`
+- `docs/benchmarks/EXPERIMENT_A_MODEL_COMPARISON_RESULTS.md`
 
-The final report must say precisely:
-- what data were found/downloaded and what remained unavailable;
-- exact hardware/software/device for each model;
-- which models ran on MPS, CPU, or were blocked;
-- per-seed results and paired uncertainty intervals;
-- separate rankings for CATE accuracy, uplift ranking, calibration, policy value and efficiency;
-- which advanced models were statistically tied with simpler baselines;
-- whether local resources were sufficient and what measured bottleneck would justify cloud CUDA later.
+Also produce ignored local artifacts with per-run configs, logs, stack traces, metrics and checkpoints.
 
-Do not claim a benchmark is complete merely because the scripts or tests pass. Only completed model runs with valid evidence count as experiment results.
+Run tests. Do not stop after writing scaffolding. Execute real data and source-backed models in the staged run ladder. Keep raw data out of GitHub. Report actual progress, exact blockers and what successfully ran.
