@@ -349,3 +349,8 @@ Every blocked run must state whether the cause is data access, license, dependen
 ### 12.6 Result interpretation
 
 Real randomized data support design-based ITT, uplift ranking and valid policy evaluation, but not individual PEHE unless individual counterfactuals are genuinely observed. Real observational data support diagnostics and sensitivity analyses, not a ground-truth model ranking. Keep each evidence class in a separate leaderboard.
+
+
+## 13. Mandatory bias-diagnosis and repair mechanism
+
+See [BIAS_DIAGNOSIS_AND_REPAIR_PROTOCOL.md](BIAS_DIAGNOSIS_AND_REPAIR_PROTOCOL.md). Model comparison must include the mechanism-level bias diagnosis and correction ablations described there. A model's architecture or paper claim is not evidence that a bias was removed. Report the exact formula, nuisance models, diagnostics before/after, ESS and estimand changes, uncertainty, and residual assumptions for every correction. This applies across binary, multi-arm, continuous-dose and repeated-decision settings.
