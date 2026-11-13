@@ -143,3 +143,35 @@ Create/update:
 Also produce ignored local artifacts with per-run configs, logs, stack traces, metrics and checkpoints.
 
 Run tests. Do not stop after writing scaffolding. Execute real data and source-backed models in the staged run ladder. Keep raw data out of GitHub. Report actual progress, exact blockers and what successfully ran.
+
+
+## 9. Mandatory deep dive: expose the mechanism of debiasing and repair
+
+Read `docs/benchmarks/BIAS_DIAGNOSIS_AND_REPAIR_PROTOCOL.md` and execute it as a required experiment layer. Do not merely list IPW/DR/EFIN/VCNet as model names.
+
+For each dataset:
+1. Define the estimand and target-trial contract: unit, eligibility, time zero, assignment, delivery/exposure, comparator, outcome window, censoring and target population.
+2. Diagnose measured confounding, treatment selection, overlap/positivity, arm imbalance, representation mismatch, nuisance misspecification, continuous-dose support, time-varying confounding, noncompliance, missing outcomes, interference, leakage and treatment-version inconsistency where applicable.
+3. Quantify each applicable issue with exact diagnostics: SMD, variance ratios, propensity calibration/distributions, common-support share, max/quantile weights, ESS overall/per arm, dose density, missingness and cluster structure.
+4. Run correction ablations with the same split/seed/estimand: unadjusted, outcome regression, IPW, stabilized IPW, clipping grid, matching/stratification, overlap weighting, cross-fitted AIPW/DR and representation balancing where executable. For continuous treatment use GPS/density-ratio and continuous-dose balancing; for repeated decisions use sequential weights/WCLS/longitudinal DR where valid.
+5. Expose the actual mathematics: propensity definition, weight formula, clipping threshold, nuisance models, cross-fitting folds, balancing loss and coefficient, generalized propensity or GPS, and target population after trimming/overlap.
+6. Report before/after diagnostics and the trade-off: bias/effect estimate, uncertainty, ESS, retained population, runtime/memory and policy value where valid.
+7. State residual problems that cannot be fixed by the selected method, especially unmeasured confounding, positivity violations, hidden treatment versions and unsupported dose regions.
+
+Important guardrails:
+- Known randomized assignment probabilities are primary for RCT ITT; do not fit a propensity model and replace design probabilities without a justified reason.
+- Assignment, delivery/exposure and outcome are separate variables and separate estimands.
+- DR is doubly robust only under its identification/regularity assumptions; it does not fix arbitrary hidden confounding or absent overlap.
+- EFIN's intervention constraint and DESCN's joint learning are architecture-specific mechanisms, not universal proof of deconfounding.
+- Representation balancing can remove effect-modifying information; test the balance penalty and held-out effect quality together.
+- Clipping/trimming/overlap weighting can change the target population; report that change.
+- Do not use binary propensity formulas for multi-arm or continuous treatments.
+- Do not report PEHE on real datasets without individual counterfactual truth.
+- Do not call a correction successful based on balance alone; also evaluate effect/decision metrics and uncertainty.
+
+Required deliverables:
+- `docs/benchmarks/BIAS_DIAGNOSIS_REPORT.md`
+- `docs/benchmarks/BIAS_REPAIR_ABLATIONS.md`
+- local machine-readable `bias_diagnostics.json`, safe aggregate weight diagnostics and plots.
+Add unit tests for SMD, ESS, propensity/weight construction, clipping, cross-fitting leakage, generalized propensity dimensions, GPS support and pre-treatment feature filtering.
+Do not stop after writing the report templates: run at least one complete real-observational correction path (e.g. Lenta/X5/MegaFon if accessible) and the design-based RCT checks. If the data or method is unavailable, document exact blocker and continue with another source-backed dataset.
