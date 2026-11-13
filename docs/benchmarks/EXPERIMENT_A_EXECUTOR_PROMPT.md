@@ -200,3 +200,89 @@ Proceed across A1 → A2 → A3 in one coherent implementation effort. Do not st
 If one dataset/model is blocked, document the blocker and continue other independent comparisons. Ask the user only if a missing local file, license decision or business estimand makes all further progress impossible.
 
 At completion, report exactly what was implemented and run, what passed, what was unavailable, the measured model comparisons, and the next research step. Do not claim work was executed if only documentation or code scaffolding was added.
+
+
+---
+
+## 11. Expanded frontier-model execution is mandatory
+
+Before implementation, read the complete file:
+`docs/benchmarks/EXPERIMENT_A_FRONTIER_MODEL_CATALOG.md`
+
+This catalogue expands the initial candidate lists. Do not finish the task after implementing only S/T/X/R/DR, One-vs-Control, DRNet and VCNet.
+
+### A1 binary: required frontier architectures
+
+Alongside S/T/X/R/DR, Causal Forest/GRF and BART where practical, implement or run:
+
+- TARNet / CFRNet;
+- DragonNet;
+- FlexTENet;
+- EFIN (KDD 2023);
+- DESCN (KDD 2022);
+- EUEN / EEUEN (ICDM 2021);
+- TransTEE where faithful implementation is feasible;
+- HyperITE as a treatment-group information-sharing wrapper where feasible.
+
+GANITE is secondary. EFIN must receive real treatment descriptors; if the available data only has a binary treatment flag, report the limitation and do not invent descriptors. DESCN must be tested on the observational measured-confounding / treatment-imbalance scenario. EUEN/EEUEN must keep randomized assignment, delivery/exposure and outcome separate; do not conflate assignment ITT with actual exposure effects.
+
+### A2 multi-treatment: required frontier architectures
+
+Alongside multi-arm S/T/One-vs-Control and generalized multi-arm DR controls, implement or run:
+
+- MEMENTO;
+- HydraNet;
+- M3TN;
+- MTMT;
+- EFIN in multi-treatment mode;
+- HyperITE where a faithful multi-arm wrapper is feasible.
+
+XTNet is a research-stage candidate. Verify exact source code and reproduction protocol before implementing; otherwise record PAPER_ONLY_NOT_IMPLEMENTED / BLOCKED, not as a passing model.
+
+MTMT's base-treatment plus treatment-type incremental-effect decomposition is valid only if the real treatment semantics contain that hierarchy. Explicitly verify the CRM treatment ontology before applying it. Do not force-fit it to unrelated mutually exclusive arms.
+
+### A3 continuous: required frontier architectures
+
+Alongside GPS/spline, DoseResponseGBM, DRNet, VCNet and existing GIKS variants, implement or run:
+
+- SCIGAN;
+- TransTEE;
+- CRNet / WDBN;
+- HNet (2026 instance-specific hypernetwork dose-response);
+- DR²CE (2026 disentangled dose-response representation).
+
+DRVAE is exploratory. E2B is a balancing wrapper, not a standalone response model. Keep those labels distinct. Do not claim that a generic model is an exact paper reproduction.
+
+### Repeated-decision Push overlay
+
+Add the cross-cutting longitudinal validation overlay in the catalogue:
+- WCLS proximal baseline;
+- static CATE model with pre-decision history features;
+- history-aware GRU/Transformer candidate if feasible;
+- carryover, fatigue, cooldown and temporal-drift known-truth scenarios;
+- participant-group splits and cluster bootstrap.
+
+This is a validation overlay, not a new full sequential optimizer. Real MRT has no individual counterfactual truth; do not report PEHE on it.
+
+### Model maturity, priority and completion
+
+Every model registry row must use one of:
+- OFFICIAL_CODE_REPRODUCED;
+- FAITHFUL_REIMPLEMENTATION_TESTED;
+- ADAPTER_TO_EXISTING_LIBRARY;
+- ARCHITECTURE_INSPIRED_VARIANT;
+- PAPER_ONLY_NOT_IMPLEMENTED;
+- BLOCKED_DEPENDENCY_OR_DATA.
+
+Do not stop at documentation or scaffolding. Run every Tier-1 model in the catalogue when its data contract is satisfied; otherwise record the exact blocker and continue independent work. Implement Tier-2 models where practical. Tier-3 research candidates do not block the benchmark.
+
+The final report must:
+1. rank models separately by CATE accuracy, uplift ranking, calibration, policy value and runtime/memory;
+2. include at least five seeds and paired uncertainty intervals for the core comparisons;
+3. include sample-size and treatment-arm imbalance stress;
+4. explain model assumptions and why a model fits or does not fit CRM Push;
+5. distinguish exact reproduction from architecture-inspired implementation;
+6. identify where simpler methods are statistically tied with recent architectures;
+7. give a recommendation based on the actual Push data regime, not paper leaderboard claims.
+
+Paper and code links, model descriptions and applicability gates are in `EXPERIMENT_A_FRONTIER_MODEL_CATALOG.md`. Use it as the source of truth for the expanded candidate list.
