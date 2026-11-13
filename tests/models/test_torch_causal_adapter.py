@@ -1,4 +1,7 @@
 import numpy as np
+import pytest
+
+pytest.importorskip("torch")
 
 from deepuplift.data.public.datasets import synthetic_ground_truth
 from deepuplift.models import build_model, model_info
