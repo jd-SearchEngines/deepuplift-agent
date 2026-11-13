@@ -38,6 +38,7 @@ class TorchContinuousEstimator:
         baseline_dose: float | None = None,
         dose_grid: Any | None = None,
         allow_extrapolation: bool = False,
+        device: str = "cpu",
     ) -> None:
         if task not in {"regression", "classification"}:
             raise ValueError("task must be 'regression' or 'classification'.")
@@ -52,6 +53,23 @@ class TorchContinuousEstimator:
         self.requested_baseline_dose = baseline_dose
         self.requested_dose_grid = dose_grid
         self.allow_extrapolation = bool(allow_extrapolation)
+        requested_device = str(device).lower()
+        if requested_device == "auto":
+            try:
+                torch = _require_torch()
+                requested_device = "mps" if torch.backends.mps.is_available() else "cpu"
+            except Exception:
+                requested_device = "cpu"
+        if requested_device == "mps":
+            try:
+                torch = _require_torch()
+                if not torch.backends.mps.is_available():
+                    raise RuntimeError("MPS is not available in this PyTorch environment")
+            except Exception as exc:
+                raise RuntimeError(f"Requested MPS device is unavailable: {exc}") from exc
+        if requested_device not in {"cpu", "mps"}:
+            raise ValueError("device must be 'cpu', 'mps', or 'auto'.")
+        self.device = requested_device
         self._fitted = False
 
     def _new_network(self, input_dim: int, dose_boundaries: np.ndarray):
@@ -90,7 +108,7 @@ class TorchContinuousEstimator:
             bins = max(1, int(getattr(self, "num_dose_bins", 1)))
             quantiles = np.arange(1, bins, dtype="float64") / bins
             self.dose_boundaries = np.unique(np.quantile(normalized_dose, quantiles)).astype("float32") if len(quantiles) else np.empty(0, dtype="float32")
-            self.model = self._new_network(encoded.shape[1], self.dose_boundaries)
+            self.model = self._new_network(encoded.shape[1], self.dose_boundaries).to(self.device)
         else:
             if list(feature_cols) != self.feature_cols:
                 raise ValueError("A warm-start fit must use the same feature columns as the factual fit.")
@@ -111,17 +129,17 @@ class TorchContinuousEstimator:
             raise ValueError("Features, treatment, and outcome must be finite after preprocessing.")
 
         dose_np = (dose - self.dose_min) / self.dose_scale
-        x = torch.as_tensor(x_np, dtype=torch.float32)
-        t = torch.as_tensor(dose_np, dtype=torch.float32)
-        y = torch.as_tensor(y_np, dtype=torch.float32)
-        weights = torch.as_tensor(weights_np, dtype=torch.float32)
+        x = torch.as_tensor(x_np, dtype=torch.float32, device=self.device)
+        t = torch.as_tensor(dose_np, dtype=torch.float32, device=self.device)
+        y = torch.as_tensor(y_np, dtype=torch.float32, device=self.device)
+        weights = torch.as_tensor(weights_np, dtype=torch.float32, device=self.device)
         optimizer = torch.optim.AdamW(self.model.parameters(), lr=self.learning_rate, weight_decay=self.weight_decay)
         rng = np.random.default_rng(self.random_state + int(getattr(self, "_fit_count", 0)))
         for _ in range(self.epochs):
             self.model.train()
             order = rng.permutation(len(x_np))
             for start in range(0, len(order), self.batch_size):
-                ids = torch.as_tensor(order[start : start + self.batch_size], dtype=torch.long)
+                ids = torch.as_tensor(order[start : start + self.batch_size], dtype=torch.long, device=self.device)
                 optimizer.zero_grad(set_to_none=True)
                 prediction = self.model(x[ids], t[ids]).reshape(-1)
                 per_row = (prediction - y[ids]).square()
@@ -167,8 +185,8 @@ class TorchContinuousEstimator:
             raise ValueError("One dose is required per feature row.")
         t_np = (doses - self.dose_min) / self.dose_scale
         self.model.eval()
-        x = torch.as_tensor(x_encoded, dtype=torch.float32)
-        t = torch.as_tensor(t_np, dtype=torch.float32).requires_grad_(gradient)
+        x = torch.as_tensor(x_encoded, dtype=torch.float32, device=self.device)
+        t = torch.as_tensor(t_np, dtype=torch.float32, device=self.device).requires_grad_(gradient)
         if gradient:
             y = self.model(x, t).reshape(-1)
             grad = torch.autograd.grad(y.sum(), t)[0] / self.dose_scale
@@ -212,7 +230,7 @@ class TorchContinuousEstimator:
                 "maturity": "OPTIONAL/EXPERIMENTAL",
                 "status": "EXPERIMENTAL",
                 "recommendation_type": "maximum_effect_reference_only",
-                "device": "cpu",
+                "device": self.device,
                 "seed": self.random_state,
                 "observed_dose_min": self.observed_dose_min,
                 "observed_dose_max": self.observed_dose_max,

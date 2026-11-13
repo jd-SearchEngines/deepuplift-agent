@@ -68,11 +68,12 @@ def synthetic_dose_response(
     rows: int = 600,
     seed: int = 42,
     *,
+    shape: str = "fatigue",
     dose_grid: Any | None = None,
     noise_sd: float = 0.18,
     outcome_value: float = 1.0,
 ) -> SyntheticContinuousData:
-    """Confounded nonlinear dose-response data with exact held-out truth.
+    """Confounded dose-response data with exact held-out truth.
 
     Dose assignment depends on pre-treatment covariates and noisy selection,
     while the response has covariate-varying linear and quadratic dose terms.
@@ -80,6 +81,8 @@ def synthetic_dose_response(
     """
     if rows < 20:
         raise ValueError("Synthetic continuous benchmarks need at least 20 rows.")
+    if shape not in {"monotone", "saturating", "fatigue"}:
+        raise ValueError("shape must be monotone, saturating, or fatigue")
     rng = np.random.default_rng(seed)
     x = rng.normal(size=(rows, 3))
     assignment_score = 1.15 * x[:, 0] - 0.75 * x[:, 1] + 0.40 * x[:, 2] + 0.20 * x[:, 2] ** 2
@@ -89,9 +92,26 @@ def synthetic_dose_response(
     if grid.ndim != 1 or len(grid) < 3 or not np.isfinite(grid).all() or np.any(np.diff(grid) <= 0):
         raise ValueError("dose_grid must be a finite, strictly increasing one-dimensional grid with at least three points.")
     features = x
-    base, effect = _response_terms(features, dose)
+    normalized_observed = dose[None, :] / 20.0
+    x1, x2 = features[:, 0], features[:, 1]
+    base = 0.35 + 0.16 * x1[:, None] - 0.11 * x2[:, None]
+    amplitude = 1.20 + 0.35 * np.tanh(x1)
+    curvature = 1.15 + 0.20 / (1.0 + np.exp(-x2))
+    if shape == "monotone":
+        effect = amplitude[:, None] * normalized_observed
+    elif shape == "saturating":
+        effect = amplitude[:, None] * (1.0 - np.exp(-dose[None, :] / 6.0))
+    else:
+        effect = amplitude[:, None] * normalized_observed - curvature[:, None] * normalized_observed**2
     y = (base[:, 0] + effect[:, 0] + rng.normal(0.0, noise_sd, rows))
-    true_base, true_effect = _response_terms(features, grid)
+    normalized_grid = grid[None, :] / 20.0
+    true_base = np.repeat((0.35 + 0.16 * x1 - 0.11 * x2)[:, None], len(grid), axis=1)
+    if shape == "monotone":
+        true_effect = amplitude[:, None] * normalized_grid
+    elif shape == "saturating":
+        true_effect = amplitude[:, None] * (1.0 - np.exp(-grid[None, :] / 6.0))
+    else:
+        true_effect = amplitude[:, None] * normalized_grid - curvature[:, None] * normalized_grid**2
     true_response = true_base + true_effect
     true_opt_effect = grid[np.argmax(true_effect, axis=1)]
     cost_domain_range = max(float(grid[-1] - grid[0]), 1e-6)
@@ -108,17 +128,18 @@ def synthetic_dose_response(
         assignment_type=AssignmentType.OBSERVATIONAL,
         id_column="unit_id",
         metadata={
-            "name": "synthetic_continuous_observational",
+            "name": f"synthetic_continuous_{shape}",
             "source": "DeepUplift deterministic nonlinear data-generating process",
             "license": "DeepUplift-generated synthetic data",
             "sample_size": int(rows),
             "treatment_range": [float(dose.min()), float(dose.max())],
             "feature_dimension": int(features.shape[1]),
             "seed": int(seed),
+            "shape": shape,
             "split": "not split by generator",
             "ground_truth_available": True,
             "assignment_mechanism": "dose = clip(20 * sigmoid(1.15*x1 - 0.75*x2 + 0.40*x3 + 0.20*x3^2 + Normal(0,2.1)), 0, 20)",
-            "outcome_mechanism": "covariate-varying concave quadratic dose response plus Gaussian noise",
+            "outcome_mechanism": f"{shape} covariate-varying dose response plus Gaussian noise",
         },
     )
     return SyntheticContinuousData(dataset, grid, true_response, true_effect, true_opt_effect, true_opt_economic, int(seed), float(outcome_value), cost_dose_range=cost_domain_range)
