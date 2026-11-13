@@ -253,3 +253,65 @@ Experiment A is complete only when:
 8. Relevant tests pass and no raw or participant-level data is committed.
 
 A passing software test suite is not evidence that one causal model is statistically superior. Model superiority must be supported by repeated-seed benchmark results and uncertainty intervals.
+
+
+---
+
+## 11. Frontier-model expansion — normative scope update (2026-11-13)
+
+The model catalogue in [EXPERIMENT_A_FRONTIER_MODEL_CATALOG.md](EXPERIMENT_A_FRONTIER_MODEL_CATALOG.md) is part of this specification and is normative. It expands the original model lists in Sections 4–6. Experiment A must not stop at S/T/X/R/DR plus the current DRNet/VCNet/GIKS implementation.
+
+### A1 binary — expanded required comparison
+
+In addition to statistical baselines (S/T/X/R/DR, Causal Forest/GRF and BART where feasible), evaluate the following established and marketing-specific neural architectures:
+
+- TARNet / CFRNet;
+- DragonNet;
+- FlexTENet;
+- EFIN (KDD 2023);
+- DESCN (KDD 2022);
+- EUEN / EEUEN (ICDM 2021);
+- TransTEE (2022) where a faithful adapter is feasible;
+- HyperITE (AISTATS 2024) as a treatment-group information-sharing wrapper.
+
+GANITE is a secondary candidate. Do not silently replace any named method with a simpler architecture-inspired variant.
+
+EFIN must be tested with meaningful treatment descriptors (Campaign/message type/channel/content/incentive or other actual action attributes). If only a binary flag exists, record the EFIN treatment-feature limitation. DESCN belongs in particular in the measured-confounding / treatment-imbalance stress scenario. EUEN/EEUEN requires separate assignment, delivery/exposure and outcome fields; report assignment ITT and exposure/delivery estimands separately.
+
+### A2 multi-treatment — expanded required comparison
+
+Compare:
+- multi-arm S/T/X/R/DR or One-vs-Control controls;
+- MEMENTO (CIKM 2022);
+- HydraNet (2025 journal publication; verify the code and exact architecture);
+- M3TN (ICASSP 2024);
+- MTMT (2024 preprint / 2026 journal publication);
+- EFIN in its multi-treatment/action-descriptor setting;
+- HyperITE where a faithful multi-arm adapter is feasible.
+
+XTNet (2025 arXiv) is an exploratory frontier candidate. It must not be called a validated baseline until code, architecture and reproduction details are verified.
+
+MTMT's decomposition into a base "whether to treat" effect plus an incremental "which treatment type" effect is valid only when the CRM action semantics support that hierarchy. If treatments are simply mutually exclusive categories without a common base action, document the mismatch and do not force the decomposition.
+
+### A3 continuous — expanded required comparison
+
+In addition to GPS/spline, DoseResponseGBM, DRNet, VCNet and existing GIKS variants, evaluate:
+- SCIGAN;
+- TransTEE;
+- CRNet / WDBN (2025);
+- HNet (2026 hypernetwork-based instance-specific dose-response);
+- DR²CE (2026 disentangled representations for dose-response).
+
+DRVAE (2026) is exploratory and may be deferred if exact source, dependencies or implementation are unavailable. E2B is a balancing wrapper, not a standalone response estimator; evaluate it as a clearly labeled wrapper if practical. Do not claim an exact implementation from an architecture summary alone.
+
+### Cross-cutting repeated-decision overlay
+
+Add the longitudinal validation overlay described in the frontier model catalogue. At minimum compare the existing WCLS proximal baseline, a history-feature CATE learner, and a history-aware neural candidate if the available sample size and data contract support it. Include carryover/fatigue/history-dependent known-truth DGPs. Real MRT PEHE remains NOT_AVAILABLE.
+
+### Model maturity and updated acceptance
+
+Every model must have an explicit maturity status: official code reproduced, faithful reimplementation tested, library adapter, architecture-inspired variant, paper-only, or blocked. Model-name coverage alone does not satisfy acceptance.
+
+The Tier-1 catalogue models must be executed or have a concrete blocker. Tier-2 candidates should be implemented where practical; Tier-3 research-only candidates must be documented and must not block the core experiment. Report per-seed results, paired uncertainty intervals, sample-size and arm-imbalance stress, and separate rankings for CATE accuracy, uplift ranking, calibration, policy value and efficiency.
+
+The original Sections 4–6 and Section 10 remain applicable where they do not conflict with this expansion. Where they list a narrower model set, this Section 11 and the frontier catalogue take precedence.
