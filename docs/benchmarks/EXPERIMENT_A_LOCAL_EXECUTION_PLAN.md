@@ -190,3 +190,21 @@ Do not combine scores across evidence classes into one leaderboard.
 - Do not upload sensitive participant data to external model APIs.
 - Commit code, metadata-only manifests, aggregate non-sensitive metrics and documentation only.
 - Record source, version, license, file hash and retrieval date locally.
+
+
+## 10. Required deep-dive layer: how bias is diagnosed and repaired
+
+The experiment must include [BIAS_DIAGNOSIS_AND_REPAIR_PROTOCOL.md](BIAS_DIAGNOSIS_AND_REPAIR_PROTOCOL.md). Model accuracy alone is insufficient. For every dataset, explicitly identify the threatened assumption, measure the problem, run an applicable correction, and show before/after diagnostics.
+
+Minimum required details:
+- measured confounding: SMD / variance ratios, IPW, matching, outcome regression, cross-fitted DR;
+- treatment selection and overlap: propensity distributions, common support, weight tails, ESS, trimming/clipping and overlap weighting;
+- multi-arm imbalance: generalized propensity, per-arm support/ESS, shared representation or shrinkage where available;
+- representation balance: exact IPM/MMD/Wasserstein loss and balance-strength ablation for CFRNet or a faithful implementation;
+- continuous dose: GPS density, dose support, density-ratio weights, support restriction and curve stability;
+- repeated decisions: sequential propensity, cumulative stabilized weights, WCLS / sequential DR where valid;
+- assignment vs delivery, missing outcomes/censoring, interference, post-treatment leakage and treatment-version consistency.
+
+Every correction must report its exact formula/configuration, pre/post diagnostic, estimate and uncertainty, ESS/retained population, runtime, assumptions and residual risk. Do not claim that IPW, DR, EFIN, DESCN or a neural representation alone removes hidden confounding.
+
+Create `BIAS_DIAGNOSIS_REPORT.md`, `BIAS_REPAIR_ABLATIONS.md` and machine-readable diagnostics. Keep RCT, observational and known-truth evidence separate.
