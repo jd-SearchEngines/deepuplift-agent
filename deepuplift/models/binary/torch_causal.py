@@ -15,9 +15,6 @@ import pandas as pd
 
 from deepuplift.contracts import CausalDataset, EffectPrediction, TreatmentType
 from deepuplift.data.preprocessing import TabularPreprocessor
-from deepuplift.models.CFRNet import CFRNet, cfrnet_loss
-from deepuplift.models.DragonNet import DragonNet, dragonnet_loss
-from deepuplift.models.TarNet import TarNet, tarnet_loss
 
 
 def _torch():
@@ -28,10 +25,23 @@ def _torch():
     return torch
 
 
+def _legacy_components():
+    """Import the optional legacy Torch definitions only when the adapter runs."""
+    from deepuplift.models.CFRNet import CFRNet, cfrnet_loss
+    from deepuplift.models.DragonNet import DragonNet, dragonnet_loss
+    from deepuplift.models.TarNet import TarNet, tarnet_loss
+
+    return {
+        "TarNet": TarNet,
+        "CFRNet": CFRNet,
+        "DragonNet": DragonNet,
+    }, tarnet_loss, cfrnet_loss, dragonnet_loss
+
+
 class TorchBinaryCausalEstimator:
     """TARNet/CFRNet/DragonNet adapter with explicit mechanism toggles."""
 
-    _MODEL_CLASSES: ClassVar[dict[str, type]] = {"TarNet": TarNet, "CFRNet": CFRNet, "DragonNet": DragonNet}
+    _MODEL_NAMES: ClassVar[tuple[str, ...]] = ("TarNet", "CFRNet", "DragonNet")
 
     def __init__(
         self,
@@ -50,8 +60,8 @@ class TorchBinaryCausalEstimator:
         targeted_regularization: bool = False,
         device: str = "auto",
     ) -> None:
-        if model_name not in self._MODEL_CLASSES:
-            raise ValueError(f"model_name must be one of {sorted(self._MODEL_CLASSES)}")
+        if model_name not in self._MODEL_NAMES:
+            raise ValueError(f"model_name must be one of {sorted(self._MODEL_NAMES)}")
         if task not in {"regression", "classification"}:
             raise ValueError("task must be regression or classification")
         self.model_name = model_name
@@ -85,7 +95,8 @@ class TorchBinaryCausalEstimator:
         return requested
 
     def _make_model(self, input_dim: int):
-        cls = self._MODEL_CLASSES[self.model_name]
+        model_classes, _, _, _ = _legacy_components()
+        cls = model_classes[self.model_name]
         model = cls(
             input_dim=input_dim,
             share_dim=self.share_dim,
@@ -102,6 +113,7 @@ class TorchBinaryCausalEstimator:
         return model
 
     def _loss(self, outputs, t, y):
+        _, tarnet_loss, cfrnet_loss, dragonnet_loss = _legacy_components()
         t_pred, y_preds, *extras = outputs
         phi = extras[0] if extras else None
         if self.model_name == "CFRNet":
