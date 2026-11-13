@@ -158,3 +158,25 @@ They are recorded as `PAPER_ONLY_NOT_IMPLEMENTED` / `BLOCKED_DEPENDENCY_OR_DATA`
 5. Run the longitudinal overlay (WCLS, history-feature model and a validated sequence candidate) only with participant-grouped MRT data. Real MRT PEHE remains unavailable.
 
 This report does not claim online uplift, real business value, causal superiority on myBPmyLife, or that MPS is faster than CUDA. It reports only the measured local synthetic execution and the concrete data/implementation blockers.
+
+## Bias diagnosis and repair phase (real observational NHEFS)
+
+The revised Experiment A scope added a real-data observational lane after the
+synthetic run above. NHEFS was retrieved through `causallib 0.10.0` into its
+local cache; raw rows were not copied into the repository. The binary lane
+used 1,566 complete-case rows (`qsmk`, `wt82_71`) and executed unadjusted,
+cross-fitted outcome regression, IPW, stabilized IPW, p99/p99.5/p99.9 weight
+clipping, overlap weighting, propensity matching and cross-fitted AIPW/DR.
+The continuous lane used 1,566 rows with baseline cigarettes/day and ran GPS
+density-ratio clipping plus DoseResponseGBM, DRNet and VCNet factual holdout
+models. Detailed estimands, assumptions, SMD, propensity, ESS, intervals and
+limitations are in [BIAS_DIAGNOSIS_REPORT.md](BIAS_DIAGNOSIS_REPORT.md) and
+[BIAS_REPAIR_ABLATIONS.md](BIAS_REPAIR_ABLATIONS.md); aggregate JSON is
+[bias_diagnostics.json](bias_diagnostics.json).
+
+This real-data phase is **PASS for computation / PARTIAL for causal
+identification**. NHEFS has no individual counterfactual truth, so PEHE,
+ground-truth ATE bias, causal model ranking and policy value remain
+`NOT_AVAILABLE`. The requested real Push MRT, Hillstrom, Criteo and X5 lanes
+remain `BLOCKED_ON_DATA` until their locally licensed files and target-trial
+contracts are supplied.
