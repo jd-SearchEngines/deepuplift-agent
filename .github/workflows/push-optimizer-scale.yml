@@ -1,0 +1,99 @@
+name: push-optimizer-scale
+
+on:
+  push:
+    branches:
+      - "codex/push-mrt-causal-benchmark"
+    paths:
+      - "deepuplift/decision/optimization/**"
+      - "scripts/run_push_optimizer_benchmark.py"
+      - "tests/decision/test_constrained_optimization.py"
+      - "tests/benchmarks/test_push_optimizer_scale.py"
+  workflow_dispatch:
+    inputs:
+      run_10m:
+        description: "Run the opt-in 10M candidate stress test (requires successful 1M validation first)"
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  scale:
+    name: optimizer scale ${{ matrix.scale }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        scale: [100000, 500000, 1000000]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install benchmark dependencies
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+          python -m pip install -e ".[dev,benchmark]"
+      - name: Run optimizer tests
+        run: |
+          python -m pytest -q tests/decision/test_constrained_optimization.py
+          if [ -f tests/benchmarks/test_push_optimizer_scale.py ]; then
+            python -m pytest -q tests/benchmarks/test_push_optimizer_scale.py
+          fi
+      - name: Run scale benchmark
+        run: >-
+          mkdir -p scale-artifacts &&
+          python scripts/run_push_optimizer_benchmark.py
+          --seed 1
+          --seed 2
+          --seed 3
+          --seed 4
+          --seed 5
+          --scale ${{ matrix.scale }}
+          --isolated
+          --output scale-artifacts/optimizer-${{ matrix.scale }}.json
+      - name: Upload scale evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: push-optimizer-scale-${{ matrix.scale }}-${{ github.sha }}
+          path: scale-artifacts/
+          if-no-files-found: warn
+          retention-days: 30
+
+  opt-in-10m:
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.run_10m }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install benchmark dependencies
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+          python -m pip install -e ".[dev,benchmark]"
+      - name: Run guarded 10M benchmark
+        run: >-
+          mkdir -p scale-artifacts &&
+          python scripts/run_push_optimizer_benchmark.py
+          --seed 42
+          --scale 10000000
+          --isolated
+          --allow-oversize
+          --output scale-artifacts/optimizer-10000000.json
+      - name: Upload 10M evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: push-optimizer-scale-10000000-${{ github.sha }}
+          path: scale-artifacts/
+          if-no-files-found: warn
+          retention-days: 30

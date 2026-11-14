@@ -1,0 +1,47 @@
+{
+  "experiment": "Experiment A",
+  "run_date": "2026-11-14",
+  "repository": "jd-SearchEngines/deepuplift-agent",
+  "branch": "codex/push-mrt-causal-benchmark",
+  "execution": {
+    "host": "local macOS Mac M3 Max",
+    "memory_gb": 64,
+    "python": "3.11",
+    "neural_device": "MPS sequential when requested",
+    "raw_data_committed": false
+  },
+  "data": {
+    "criteo_uplift_v2_1": {"status": "AVAILABLE_AND_RUN", "rows": 13979592, "features": 12, "treatment_rate": 0.8500001288, "missing_values": 0, "exposure_used_as_feature": false, "formal_rows": 90, "formal_seeds": 3},
+    "hillstrom": {"status": "AVAILABLE_AND_RUN", "formal_rows": 150, "formal_seeds": 5},
+    "nhefs": {"status": "AVAILABLE_AND_RUN", "rows": 1566, "evidence": "observational_bias_repair"},
+    "myBPmyLife": {"status": "NOT_AVAILABLE", "formal_rows": 0},
+    "mt_lift": {"status": "ACCESS_BLOCKED", "formal_rows": 0},
+    "uvet": {"status": "AUDIT_ONLY", "parsed_prefix_rows": 330458, "formal_rows": 0},
+    "x5": {"status": "NOT_AVAILABLE", "formal_rows": 0}
+  },
+  "runs": {
+    "synthetic_a1": {"status": "PASS", "rows": 60},
+    "synthetic_a2": {"status": "PASS", "rows": 20},
+    "synthetic_a3": {"status": "PASS", "rows": 150},
+    "synthetic_a1_neural": {"status": "PASS", "rows": 75},
+    "hillstrom_real_randomized": {"status": "PASS", "rows": 150},
+    "criteo_conversion": {"status": "PASS", "rows": 45},
+    "criteo_visit": {"status": "PASS", "rows": 45}
+  },
+  "criteo": {
+    "conversion": {
+      "100000": {"qini_mean": {"S-Learner": 1.316, "T-Learner": 4.862, "X-Learner": -2.606, "R-Learner": 4.281, "DR-Learner": 10.209}, "policy_increment_mean": {"S-Learner": -0.000171, "T-Learner": 0.000155, "X-Learner": -0.000139, "R-Learner": 0.000253, "DR-Learner": 0.000685}, "max_rss_mb": 470.9},
+      "500000": {"qini_mean": {"S-Learner": 61.191, "T-Learner": 99.151, "X-Learner": 89.456, "R-Learner": 70.856, "DR-Learner": 101.851}, "policy_increment_mean": {"S-Learner": 0.000028, "T-Learner": 0.001257, "X-Learner": 0.001286, "R-Learner": 0.000627, "DR-Learner": 0.001407}, "max_rss_mb": 1122.0},
+      "1000000": {"qini_mean": {"S-Learner": 154.838, "T-Learner": 143.490, "X-Learner": 149.593, "R-Learner": 95.127, "DR-Learner": 159.596}, "policy_increment_mean": {"S-Learner": 0.000703, "T-Learner": 0.000893, "X-Learner": 0.000958, "R-Learner": 0.000842, "DR-Learner": 0.001169}, "max_rss_mb": 1782.2}
+    },
+    "visit": {
+      "100000": {"qini_mean": {"S-Learner": 83.665, "T-Learner": 72.585, "X-Learner": 53.593, "R-Learner": 34.651, "DR-Learner": 90.918}, "policy_increment_mean": {"S-Learner": 0.005946, "T-Learner": 0.004685, "X-Learner": 0.003188, "R-Learner": 0.001521, "DR-Learner": 0.004907}, "max_rss_mb": 470.9},
+      "500000": {"qini_mean": {"S-Learner": 794.048, "T-Learner": 716.961, "X-Learner": 830.606, "R-Learner": 499.225, "DR-Learner": 719.761}, "policy_increment_mean": {"S-Learner": 0.010440, "T-Learner": 0.009442, "X-Learner": 0.010808, "R-Learner": 0.006983, "DR-Learner": 0.009531}, "max_rss_mb": 1122.0},
+      "1000000": {"qini_mean": {"S-Learner": 1524.095, "T-Learner": 1376.281, "X-Learner": 1389.155, "R-Learner": 934.765, "DR-Learner": 1448.575}, "policy_increment_mean": {"S-Learner": 0.010468, "T-Learner": 0.009164, "X-Learner": 0.009825, "R-Learner": 0.007417, "DR-Learner": 0.010076}, "max_rss_mb": 1826.1}
+    }
+  },
+  "quality_boundary": "Real randomized lanes have no PEHE or individual counterfactual ground truth; synthetic known-truth lanes carry PEHE/MISE/policy regret.",
+  "overall_status": "PARTIAL",
+  "blockers": ["myBPmyLife MRT raw archive unavailable", "MT-LIFT authenticated download blocked", "UVET only partial prefix audit", "frontier paper-faithful adapters not complete"],
+  "tests": {"pytest": "101 passed, 2 skipped"}
+}

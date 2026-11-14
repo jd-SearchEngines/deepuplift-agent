@@ -55,7 +55,11 @@ class _PeakMemorySampler:
         self._stop.set()
         if self._thread is not None:
             self._thread.join(timeout=1.0)
-        return max(self.peak_mb, self._process.memory_info().rss / (1024.0 * 1024.0))
+        self.peak_mb = max(self.peak_mb, self._process.memory_info().rss / (1024.0 * 1024.0))
+        # On macOS ru_maxrss is process-lifetime high-water RSS, not the peak
+        # attributable to this model fit.  When psutil sampling is available,
+        # do not mix that cumulative value into the per-model measurement.
+        return self.peak_mb
 
 
 def environment_provenance() -> dict[str, Any]:
@@ -188,7 +192,7 @@ def run_continuous_model(
         "decision_seconds": decision_seconds,
         "peak_memory_mb": peak_mb,
         "memory_measurement": memory_sampler.method,
-        "device": "cpu",
+        "device": str(prediction.metadata.get("device", "cpu")),
         "metrics": metrics,
         "support_metrics": {
             "observed_dose_range": [train_min, train_max],

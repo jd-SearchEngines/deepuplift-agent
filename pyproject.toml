@@ -45,6 +45,7 @@ torch = ["torch>=1.12", "geomloss>=0.2.6"]
 continuous = ["torch>=1.12"]
 giks = ["torch>=1.12"]
 benchmark = ["psutil>=5.9"]
+experiment-a = ["causallib==0.10.0", "psutil>=5.9", "torch>=1.12"]
 ccpfn = ["ccpfn==0.1.2", "numpy<2"]
 all = [
   "streamlit>=1.32",
