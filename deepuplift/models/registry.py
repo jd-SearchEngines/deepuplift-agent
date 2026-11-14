@@ -35,7 +35,7 @@ class ModelSpec:
 
 
 def _native(cls, outcome_model: str = "gbm"):
-    return lambda *, task="classification", random_state=42, **kwargs: cls(task=task, random_state=random_state, outcome_model=outcome_model, **kwargs)
+    return lambda *, task="classification", random_state=42, **kwargs: cls(task=task, random_state=random_state, outcome_model=kwargs.pop("outcome_model", outcome_model), **kwargs)
 
 
 _rf_capabilities = ModelCapabilities(supports_sample_weight=True)

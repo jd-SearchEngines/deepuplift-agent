@@ -48,15 +48,20 @@ def uplift_at_k(frame: pd.DataFrame, fraction: float = 0.1) -> float | None:
     return float(treated.mean() - control.mean())
 
 
-def ranking_metrics(prediction: EffectPrediction, dataset: CausalDataset, fractions: tuple[float, ...] = (0.05, 0.1, 0.2)) -> dict[str, Any]:
+def ranking_metrics(
+    prediction: EffectPrediction,
+    dataset: CausalDataset,
+    fractions: tuple[float, ...] = (0.05, 0.1, 0.2),
+    *,
+    include_curves: bool = True,
+) -> dict[str, Any]:
     frame = _frame(prediction, dataset)
     curve = qini_curve(frame)
     top_k = [{"fraction": fraction, "uplift": uplift_at_k(frame, fraction)} for fraction in fractions]
-    balance_curve = []
     ordered = frame.sort_values("uplift", ascending=False).reset_index(drop=True)
-    for index in range(len(frame)):
-        prefix = ordered.iloc[: index + 1]
-        balance_curve.append({"fraction": (index + 1) / max(len(frame), 1), "treated_rate": float((prefix["treatment"] == 1).mean())})
+    treated = (ordered["treatment"].to_numpy() == 1).astype("float64")
+    balance_fraction = (np.arange(len(ordered)) + 1) / max(len(ordered), 1)
+    balance_rate = np.cumsum(treated) / (np.arange(len(ordered)) + 1)
     rng = np.random.default_rng(42)
     bootstrap = []
     for _ in range(20):
@@ -71,9 +76,12 @@ def ranking_metrics(prediction: EffectPrediction, dataset: CausalDataset, fracti
         "uplift_at_k": top_k,
         "uplift_at_10": uplift_at_k(frame, .1),
         "uplift_at_20": uplift_at_k(frame, .2),
-        "rows": int(len(frame)),
-        "curve": curve.to_dict(orient="records"),
-        "gain_curve": curve.to_dict(orient="records"),
-        "treatment_balance_curve": balance_curve,
+        "rows": len(frame),
+        "curve": curve.to_dict(orient="records") if include_curves else None,
+        "gain_curve": curve.to_dict(orient="records") if include_curves else None,
+        "treatment_balance_curve": [
+            {"fraction": float(fraction), "treated_rate": float(rate)}
+            for fraction, rate in zip(balance_fraction, balance_rate, strict=True)
+        ] if include_curves else None,
         "bootstrap_stability": {"n": len(bootstrap), "mean_qini": float(np.mean(bootstrap)) if bootstrap else None, "std_qini": float(np.std(bootstrap)) if bootstrap else None},
     }

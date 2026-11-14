@@ -29,8 +29,14 @@ def policy_metrics(prediction: EffectPrediction, dataset: CausalDataset, *, trea
     return {"target_count": policy.summary["target_count"], "incremental_outcome": policy.summary["expected_incremental_outcome"], "incremental_value": policy.summary["expected_incremental_value"], "treatment_cost": policy.summary["total_cost"], "net_value": policy.summary["expected_net_value"], "iROAS": policy.summary["iroas"], "budget_utilization": policy.summary["budget_utilization"], "offline_only": True}
 
 
-def evaluate_prediction(prediction: EffectPrediction, dataset: CausalDataset, *, true_effect_col: str | None = None) -> dict[str, Any]:
-    result = {"ranking": ranking_metrics(prediction, dataset), "calibration": calibration_metrics(prediction, dataset), "policy": policy_metrics(prediction, dataset)}
+def evaluate_prediction(
+    prediction: EffectPrediction,
+    dataset: CausalDataset,
+    *,
+    true_effect_col: str | None = None,
+    include_ranking_curves: bool = True,
+) -> dict[str, Any]:
+    result = {"ranking": ranking_metrics(prediction, dataset, include_curves=include_ranking_curves), "calibration": calibration_metrics(prediction, dataset), "policy": policy_metrics(prediction, dataset)}
     if true_effect_col:
         result["ground_truth"] = ground_truth_metrics(prediction, dataset, true_effect_col=true_effect_col)
     else:
@@ -38,4 +44,4 @@ def evaluate_prediction(prediction: EffectPrediction, dataset: CausalDataset, *,
     return result
 
 
-__all__ = ["ground_truth_metrics", "policy_metrics", "evaluate_prediction"]
+__all__ = ["evaluate_prediction", "ground_truth_metrics", "policy_metrics"]

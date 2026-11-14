@@ -8,18 +8,22 @@ model-facing ``CausalDataset``.
 
 from __future__ import annotations
 
+import hashlib
 from dataclasses import dataclass
 from typing import Any
 
 import numpy as np
 import pandas as pd
 from sklearn.linear_model import Ridge
+from sklearn.model_selection import train_test_split
 
+from deepuplift.benchmarks.metrics import evaluate_prediction
 from deepuplift.contracts import AssignmentType, CausalDataset, TreatmentType
+from deepuplift.data.nuisance import estimate_nuisance
 from deepuplift.data.preprocessing import TabularPreprocessor
 from deepuplift.data.public.mrt import MRTDataset, load_mybpmylife_mrt
 from deepuplift.data.schema import create_causal_dataset
-
+from deepuplift.models import build_model
 
 SCENARIOS = (
     "measured_confounding",
@@ -166,8 +170,8 @@ def generate_push_semisynthetic(
             "evidence_class": "SEMI_SYNTHETIC_KNOWN_TRUTH",
             "scenario": scenario,
             "seed": int(seed),
-            "rows_full": int(len(full)),
-            "rows_observed": int(len(observed)),
+            "rows_full": len(full),
+            "rows_observed": len(observed),
             "truth_not_in_model_frame": True,
             "assignment_mechanism": "known logistic score; hidden-U scenarios add U to assignment",
             "selection_mechanism": "known logistic selection probability; MNAR uses hidden U",
@@ -243,17 +247,14 @@ def _evaluate_method(benchmark: SemiSyntheticBenchmark, method: str) -> dict[str
     selection_weight = 1.0 / s
     if method == "unadjusted":
         estimate = float(frame.loc[treatment == 1, "outcome"].mean() - frame.loc[treatment == 0, "outcome"].mean())
-        policy_effect = np.full(len(truth.full_frame), estimate)
         analysis_weights = np.ones(len(frame))
     else:
         use_selection = method.startswith("selection_weighted") or method == "oracle_selection_weighted_dr"
         base_weight = selection_weight if use_selection else np.ones(len(frame))
         prep, models = _fit_outcome_models(frame, dataset.feature_cols, sample_weight=base_weight if use_selection else None)
         x_observed = prep.transform(frame[dataset.feature_cols])
-        full_x = prep.transform(truth.full_frame[dataset.feature_cols])
         m0 = models[0].predict(x_observed)
         m1 = models[1].predict(x_observed)
-        full_effect = models[1].predict(full_x) - models[0].predict(full_x)
         if method == "outcome_regression":
             estimate = float(np.average(m1 - m0, weights=base_weight))
             analysis_weights = base_weight
@@ -276,11 +277,6 @@ def _evaluate_method(benchmark: SemiSyntheticBenchmark, method: str) -> dict[str
             residual = m1 - m0 + treatment / p * (frame["outcome"].to_numpy() - m1) - (1 - treatment) / (1 - p) * (frame["outcome"].to_numpy() - m0)
             estimate = float(np.average(residual, weights=base_weight))
             analysis_weights = base_weight
-        policy_effect = full_effect
-    truth_effect_observed = truth.true_effect[observed_indices]
-    policy_action = (policy_effect > 0).astype(int)
-    policy_value = float(np.mean(truth.y0 + policy_action * truth.true_effect))
-    oracle_value = float(np.mean(np.maximum(truth.y0, truth.y1)))
     weights = np.asarray(analysis_weights, dtype="float64")
     treated_weights = weights * treatment
     control_weights = weights * (1 - treatment)
@@ -290,14 +286,80 @@ def _evaluate_method(benchmark: SemiSyntheticBenchmark, method: str) -> dict[str
         "true_ate": truth.true_ate,
         "ate_bias": float(estimate - truth.true_ate),
         "ate_squared_error": float((estimate - truth.true_ate) ** 2),
-        "cate_pehe_observed": float(np.sqrt(np.mean((policy_effect[observed_indices] - truth_effect_observed) ** 2))),
-        "policy_value": policy_value,
-        "oracle_policy_value": oracle_value,
-        "policy_regret": float(oracle_value - policy_value),
+        "estimand": "ATE",
+        "cate_pehe_observed": None,
+        "policy_value": None,
+        "oracle_policy_value": None,
+        "policy_regret": None,
+        "cate_policy_surface": "NOT_EVALUATED; ATE estimator output is not a CATE learner",
         "effective_sample_size": {"treated": _ess(treated_weights), "control": _ess(control_weights)},
         "weight_max": float(np.max(weights)),
         "weight_variance": float(np.var(weights)),
         "balance": {"smd_max_before": _weighted_smd(x, treatment), "smd_max_after": _weighted_smd(x, treatment, weights)},
+    }
+
+
+CATE_LEARNERS = ("S-Learner", "T-Learner", "X-Learner", "R-Learner", "DR-Learner")
+
+
+def _prediction_fingerprint(values: np.ndarray) -> str:
+    rounded = np.asarray(values, dtype="float64").round(10)
+    return hashlib.sha256(rounded.tobytes()).hexdigest()[:16]
+
+
+def _evaluate_cate_learner(benchmark: SemiSyntheticBenchmark, method: str) -> dict[str, Any]:
+    """Evaluate one learner on a held-out observed-row split.
+
+    This path intentionally does not reuse the ATE estimator's Ridge surface.
+    R/DR receive a nuisance result fitted on the training partition only.
+    """
+    if method not in CATE_LEARNERS:
+        raise ValueError(f"Unknown CATE learner {method!r}; expected {CATE_LEARNERS}.")
+    dataset, truth = benchmark.dataset, benchmark.truth
+    frame = dataset.to_pandas().reset_index(drop=True)
+    treatment = frame[dataset.treatment_col].to_numpy(dtype="int64")
+    indices = np.arange(len(frame))
+    train_idx, test_idx = train_test_split(indices, test_size=0.25, random_state=truth.seed, stratify=treatment)
+    train = dataset.subset(train_idx)
+    test = dataset.subset(test_idx)
+    nuisance = None
+    if method in {"R-Learner", "DR-Learner"}:
+        arm_counts = np.bincount(treatment[train_idx].astype(int), minlength=2)
+        n_splits = min(5, int(arm_counts.min()))
+        if n_splits < 2:
+            raise ValueError(f"{method} needs at least two rows per treatment arm in the training split.")
+        nuisance = estimate_nuisance(train, estimator="logistic", cross_fit=True, n_splits=n_splits, random_state=truth.seed)
+    model = build_model(method, task="regression", random_state=truth.seed)
+    model.fit(train, nuisance=nuisance)
+    prediction = model.predict(test)
+    observed_indices = frame.iloc[test_idx]["source_row_index"].to_numpy(dtype="int64")
+    true_effect = truth.true_effect[observed_indices]
+    y0 = truth.y0[observed_indices]
+    y1 = truth.y1[observed_indices]
+    estimated_effect = np.asarray(prediction.cate, dtype="float64")
+    policy_action = estimated_effect > 0
+    policy_value = float(np.mean(y0 + policy_action * true_effect))
+    oracle_value = float(np.mean(np.maximum(y0, y1)))
+    evaluated = evaluate_prediction(prediction, test)
+    return {
+        "method": method,
+        "estimand": "CATE",
+        "status": "PASS",
+        "target_population": "observed_test_rows",
+        "train_rows": len(train_idx),
+        "test_rows": len(test_idx),
+        "prediction_fingerprint": _prediction_fingerprint(estimated_effect),
+        "ate_estimate_from_cate": float(np.mean(estimated_effect)),
+        "true_ate_test": float(np.mean(true_effect)),
+        "ate_bias_from_cate": float(np.mean(estimated_effect) - np.mean(true_effect)),
+        "cate_pehe_test": float(np.sqrt(np.mean((estimated_effect - true_effect) ** 2))),
+        "policy_value": policy_value,
+        "oracle_policy_value": oracle_value,
+        "policy_regret": float(oracle_value - policy_value),
+        "ranking": evaluated["ranking"],
+        "calibration": evaluated["calibration"],
+        "model_metadata": prediction.metadata,
+        "split": "stratified row split; model-specific prediction on held-out rows",
     }
 
 
@@ -316,21 +378,28 @@ def run_push_semisynthetic_scenario(
         methods.extend(["selection_weighted_ipw", "selection_weighted_dr"])
     if scenario == "sample_selection_mnar":
         methods.extend(["selection_weighted_dr", "oracle_selection_weighted_dr"])
-    results = [_evaluate_method(benchmark, method) for method in methods]
+    ate_results = [_evaluate_method(benchmark, method) for method in methods]
+    cate_results = [_evaluate_cate_learner(benchmark, method) for method in CATE_LEARNERS]
     truth = benchmark.truth
     return {
         "status": "PASS",
         "evidence_class": "SEMI_SYNTHETIC_KNOWN_TRUTH",
         "scenario": scenario,
         "seed": int(seed),
-        "rows_full": int(len(truth.full_frame)),
-        "rows_observed": int(len(benchmark.dataset.to_pandas())),
+        "rows_full": len(truth.full_frame),
+        "rows_observed": len(benchmark.dataset.to_pandas()),
         "selection_rate": float(np.mean(truth.selected_mask)),
         "propensity_extreme_rate_true": float(np.mean((truth.propensity < 0.05) | (truth.propensity > 0.95))),
         "propensity_extreme_rate_observed_x": float(np.mean((truth.observed_x_propensity < 0.05) | (truth.observed_x_propensity > 0.95))),
         "true_ate": truth.true_ate,
         "dgp_parameters": truth.parameters,
-        "methods": results,
+        "methods": ate_results,
+        "ate_estimators": ate_results,
+        "cate_learners": cate_results,
+        "method_separation": {
+            "ate_estimators": "ATE estimates, bias and weighting diagnostics only",
+            "cate_learners": "held-out method-specific CATE, ranking, calibration and oracle policy diagnostics",
+        },
         "hidden_confounding_limit": scenario in {"hidden_confounding", "sample_selection_mnar"},
         "mnar_interpretation": "Observed-X correction is not identified; oracle selection weighting is a sensitivity upper bound, not an estimable production method." if scenario == "sample_selection_mnar" else None,
         "deep_candidates": {"status": "NOT_RUN", "reason": "P2 gate compares auditable classical identification baselines; deep candidates are not silently treated as causal corrections."},

@@ -224,3 +224,37 @@ The table is a model-selection diagnostic on a single randomized dataset, not
 a claim that the selected learner is causally superior. R-Learner's low target
 rate and the spend-lane Ridge conditioning warnings are retained as observed
 diagnostics. There is still no real Push/MRT result.
+
+## Criteo v2.1 real randomized execution (2026-11-14)
+
+The corrected Criteo Uplift v2.1 file was locally audited and then benchmarked
+at 100k, 500k and 1m exact-uniform row samples. Conversion and visit each ran
+45/45 PASS rows (five learners × three seeds × three sizes). The source file
+contained 13,979,592 rows, 12 usable features, no missing values and an
+observed treatment share of 0.8500001288. `exposure` was excluded from model
+features. Unlike the previous unavailable-data statement in this historical
+section, this update is the current measured result; the older claims are
+preserved as historical context.
+
+Aggregate tables and data boundary are in
+[`reports/EXPERIMENT_A_MODEL_COMPARISON_RESULTS.md`](../../reports/EXPERIMENT_A_MODEL_COMPARISON_RESULTS.md),
+[`reports/EXPERIMENT_A_DATA_AUDIT.md`](../../reports/EXPERIMENT_A_DATA_AUDIT.md),
+and the machine-readable aggregate
+[`reports/EXPERIMENT_A_SUMMARY.json`](../../reports/EXPERIMENT_A_SUMMARY.json).
+No Criteo PEHE or individual counterfactual error is reported. The measured
+results are randomized external-data ranking and design-based offline policy
+diagnostics only.
+
+## Correctness and scale update
+
+The Push semi-synthetic path now separates ATE estimators from method-specific
+CATE learners. ATE rows no longer reuse a Ridge effect surface for PEHE or
+policy metrics; each S/T/X/R/DR learner trains and predicts on its own held-out
+split. A regression test checks distinct prediction fingerprints and the
+`NOT_EVALUATED` CATE marker on ATE rows.
+
+The ranking treatment-balance curve was vectorized with NumPy cumulative sums,
+replacing repeated DataFrame prefix slicing. Large Criteo runs can omit the
+materialized curves while retaining scalar Qini/AUUC, top-k metrics and
+bootstrap stability. The full test suite after this change is `101 passed, 2
+skipped`.

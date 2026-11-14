@@ -2,7 +2,10 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from deepuplift.benchmarks.push_semisynthetic import generate_push_semisynthetic, run_push_semisynthetic_scenario
+from deepuplift.benchmarks.push_semisynthetic import (
+    generate_push_semisynthetic,
+    run_push_semisynthetic_scenario,
+)
 from deepuplift.data import load_mybpmylife_mrt
 from tests.data.test_mrt_loader import _fixture
 
@@ -25,3 +28,14 @@ def test_semisynthetic_scenarios_report_known_truth_and_mnar_limit(tmp_path: Pat
         assert report["methods"]
     mnar = run_push_semisynthetic_scenario(mrt, scenario="sample_selection_mnar", rows=40, seed=5)
     assert "not identified" in mnar["mnar_interpretation"]
+
+
+def test_ate_estimators_are_separate_from_method_specific_cate_learners(tmp_path: Path):
+    mrt = load_mybpmylife_mrt(_fixture(tmp_path))
+    report = run_push_semisynthetic_scenario(mrt, scenario="measured_confounding", rows=120, seed=11)
+    assert {row["estimand"] for row in report["ate_estimators"]} == {"ATE"}
+    assert all(row["cate_policy_surface"].startswith("NOT_EVALUATED") for row in report["ate_estimators"])
+    cate_rows = report["cate_learners"]
+    assert {row["estimand"] for row in cate_rows} == {"CATE"}
+    assert all(row["cate_pehe_test"] is not None for row in cate_rows)
+    assert len({row["prediction_fingerprint"] for row in cate_rows}) == len(cate_rows)

@@ -130,3 +130,38 @@ two pairwise comparisons × five seeds × five learners (`S`, `T`, `X`, `R`,
 These are randomized external-data baselines and are not claims about Push
 business value. The next real-data requirement remains a licensed myBPmyLife
 MRT file with participant/time/eligibility/delivery/outcome semantics.
+
+## Criteo Uplift v2.1 execution update (2026-11-14)
+
+The official Criteo v2.1 source was audited locally. The compressed CSV contains
+13,979,592 rows, 12 feature columns (`f0`–`f11`), binary treatment,
+conversion/visit/exposure outcomes and no missing values. The observed treated
+share is 0.8500001288. Exposure was not used as a feature. The local file SHA256
+is `2716e1bf0fd157a93b5bf86924d9088419dfbac2022c6cd90030220634f616dc`.
+
+Command shape:
+
+```bash
+.venv-experiment-a/bin/python scripts/run_criteo_real_benchmark.py \
+  --path .local/experiment-a/raw/criteo-research-uplift-v2.1.csv.gz \
+  --outcomes conversion visit --sizes 100000 500000 1000000 \
+  --seeds 42 52 62 --models S-Learner T-Learner X-Learner R-Learner DR-Learner \
+  --output /tmp/deepuplift-experiment-a/criteo_<outcome>_v1.json
+```
+
+Each outcome completed 45/45 PASS rows. Exact aggregate values, runtime and
+RSS are in the current report under `reports/`; the raw CSV and per-run JSON
+remain outside Git. These are randomized external-data metrics: no PEHE,
+individual CATE bias or business deployment claim is made.
+
+The same command was re-run after the ranking-curve vectorization as
+`/tmp/deepuplift-experiment-a/criteo_v2_postfix.json`; it completed 90/90 PASS
+rows across both outcomes. Scalar ranking and policy metrics were unchanged;
+the report's runtime/RSS values use this post-fix run.
+
+## Data and failure status
+
+myBPmyLife remains `NOT_AVAILABLE` locally. MT-LIFT's official Drive download
+was blocked by authentication. UVET was inspected through a 50MB range only
+and is `AUDIT_ONLY`, not a formal benchmark. The current overall Experiment A
+status is `PARTIAL` until the real MRT and multi-treatment lanes are supplied.
