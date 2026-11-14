@@ -45,15 +45,19 @@ def continuous_curve_metrics(
         raise ValueError("Prediction and ground-truth curve shapes must agree over units and dose grid.")
     interval = float(grid[-1] - grid[0])
     squared_error = (pred_y - truth_y) ** 2
+    effect_squared_error = (pred_tau - truth_tau) ** 2
     absolute_error = np.abs(pred_y - truth_y)
     integrate = np.trapezoid if hasattr(np, "trapezoid") else np.trapz
     mise = float(np.mean(integrate(squared_error, x=grid, axis=1) / interval)) if interval > 0 else float(np.mean(squared_error))
+    effect_mise = float(np.mean(integrate(effect_squared_error, x=grid, axis=1) / interval)) if interval > 0 else float(np.mean(effect_squared_error))
     iae = float(np.mean(integrate(absolute_error, x=grid, axis=1) / interval)) if interval > 0 else float(np.mean(absolute_error))
     if not causal_baseline_supported:
         true_adrf = truth_y.mean(axis=0)
         pred_adrf = pred_y.mean(axis=0)
         return {
             "mise": mise,
+            "response_mise": mise,
+            "effect_mise": None,
             "dose_response_rmse": float(np.sqrt(np.mean(squared_error))),
             "integrated_absolute_error": iae,
             "cate_icte_rmse": None,
@@ -90,6 +94,8 @@ def continuous_curve_metrics(
     pred_adrf = pred_y.mean(axis=0)
     return {
         "mise": mise,
+        "response_mise": mise,
+        "effect_mise": effect_mise,
         "dose_response_rmse": float(np.sqrt(np.mean(squared_error))),
         "integrated_absolute_error": iae,
         "cate_icte_rmse": float(np.sqrt(np.mean((pred_tau - truth_tau) ** 2))),
