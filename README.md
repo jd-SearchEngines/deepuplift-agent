@@ -6,6 +6,8 @@ Open-source Uplift & Causal Decision Framework
 
 Release status: `v0.5.0b1 Beta`
 
+Project roadmap, current experiment gates, open issues and the shared handoff state: [`docs/PROJECT_STATUS.md`](docs/PROJECT_STATUS.md).
+
 From heterogeneous treatment effect estimation to deployable business policies.
 
 ## DeepUplift Agent
