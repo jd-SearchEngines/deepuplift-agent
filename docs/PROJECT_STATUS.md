@@ -1,9 +1,9 @@
 # DeepUplift Project Status
 
-**Last updated:** 2026-11-15  
+**Last updated:** 2026-11-16  
 **Repository:** `jd-SearchEngines/deepuplift-agent`  
-**Current evidence branch:** `codex/hermes-metrics-pilot`  
-**Current PR:** [#5 — strengthen causal benchmark metrics](https://github.com/jd-SearchEngines/deepuplift-agent/pull/5) (OPEN, DRAFT; not merged)
+**Current evidence branch:** `codex/issue12-long-term-runner`  
+**Current PR:** [#13 — make autonomous research runner continuous](https://github.com/jd-SearchEngines/deepuplift-agent/pull/13) (OPEN, DRAFT; not merged)
 
 > This file is the shared entry point for future GPT/Codex sessions. Read it before proposing or executing work, then inspect the linked phase reports and current GitHub state. Update this file after every meaningful experiment, phase gate, blocker, or scheduling-system test. Do not rely on chat history as the sole source of project state.
 
@@ -179,7 +179,7 @@ Work is being continued on branch `codex/issue12-long-term-runner` from the vali
 | Multi-arm candidate → optimizer → OPE | PASS | Oracle-effect semi-synthetic diagnostic; not a fitted-model claim |
 | Real myBPmyLife MRT | BLOCKED | No locally authorized raw archive was available in this run |
 
-The complete launchd, interruption/recovery and multi-stage acceptance evidence will be added to `docs/benchmarks/ISSUE12_LONG_TERM_RUNNER_REPORT.md` after the service is installed and observed. Until then, autonomous continuous execution remains **PARTIAL**, not PASS.
+The observed launchd, interruption/recovery and multi-stage evidence is recorded in [Issue #12 long-term runner report](benchmarks/ISSUE12_LONG_TERM_RUNNER_REPORT.md) and its [machine-readable JSON](benchmarks/ISSUE12_LONG_TERM_RUNNER_REPORT.json). The optimizer Worker remains in progress; autonomous continuous execution therefore remains **PARTIAL**, not PASS.
 
 
 ## 9. 2026-11-16 end-to-end chain audit
