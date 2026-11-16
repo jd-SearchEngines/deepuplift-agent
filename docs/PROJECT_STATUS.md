@@ -289,3 +289,11 @@ What was actually verified on the local machine:
 - Draft PR #8 is open; remote SHA was verified, and all Python 3.10/3.11/3.12 syntax plus continuous-frontier checks passed.
 
 This gate proves a local bounded engineering workflow, not causal validity, real myBPmyLife availability, online lift, or unattended operation when the local machine/device is offline. The next eligible task is Gate 1 metric correctness review; do not launch the long causal sweep yet.
+
+## 12. 2026-11-16 Gate 1 metric correctness
+
+**Gate status: PASS for deterministic metric correctness; independent SDK review: NOT_COMPLETED due to timeout.** Report: [GATE1_METRIC_CORRECTNESS_REPORT.md](benchmarks/GATE1_METRIC_CORRECTNESS_REPORT.md), machine-readable result: [GATE1_METRIC_CORRECTNESS_REPORT.json](benchmarks/GATE1_METRIC_CORRECTNESS_REPORT.json).
+
+The metric layer now has a hand-calculated Qini/AUUC fixture (`qini=0.625`, `auuc=3.625`), participant-cluster bootstrap support, and a multi-arm policy-value estimator using the logged per-row arm probability matrix. Focused tests passed (`10 passed`); the full Python 3.11 suite passed (`114 passed, 2 skipped`). The SDK read-only reviewer timed out and was not counted as a pass. No raw MRT data or business claims are attached to this gate.
+
+The next eligible phase is Gate 2 Push data provenance reconciliation. Real-data and long-running causal experiments remain gated until archive source, license, fingerprint, dictionary version and run IDs agree.

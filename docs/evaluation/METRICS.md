@@ -36,6 +36,18 @@ is suitable for a binary randomized or explicitly modeled assignment lane; it
 is not a claim of sequential MRT value or identification under hidden
 confounding.
 
+`bootstrap_cluster_ci` resamples independent participant/unit IDs and keeps
+all repeated decision rows from a selected cluster together. It is the
+uncertainty primitive for repeated MRT rows; row bootstrap remains available
+for independent-row fixtures. The report records the bootstrap unit and
+cluster count.
+
+`multiarm_policy_value` accepts an `(n_rows, n_arms)` matrix of logged
+assignment probabilities. It estimates `I(A=d(X))Y/p(A=d(X)|X)` and subtracts
+the cost of the selected arm. It rejects non-positive/non-normalized
+probabilities and does not infer assignment probabilities from observed arm
+counts. Pass participant IDs through `clusters=` for cluster bootstrap.
+
 Continuous benchmarks report both `response_mise` and `effect_mise`:
 
 - `response_mise` integrates squared error between predicted and true potential

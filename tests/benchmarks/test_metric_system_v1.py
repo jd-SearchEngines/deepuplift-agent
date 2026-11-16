@@ -6,7 +6,14 @@ import pytest
 import json
 
 from deepuplift.contracts import CausalDataset, EffectPrediction, TreatmentType
-from deepuplift.decision.evaluation import fixed_budget_policy_value, policy_value_contributions, ranking_metrics
+from deepuplift.decision.evaluation import (
+    bootstrap_cluster_ci,
+    fixed_budget_policy_value,
+    multiarm_policy_value,
+    multiarm_policy_value_contributions,
+    policy_value_contributions,
+    ranking_metrics,
+)
 from deepuplift.decision.evaluation.ranking import qini_curve
 from deepuplift.benchmarks.continuous.metrics import continuous_curve_metrics
 from deepuplift.models.continuous.contracts import effect_prediction_from_curve
@@ -47,6 +54,56 @@ def test_ranking_curve_excludes_prefixes_without_both_treatment_arms():
     )
     assert len(curve) == 2
     assert np.isfinite(curve[["qini", "uplift", "auuc_gain"]].to_numpy()).all()
+
+
+def test_qini_and_auuc_match_hand_calculated_tiny_fixture():
+    frame = pd.DataFrame(
+        {
+            "unit_id": [0, 1, 2, 3],
+            "x": [4.0, 3.0, 2.0, 1.0],
+            "treatment": [1, 0, 1, 0],
+            "outcome": [4.0, 1.0, 3.0, 2.0],
+        }
+    )
+    dataset = CausalDataset(frame, feature_cols=["x"], treatment_col="treatment", outcome_col="outcome", id_column="unit_id")
+    prediction = EffectPrediction(unit_id=frame["unit_id"], treatment_type=TreatmentType.BINARY, uplift=frame["x"])
+    result = ranking_metrics(prediction, dataset, include_curves=True, bootstrap_samples=0)
+    assert result["qini_raw_area"] == pytest.approx(2.125)
+    assert result["random_baseline_area"] == pytest.approx(1.5)
+    assert result["qini"] == pytest.approx(0.625)
+    assert result["auuc"] == pytest.approx(3.625)
+    assert [row["qini"] for row in result["curve"]] == pytest.approx([3.0, 5.0, 4.0])
+    assert [row["auuc_gain"] for row in result["curve"]] == pytest.approx([6.0, 7.5, 8.0])
+
+
+def test_cluster_bootstrap_keeps_repeated_rows_together():
+    result = bootstrap_cluster_ci(
+        [1.0, 3.0, 10.0, 12.0], ["p1", "p1", "p2", "p2"], samples=32, random_state=11
+    )
+    assert result["estimate"] == pytest.approx(6.5)
+    assert result["cluster_count"] == 2
+    assert result["samples"] == 32
+    assert result["low"] <= result["estimate"] <= result["high"]
+
+
+def test_multiarm_policy_value_uses_logged_arm_probabilities_and_cluster_ci():
+    treatment = [0, 1, 2, 1]
+    outcome = [2.0, 4.0, 8.0, 6.0]
+    policy = [0, 1, 2, 1]
+    propensity = [[0.5, 0.3, 0.2], [0.2, 0.5, 0.3], [0.2, 0.2, 0.6], [0.3, 0.5, 0.2]]
+    contributions = multiarm_policy_value_contributions(
+        treatment, outcome, policy, propensity, treatment_cost=[0.0, 1.0, 2.0]
+    )
+    assert contributions.mean() == pytest.approx(25.0 / 3.0)
+    result = multiarm_policy_value(
+        treatment, outcome, policy, propensity, treatment_cost=[0.0, 1.0, 2.0],
+        clusters=["p1", "p1", "p2", "p2"], bootstrap_samples=32, random_state=11,
+    )
+    assert result["policy_value"] == pytest.approx(25.0 / 3.0)
+    assert result["bootstrap_unit"] == "cluster"
+    assert result["bootstrap"]["cluster_count"] == 2
+    with pytest.raises(ValueError, match="sum to one"):
+        multiarm_policy_value_contributions(treatment, outcome, policy, [[0.5, 0.5, 0.1]] * 4)
 
 
 def test_auuc_is_unavailable_with_only_one_identifiable_prefix():
