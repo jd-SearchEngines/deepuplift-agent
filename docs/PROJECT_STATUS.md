@@ -337,6 +337,9 @@ and [Batch 3 validation log](benchmarks/evidence/BATCH3_PUSH_E2E_VALIDATION.md).
   evidence, then the report provenance/test-pass issues were repaired and the
   focused validation returned `7 passed`.
 
+Draft PR [#11](https://github.com/jd-SearchEngines/deepuplift-agent/pull/11)
+contains the runner and Batch 3 evidence; it is intentionally not merged.
+
 Launchd is **NOT_INSTALLED**. The checked-in template and
 `start.sh`/`stop.sh`/`status.sh`/`resume.sh` passed shell validation; service
 installation remains an explicit local deployment step after review.

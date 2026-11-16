@@ -42,7 +42,7 @@ modified.
 | BLOCKED boundary | Unit test exercises two repair cycles then `BLOCKED`; no infinite retry | PASS |
 | Independent review | Read-only SDK Worker returned a PARTIAL evidence verdict; no source files changed | PASS |
 | Launchd front-end | Scripts and plist template syntax checked; not installed | NOT_INSTALLED |
-| GitHub sync | Code/report branch and Draft PR handoff are pending final commit/push in this run | PENDING |
+| GitHub sync | Branch `codex/batch3-autonomous-runner`, commits `e9919f6` and `555827f`, Draft PR [#11](https://github.com/jd-SearchEngines/deepuplift-agent/pull/11) | PASS |
 
 ## Real task sequence
 
