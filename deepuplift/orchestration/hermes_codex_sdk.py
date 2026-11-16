@@ -82,6 +82,10 @@ class RunLedger:
                     commit_sha TEXT,
                     pr_url TEXT,
                     last_error TEXT,
+                    task_key TEXT,
+                    spec_json TEXT,
+                    repair_count INTEGER NOT NULL DEFAULT 0,
+                    worker_pid INTEGER,
                     updated_at TEXT NOT NULL,
                     PRIMARY KEY (run_id, phase_id)
                 );
@@ -95,6 +99,18 @@ class RunLedger:
                 );
                 """
             )
+            # Batch 0 ledgers predate the long-running runner.  Migrate only
+            # the project-owned metadata table; Hermes' private database is
+            # intentionally never opened or modified here.
+            columns = {row[1] for row in db.execute("PRAGMA table_info(stages)")}
+            for name, definition in (
+                ("task_key", "TEXT"),
+                ("spec_json", "TEXT"),
+                ("repair_count", "INTEGER NOT NULL DEFAULT 0"),
+                ("worker_pid", "INTEGER"),
+            ):
+                if name not in columns:
+                    db.execute(f"ALTER TABLE stages ADD COLUMN {name} {definition}")
 
     def ensure_stage(
         self,
@@ -106,6 +122,8 @@ class RunLedger:
         worktree: str = "",
         config: Any = None,
         dataset_fingerprint: str = "synthetic-fixture-only",
+        task_key: str | None = None,
+        spec: Any = None,
     ) -> None:
         now = utc_now()
         dependencies = json.dumps(list(dependency_ids), sort_keys=True)
@@ -115,11 +133,12 @@ class RunLedger:
                 """
                 INSERT OR IGNORE INTO stages
                 (run_id, phase_id, status, dependency_ids, branch, worktree,
-                 config_hash, dataset_fingerprint, updated_at)
-                VALUES (?, ?, 'READY', ?, ?, ?, ?, ?, ?)
+                 config_hash, dataset_fingerprint, task_key, spec_json, updated_at)
+                VALUES (?, ?, 'READY', ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (run_id, phase_id, dependencies, branch, worktree, config_hash,
-                 dataset_fingerprint, now),
+                 dataset_fingerprint, task_key or phase_id,
+                 json.dumps(spec, sort_keys=True) if spec is not None else None, now),
             )
 
     def get(self, run_id: str, phase_id: str) -> dict[str, Any]:
@@ -137,7 +156,8 @@ class RunLedger:
         allowed = {
             "status", "attempt", "codex_thread_id", "codex_turn_id", "started_at",
             "heartbeat_at", "checkpoint", "validation_status", "report_path",
-            "commit_sha", "pr_url", "last_error",
+            "commit_sha", "pr_url", "last_error", "task_key", "spec_json",
+            "repair_count", "worker_pid",
         }
         invalid = set(fields) - allowed
         if invalid:
@@ -198,10 +218,18 @@ class HermesKanban:
             return result.stderr.strip()
         return result.stdout.strip()
 
-    def create(self, title: str, body: str, *, key: str, workspace: Path) -> str:
+    def create(
+        self,
+        title: str,
+        body: str,
+        *,
+        key: str,
+        workspace: Path,
+        created_by: str = "hermes-batch0",
+    ) -> str:
         output = self._run([
             "create", title, "--body", body, "--workspace", f"dir:{workspace}",
-            "--idempotency-key", key, "--created-by", "hermes-batch0", "--json",
+            "--idempotency-key", key, "--created-by", created_by, "--json",
         ])
         try:
             payload = json.loads(output)
@@ -229,6 +257,13 @@ class HermesKanban:
 
     def comment(self, task_id: str, body: str) -> None:
         self._run(["comment", task_id, body])
+
+    def list(self) -> list[dict[str, Any]]:
+        output = self._run(["list", "--json"])
+        payload = json.loads(output or "[]")
+        if not isinstance(payload, list):
+            raise RuntimeError(f"unexpected Hermes task list payload: {payload!r}")
+        return payload
 
 
 class CodexSDKWorker:

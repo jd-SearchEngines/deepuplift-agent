@@ -1,0 +1,17 @@
+{
+  "run_id": "batch3-front-end-20261116",
+  "board": "deepuplift-batch3-20261116",
+  "evidence_class": "LOCAL_ENGINEERING_AND_SEMI_SYNTHETIC",
+  "status": "PASS_LOCAL_ENGINEERING",
+  "tasks": [
+    {"id": "t_e7126026", "key": "batch3:runner-engineering", "status": "ACCEPTED", "attempt": 3, "repair_count": 1, "validation": "PASS", "codex_thread_id": "01a1e4c2-6b4c-7830-bf97-99f1ae69897f"},
+    {"id": "t_2b94bd22", "key": "batch3:push-e2e-v2", "status": "ACCEPTED", "attempt": 1, "repair_count": 0, "validation": "PASS", "codex_thread_id": "01a1e4ca-ecac-74c3-8bd0-b9c732e0f2d0"},
+    {"id": "t_57462294", "key": "batch3:independent-report", "status": "ACCEPTED", "attempt": 1, "repair_count": 0, "validation": "PASS", "codex_thread_id": "01a1e4cc-e990-7683-9630-b5e5613fe94d"}
+  ],
+  "forced_recovery": {"killed_returncode": -9, "checkpoint_observed": true, "resumed_same_thread": true, "resume_status": "completed", "resume_stream_events": 82},
+  "focused_validation": {"command": "python3 -m pytest -q tests/orchestration tests/benchmarks/test_push_e2e_v2.py", "result": "7 passed"},
+  "launchd": "NOT_INSTALLED",
+  "real_mrt": "BLOCKED_LICENSE_AND_LOCAL_ARCHIVE",
+  "full_sequential_dr": "NOT_AVAILABLE_CONTINUATION_MODEL_MISSING",
+  "github_merge": "NOT_REQUESTED"
+}

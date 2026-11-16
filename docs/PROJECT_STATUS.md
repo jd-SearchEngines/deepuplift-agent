@@ -305,3 +305,42 @@ The next eligible phase is Gate 2 Push data provenance reconciliation. Real-data
 The bounded local filename audit found no raw `Data_MRT.zip` or participant-level myBPmyLife archive. The upstream repository is public, but GitHub reports no license metadata or root license file; therefore the archive was not downloaded. Historical P0/P1 supplied-snapshot PASS evidence and the Experiment A zero-row `NOT_AVAILABLE` result remain separate and reconcile to `PARTIAL / NOT_VERIFIED`, not a real-data PASS.
 
 The real Push lane is paused at the license/archive-fingerprint gate. Semi-synthetic known-truth work may continue; no raw data download, redistribution or long-running real MRT experiment will be started without authorized provenance evidence.
+
+## 14. 2026-11-16 Autonomous Research Runner and Batch 3
+
+This section supersedes the earlier orchestration `NOT VERIFIED` note for the
+specific local run below; it does not claim that the whole causal research
+programme is complete.
+
+**Runner gate: PASS for the local engineering acceptance run.** Evidence:
+[Autonomous Research Runner report](benchmarks/AUTONOMOUS_RESEARCH_RUNNER_REPORT.md),
+[machine-readable runner record](benchmarks/AUTONOMOUS_RESEARCH_RUNNER_REPORT.json),
+and [Batch 3 validation log](benchmarks/evidence/BATCH3_PUSH_E2E_VALIDATION.md).
+
+- Hermes public Kanban created and persisted a three-task DAG: engineering →
+  `push_e2e_v2` → independent report. Task IDs were `t_e7126026`,
+  `t_2b94bd22`, and `t_57462294`.
+- The official asynchronous Codex SDK produced streaming events while the
+  Supervisor emitted Hermes heartbeats. The engineering task encountered a
+  real shell failure (`python` unavailable), entered `REPAIR_READY`, then
+  passed after the bounded repair using the same Codex thread. No failure was
+  silently converted to PASS.
+- A separate forced-kill test returned `-9`; the resumed worker reused the
+  original Codex thread and completed from the persisted checkpoint. Completed
+  stages were not duplicated.
+- Batch 3 completed the known-truth semi-synthetic lane across five seeds:
+  20 model rows, 25 optimizer rows, 25 OPE rows, and a separate existing
+  three-arm comparison. The experiment gate is PASS for this synthetic lane;
+  the research gate remains PARTIAL because the real MRT lane is blocked and
+  full Sequential DR lacks a continuation-value model.
+- Independent read-only review accepted the evidence only as PARTIAL synthetic
+  evidence, then the report provenance/test-pass issues were repaired and the
+  focused validation returned `7 passed`.
+
+Launchd is **NOT_INSTALLED**. The checked-in template and
+`start.sh`/`stop.sh`/`status.sh`/`resume.sh` passed shell validation; service
+installation remains an explicit local deployment step after review.
+
+Next eligible tasks: add a continuation-value model for full Sequential DR,
+add multi-arm candidate/OPE integration, complete optimizer convergence and
+dual-bound evidence, and reopen real MRT only after the license/archive gate.
