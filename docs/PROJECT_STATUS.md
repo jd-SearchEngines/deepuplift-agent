@@ -347,3 +347,37 @@ installation remains an explicit local deployment step after review.
 Next eligible tasks: add a continuation-value model for full Sequential DR,
 add multi-arm candidate/OPE integration, complete optimizer convergence and
 dual-bound evidence, and reopen real MRT only after the license/archive gate.
+
+
+## 15. 2026-11-16 audit: why continuous phase execution has not started
+
+**Current status: Batch 3 bounded run PASS; unattended multi-phase operation NOT YET ACTIVE.**
+
+Follow-up: [Issue #12 — Make Autonomous Research Runner truly continuous across research phases](https://github.com/jd-SearchEngines/deepuplift-agent/issues/12).
+
+### Verified from PR #11 source and evidence
+
+1. Batch 3 local engineering run completed three tasks (runner engineering, push_e2e_v2, independent report); forced worker kill/restart reused the same Codex thread. Full local suite reported 121 passed / 2 skipped; focused runner and Batch 3 tests reported 7 passed. GitHub quality and continuous-frontier CI passed on PR head `05d8024ffef87af867b77b29db7122fe049e4491`.
+2. `launchd` remains `NOT_INSTALLED`; only a plist template and shell scripts are committed. The PR does not prove automatic login startup or OS-level KeepAlive/reboot recovery.
+3. `ResearchPlanner.build_plan()` is a fixed three-task Batch 3 plan, not a phase-aware planner for P1–P9 / Push P0–P6.
+4. `AutonomousResearchRunner.run_once()` only processes already-created READY tasks. The `--cycles 0` loop sleeps when no task is ready; it does not call the Planner again to discover and create the next research phase. Therefore the process may remain alive but idle after its fixed tasks are accepted.
+5. `start.sh` defaults the ledger/checkpoint root to `${TMPDIR}/deepuplift-autonomous-runner`; migrate to a stable per-user Application Support directory before claiming reboot-safe persistence.
+6. The registered Desktop Commander device `jingdongdeMacBook-Pro.local` was OFFLINE at the 2026-11-16 audit (last seen approximately 179 hours earlier). Current local process and launchctl state cannot be inspected or modified from this session until the remote agent reconnects. Codex's Full Access setting does not establish a live remote-device connection or install a background service.
+
+### Required next gate
+
+- Implement phase-aware, idempotent planning from project status and the research execution plan.
+- Re-plan after each accepted/blocked phase; no idle loop without a next-task decision.
+- Move persistent state out of TMPDIR.
+- Install and verify the LaunchAgent with `launchctl print`, login startup and forced process restart.
+- Report process health, active/ready/blocked tasks, last heartbeat and next planned gate.
+- Complete a multi-phase sequence crossing a research-gate boundary, then prove restart recovery without duplicating accepted work.
+
+Until this gate passes:
+- `BATCH3_SYNTHETIC_EXPERIMENT=PASS`
+- `RUNNER_BOUNDED_EXECUTION=PASS`
+- `LAUNCHD=NOT_INSTALLED`
+- `AUTONOMOUS_PHASE_PLANNING=NOT_IMPLEMENTED`
+- `UNATTENDED_MULTI_PHASE_RUN=NOT_VERIFIED`
+
+Batch 3 research remains `PARTIAL`: the three-arm comparison is separate from the binary candidate/optimizer contract, OPE is one-step binary IPS/SNIPS, full Sequential DR lacks a continuation-value model, and real MRT remains blocked by the license/archive gate.
