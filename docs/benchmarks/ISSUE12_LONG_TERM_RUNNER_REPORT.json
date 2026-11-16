@@ -1,0 +1,87 @@
+{
+  "report": "issue12_long_term_runner",
+  "observed_at": "2026-11-16T23:55:34+08:00",
+  "branch": "codex/issue12-long-term-runner",
+  "code_sha_at_last_push": "c988666",
+  "github_pr": "https://github.com/jd-SearchEngines/deepuplift-agent/pull/13",
+  "environment": {
+    "hermes": "Hermes Agent v0.23.1",
+    "hermes_installation": "present; /Users/jingdong/.hermes/hermes-agent",
+    "codex_sdk": "openai_codex import PASS in validated Python 3.11 SDK environment",
+    "system_python": "3.9.6",
+    "runner_python": "3.11.15",
+    "node": "v22.23.1",
+    "github_auth": "gh authenticated; credential values omitted"
+  },
+  "gates": {
+    "hermes_installed": "PASS",
+    "codex_sdk_import": "PASS",
+    "dynamic_planner_code_and_tests": "PASS",
+    "stable_application_support_state": "PASS",
+    "launchd_loaded": "PASS",
+    "launchd_keepalive_runatload": "PASS",
+    "multi_phase_autonomous_execution": "PARTIAL",
+    "supervisor_kill_restart": "PASS",
+    "same_thread_checkpoint_observed": "PASS",
+    "optimizer_worker_terminal_validation": "IN_PROGRESS",
+    "real_mrt": "BLOCKED; no locally authorized raw myBPmyLife archive",
+    "online_lift": "NOT_RUN"
+  },
+  "launchd_observations": [
+    {
+      "command": "scripts/autonomous_runner/install_launchd.sh",
+      "result": "PASS",
+      "label": "com.deepuplift.autonomous-runner",
+      "domain": "gui/501",
+      "state": "running",
+      "pid_observed": 20724,
+      "plist": "~/Library/LaunchAgents/com.deepuplift.autonomous-runner.plist",
+      "state_root": "~/Library/Application Support/DeepUplift/runner/",
+      "properties": ["keepalive", "runatload"]
+    },
+    {
+      "command": "kill -9 21437; wait for KeepAlive",
+      "result": "PASS",
+      "old_supervisor_pid": 21437,
+      "new_supervisor_pid": 21662,
+      "launchd_runs_after_restart": 2
+    }
+  ],
+  "planner_observations": {
+    "accepted_stage": "research:multi-arm-chain:v1",
+    "next_stage": "research:optimizer-evidence:v1",
+    "duplicate_completed_stage": false,
+    "ledger_status_at_report_time": {
+      "ACCEPTED": 1,
+      "RUNNING": 1
+    }
+  },
+  "recovery_observations": {
+    "events": [
+      "recovery_thread_checkpoint",
+      "recovery_result_consumed",
+      "validation_rejected",
+      "worker_started"
+    ],
+    "same_codex_thread_id": "01a1e50e-0df2-7d01-baf5-0df46bfbce78",
+    "recovered_stage": "research:optimizer-evidence:v1",
+    "repair_count_after_recovery": 1,
+    "interpretation": "Supervisor restart did not duplicate the stage; it consumed the interrupted-worker evidence and routed the task to bounded repair."
+  },
+  "research_evidence": {
+    "sequential_dr": "PASS; docs/benchmarks/SEQUENTIAL_DR_REPORT.json; five fixed seeds",
+    "multi_arm_chain": "PASS; docs/benchmarks/MULTIARM_PUSH_CHAIN_REPORT.json; five fixed seeds; oracle-effect diagnostic",
+    "optimizer": "IN_PROGRESS under the real Codex SDK worker; no terminal result claimed"
+  },
+  "tests": {
+    "full_local_suite_before_launchd": "126 passed, 2 skipped",
+    "recovery_focused_tests": "10 passed",
+    "sequential_dr_tests": "3 passed",
+    "multi_arm_chain_test": "1 passed"
+  },
+  "limitations": [
+    "This report does not claim the entire P1-P9 or Push P0-P6 roadmap is complete.",
+    "The real MRT lane remains blocked by local authorization/archive availability.",
+    "A running Codex worker is not counted as accepted until its result file and independent validation are recorded."
+  ]
+}
