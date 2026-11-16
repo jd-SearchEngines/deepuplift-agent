@@ -1,6 +1,6 @@
 # Issue #12 Long-Term Autonomous Research Runner Report
 
-Observed: 2026-11-16 (Asia/Shanghai)  
+Observed: 2026-11-17 (Asia/Shanghai)  
 Branch: `codex/issue12-long-term-runner`  
 Draft PR: [#13](https://github.com/jd-SearchEngines/deepuplift-agent/pull/13)
 
@@ -70,4 +70,4 @@ This is stronger than an in-process unit test because the Supervisor was actuall
 
 ## Remaining state and next action
 
-The service is intentionally left loaded under launchd. The next evidence required is the optimizer Worker result, independent acceptance command, and a subsequent Planner event. If the bounded retries are exhausted, the correct outcome is `BLOCKED` with the SDK/validation error preserved; a running process alone will never be promoted to `PASS`.
+The service is intentionally left loaded under launchd. At the latest observation the optimizer SDK thread still had an active writer, with fresh Heartbeat but no result file after the bounded-recovery attempt. The next evidence required is the optimizer Worker result, independent acceptance command, and a subsequent Planner event. If the bounded retries are exhausted, the correct outcome is `BLOCKED` with the SDK/validation error preserved; a running process alone will never be promoted to `PASS`.

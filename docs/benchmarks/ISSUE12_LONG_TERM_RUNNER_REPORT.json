@@ -1,8 +1,8 @@
 {
   "report": "issue12_long_term_runner",
-  "observed_at": "2026-11-16T23:55:34+08:00",
+  "observed_at": "2026-11-17T00:02:34+08:00",
   "branch": "codex/issue12-long-term-runner",
-  "code_sha_at_last_push": "c988666",
+  "code_sha_at_last_push": "3e7fa80",
   "github_pr": "https://github.com/jd-SearchEngines/deepuplift-agent/pull/13",
   "environment": {
     "hermes": "Hermes Agent v0.23.1",
@@ -23,7 +23,7 @@
     "multi_phase_autonomous_execution": "PARTIAL",
     "supervisor_kill_restart": "PASS",
     "same_thread_checkpoint_observed": "PASS",
-    "optimizer_worker_terminal_validation": "IN_PROGRESS",
+    "optimizer_worker_terminal_validation": "IN_PROGRESS; SDK thread has an active writer and no result file yet",
     "real_mrt": "BLOCKED; no locally authorized raw myBPmyLife archive",
     "online_lift": "NOT_RUN"
   },
