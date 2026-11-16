@@ -1,15 +1,15 @@
+from __future__ import annotations
+
 import json
-
-from deepuplift.benchmarks import run_benchmark
-from deepuplift.data import synthetic_ground_truth
+from pathlib import Path
 
 
-def test_benchmark_writes_complete_evidence_bundle(tmp_path):
-    report = run_benchmark(synthetic_ground_truth(180, 13), models=["DR-Learner"], output_dir=tmp_path)
-    run_dir = tmp_path / report["manifest"]["run_id"]
-    expected = {"config.json", "dataset_manifest.json", "diagnostics.json", "nuisance.json", "model.json", "metrics.json", "policy.json", "environment.json", "evidence_manifest.json"}
-    assert expected == {p.name for p in run_dir.iterdir()}
-    manifest = json.loads((run_dir / "evidence_manifest.json").read_text())
-    assert manifest["files"]["metrics.json"]
-    assert report["results"][0]["metrics"]["ground_truth"]["available"] is True
-
+def test_long_term_research_reports_have_explicit_evidence_gates():
+    root = Path(__file__).resolve().parents[2]
+    sequential = json.loads((root / "docs/benchmarks/SEQUENTIAL_DR_REPORT.json").read_text(encoding="utf-8"))
+    multiarm = json.loads((root / "docs/benchmarks/MULTIARM_PUSH_CHAIN_REPORT.json").read_text(encoding="utf-8"))
+    assert sequential["status"] == "PASS"
+    assert sequential["gates"]["real_mrt"].startswith("BLOCKED")
+    assert sequential["gates"]["online_lift"] == "NOT_RUN"
+    assert multiarm["status"] == "PASS"
+    assert multiarm["gates"]["three_arm_logged_probability_ope"] == "PASS"

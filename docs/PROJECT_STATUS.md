@@ -1,9 +1,9 @@
 # DeepUplift Project Status
 
-**Last updated:** 2026-11-15  
+**Last updated:** 2026-11-16  
 **Repository:** `jd-SearchEngines/deepuplift-agent`  
-**Current evidence branch:** `codex/hermes-metrics-pilot`  
-**Current PR:** [#5 — strengthen causal benchmark metrics](https://github.com/jd-SearchEngines/deepuplift-agent/pull/5) (OPEN, DRAFT; not merged)
+**Current evidence branch:** `codex/issue12-long-term-runner`  
+**Current PR:** [#13 — make autonomous research runner continuous](https://github.com/jd-SearchEngines/deepuplift-agent/pull/13) (OPEN, DRAFT; not merged)
 
 > This file is the shared entry point for future GPT/Codex sessions. Read it before proposing or executing work, then inspect the linked phase reports and current GitHub state. Update this file after every meaningful experiment, phase gate, blocker, or scheduling-system test. Do not rely on chat history as the sole source of project state.
 
@@ -149,6 +149,37 @@ After every meaningful run or phase transition, update this file and the relevan
 - remaining blocker and the next concrete task.
 
 Never fabricate data or metrics. Never treat CI success as proof of causal validity, production readiness, or autonomous orchestration. Keep raw datasets, participant-level records, credentials, model weights and local caches out of Git.
+
+## 10. Issue #12 long-term autonomous research runner (2026-11-16)
+
+Work is being continued on branch `codex/issue12-long-term-runner` from the validated Batch 3 runner. This section records only the current evidence for Issue #12; the historical Batch 3 reports above remain unchanged.
+
+### Engineering changes in this phase
+
+- `ResearchPlanner` now selects the next eligible research task from persisted stage/report evidence instead of recreating a fixed Batch 3 DAG.
+- The supervisor re-plans before and after every cycle, including idle cycles, and persists the public Hermes task ID alongside the external SQLite ledger.
+- State and logs use `~/Library/Application Support/DeepUplift/runner/` by default; `plan.sh`, `logs.sh`, `status.sh`, `resume.sh`, `stop.sh` and `install_launchd.sh` are provided.
+- The existing official `openai-codex` SDK worker and Hermes public CLI adapter remain the execution path. No Hermes private database is opened or modified.
+
+### New research evidence
+
+- [Sequential DR report](benchmarks/SEQUENTIAL_DR_REPORT.md) / [JSON](benchmarks/SEQUENTIAL_DR_REPORT.json): 5 fixed seeds on known-truth trajectories; true continuation-value Sequential DR is separated from ordinary per-decision DR. Synthetic gate PASS; real MRT BLOCKED; online lift NOT_RUN.
+- [Multi-arm candidate chain report](benchmarks/MULTIARM_PUSH_CHAIN_REPORT.md) / [JSON](benchmarks/MULTIARM_PUSH_CHAIN_REPORT.json): 5 fixed seeds; three-arm logged arm probabilities, cluster bootstrap, candidate construction and constrained optimizer are connected on a known-truth Push-shaped DGP. Semi-synthetic gate PASS; real MRT BLOCKED; online lift NOT_RUN.
+
+### Honest gates at the start of this phase
+
+| Gate | Status | Evidence boundary |
+|---|---|---|
+| Hermes local installation | PASS | Hermes Agent v0.23.1 is installed at the user-local path; credentials are not reported |
+| Official Codex SDK import | PASS | `openai_codex` imports in the validated Python 3.11 SDK environment |
+| Dynamic phase-aware planner | PASS (code/tests) | Planner chooses the next evidence-backed task; long-lived multi-phase execution is separately verified below |
+| Stable local state path | PASS (code) | Default is the macOS Application Support runner directory |
+| launchd service | NOT_INSTALLED at initial audit | Must be verified with `launchctl print` after installation |
+| Sequential DR known-truth experiment | PASS | 5 seeds and continuation-value diagnostics; no real MRT claim |
+| Multi-arm candidate → optimizer → OPE | PASS | Oracle-effect semi-synthetic diagnostic; not a fitted-model claim |
+| Real myBPmyLife MRT | BLOCKED | No locally authorized raw archive was available in this run |
+
+The observed launchd, interruption/recovery and multi-stage evidence is recorded in [Issue #12 long-term runner report](benchmarks/ISSUE12_LONG_TERM_RUNNER_REPORT.md) and its [machine-readable JSON](benchmarks/ISSUE12_LONG_TERM_RUNNER_REPORT.json). The optimizer Worker remains in progress; autonomous continuous execution therefore remains **PARTIAL**, not PASS.
 
 
 ## 9. 2026-11-16 end-to-end chain audit

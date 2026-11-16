@@ -416,6 +416,150 @@ def evaluate_sequential_ope_policy(
     }
 
 
+def evaluate_sequential_dr_policy(
+    *,
+    logged_action: Any,
+    reward: Any,
+    logged_propensity: Any,
+    target_action: Any,
+    cluster_id: Any,
+    decision_time: Any,
+    target_value_pred: Any,
+    logged_action_value_pred: Any,
+    target_logged_action_probability: Any | None = None,
+    discount: float = 1.0,
+    clip_min: float = 0.02,
+    clip_max: float = 1.0,
+    n_bootstrap: int = 0,
+    random_state: int = 42,
+) -> Dict[str, Any]:
+    """Estimate a finite-horizon target policy value with sequential DR.
+
+    ``target_value_pred`` is :math:`V_t^\pi(s_t)` and
+    ``logged_action_value_pred`` is :math:`Q_t(s_t, a_t)`, both including the
+    continuation value from the supplied decision time.  The estimator is
+    the trajectory average of
+
+    ``V_0 + sum_t gamma**t rho_0:t * (r_t + gamma*V_{t+1} - Q_t)``.
+
+    Unlike the historical one-step/per-decision DR helper, this function
+    explicitly uses the next-step continuation value and reports its status
+    as available only when both nuisance value arrays are supplied.
+    """
+
+    logged = _as_series(logged_action, "logged_action").astype(str)
+    target = _as_series(target_action, "target_action").astype(str)
+    y = pd.to_numeric(_as_series(reward, "reward"), errors="coerce").astype("float64")
+    p_raw = pd.to_numeric(_as_series(logged_propensity, "logged_propensity"), errors="coerce").astype("float64")
+    clusters = _as_series(cluster_id, "cluster_id")
+    times = _as_series(decision_time, "decision_time")
+    target_value = pd.to_numeric(_as_series(target_value_pred, "target_value_pred"), errors="coerce").astype("float64")
+    logged_value = pd.to_numeric(_as_series(logged_action_value_pred, "logged_action_value_pred"), errors="coerce").astype("float64")
+    lengths = {len(logged), len(target), len(y), len(p_raw), len(clusters), len(times), len(target_value), len(logged_value)}
+    if len(lengths) != 1:
+        raise ValueError("sequential DR inputs must have the same length.")
+    if not 0.0 <= float(discount) <= 1.0:
+        raise ValueError("discount must satisfy 0 <= discount <= 1.")
+    _validate_clip_bounds(clip_min, clip_max)
+    _validate_probability(p_raw, "logged_propensity")
+    target_probability = None
+    if target_logged_action_probability is not None:
+        target_probability = _validate_probability(
+            pd.to_numeric(_as_series(target_logged_action_probability, "target_logged_action_probability"), errors="coerce"),
+            "target_logged_action_probability",
+            allow_zero=True,
+        )
+        if len(target_probability) != len(logged):
+            raise ValueError("target_logged_action_probability must have the same length as logged_action.")
+    mask = logged.notna() & target.notna() & y.notna() & p_raw.notna() & clusters.notna() & times.notna() & target_value.notna() & logged_value.notna()
+    if not mask.any():
+        return {"status": "empty", "rows": 0, "metrics": {}, "diagnostics": {"valid_rows": 0}}
+    frame = pd.DataFrame(
+        {
+            "logged": logged[mask].to_numpy(),
+            "target": target[mask].to_numpy(),
+            "reward": y[mask].to_numpy(dtype="float64"),
+            "propensity": p_raw[mask].to_numpy(dtype="float64"),
+            "cluster": clusters[mask].astype(str).to_numpy(),
+            "time": times[mask].to_numpy(),
+            "target_value": target_value[mask].to_numpy(dtype="float64"),
+            "logged_value": logged_value[mask].to_numpy(dtype="float64"),
+        }
+    )
+    if target_probability is not None:
+        frame["target_logged_action_probability"] = target_probability[mask.to_numpy()]
+    frame = frame.sort_values(["cluster", "time"], kind="mergesort").reset_index(drop=True)
+    if frame.duplicated(["cluster", "time"]).any():
+        raise ValueError("Each cluster must have at most one row per decision_time.")
+
+    p = frame["propensity"].clip(lower=float(clip_min), upper=float(clip_max)).to_numpy(dtype="float64")
+    match = (frame["logged"].to_numpy() == frame["target"].to_numpy()).astype("float64")
+    numerator = match if target_probability is None else frame["target_logged_action_probability"].to_numpy(dtype="float64")
+    ratios = numerator / p
+    rewards = frame["reward"].to_numpy(dtype="float64")
+    target_values = frame["target_value"].to_numpy(dtype="float64")
+    logged_values = frame["logged_value"].to_numpy(dtype="float64")
+    clusters_np = frame["cluster"].to_numpy()
+    per_cluster: list[float] = []
+    cumulative_weights = np.empty(len(frame), dtype="float64")
+    residuals = np.empty(len(frame), dtype="float64")
+    for cluster in pd.unique(clusters_np):
+        indices = np.flatnonzero(clusters_np == cluster)
+        cumulative = np.cumprod(ratios[indices])
+        cumulative_weights[indices] = cumulative
+        next_values = np.empty(len(indices), dtype="float64")
+        next_values[:-1] = target_values[indices[1:]]
+        next_values[-1] = 0.0
+        residual = rewards[indices] + float(discount) * next_values - logged_values[indices]
+        residuals[indices] = residual
+        per_cluster.append(float(target_values[indices[0]] + np.sum((float(discount) ** np.arange(len(indices))) * cumulative * residual)))
+    trajectory_weights = np.asarray(
+        [cumulative_weights[np.flatnonzero(clusters_np == cluster)[-1]] for cluster in pd.unique(clusters_np)],
+        dtype="float64",
+    )
+    metrics = {
+        "sequential_dr": _clean_float(np.mean(per_cluster)),
+        "trajectory_ips": _clean_float(np.mean(trajectory_weights * np.asarray([np.sum(rewards[np.flatnonzero(clusters_np == cluster)]) for cluster in pd.unique(clusters_np)]))),
+    }
+    diagnostics = {
+        "valid_rows": int(len(frame)),
+        "cluster_count": int(frame["cluster"].nunique()),
+        "max_horizon": int(frame.groupby("cluster", sort=False).size().max()),
+        "coverage_rate": _clean_float(match.mean()),
+        "target_policy_type": "stochastic" if target_probability is not None else "deterministic",
+        "target_support_rate": _clean_float(np.mean(numerator > 0.0)),
+        "raw_propensity_min": _clean_float(frame["propensity"].min()),
+        "raw_propensity_max": _clean_float(frame["propensity"].max()),
+        "clipped_rate": _clean_float(((frame["propensity"] < clip_min) | (frame["propensity"] > clip_max)).mean()),
+        "one_step_ess": _clean_float(effective_sample_size(ratios)),
+        "cumulative_ess": _clean_float(effective_sample_size(cumulative_weights)),
+        "trajectory_ess": _clean_float(effective_sample_size(trajectory_weights)),
+        "trajectory_weight_max": _clean_float(np.max(trajectory_weights)),
+        "residual_mean_abs": _clean_float(np.mean(np.abs(residuals))),
+        "bootstrap_unit": "cluster",
+        "continuation_value_model": "provided_target_V_and_logged_Q",
+        "sequential_dr_status": "AVAILABLE",
+    }
+    bootstrap: dict[str, Any] = {}
+    if n_bootstrap > 0:
+        rng = np.random.default_rng(random_state)
+        unique_clusters = pd.unique(clusters_np)
+        groups = {cluster: np.flatnonzero(clusters_np == cluster) for cluster in unique_clusters}
+        samples: list[float] = []
+        for _ in range(int(n_bootstrap)):
+            sampled = rng.choice(unique_clusters, size=len(unique_clusters), replace=True)
+            values = []
+            for cluster in sampled:
+                indices = groups[cluster]
+                cumulative = np.cumprod(ratios[indices])
+                next_values = np.concatenate([target_values[indices[1:]], np.array([0.0])])
+                residual = rewards[indices] + float(discount) * next_values - logged_values[indices]
+                values.append(float(target_values[indices[0]] + np.sum((float(discount) ** np.arange(len(indices))) * cumulative * residual)))
+            samples.append(float(np.mean(values)))
+        bootstrap = {"n_bootstrap": int(n_bootstrap), "bootstrap_unit": "cluster", "sequential_dr": _ci(np.asarray(samples, dtype="float64"))}
+    return {"status": "ok", "rows": int(len(frame)), "metrics": metrics, "diagnostics": diagnostics, "bootstrap": bootstrap, "guidance": _ope_guidance(diagnostics, metrics)}
+
+
 def _ope_guidance(diagnostics: dict[str, Any], metrics: dict[str, Any]) -> list[str]:
     rows = []
     if (diagnostics.get("coverage_rate") or 0.0) < 0.05:
