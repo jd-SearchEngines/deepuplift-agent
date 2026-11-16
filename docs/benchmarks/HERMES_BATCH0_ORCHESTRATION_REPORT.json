@@ -442,6 +442,10 @@
     "full_suite": "111 passed, 2 skipped, 432 warnings",
     "python": "3.11",
     "blas_threads": 1,
-    "first_adapter_issue": "multi-line Hermes --json parsing; fixed and rerun with idempotency keys"
-  }
+    "first_adapter_issue": "multi-line Hermes --json parsing; fixed and rerun with idempotency keys",
+    "github_pr": 8,
+    "github_checks": "PASS",
+    "source_commit": "3a07513533c059ede1b67978374c95c66f93113a"
+  },
+  "pr_url": "https://github.com/jd-SearchEngines/deepuplift-agent/pull/8"
 }

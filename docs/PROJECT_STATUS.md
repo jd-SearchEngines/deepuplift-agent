@@ -286,5 +286,6 @@ What was actually verified on the local machine:
 - B was interrupted after `b_checkpoint_written`; restart idempotently skipped accepted A, resumed B on the same Codex thread, and unlocked C only after B validation passed.
 - A validation rejection entered `REPAIR_READY` and was repaired on the same Codex thread. A separate repeated-failure case entered `BLOCKED` after three failed attempts / two automatic repair cycles.
 - Adapter tests passed (`2 passed`); full project suite passed (`111 passed, 2 skipped`).
+- Draft PR #8 is open; remote SHA was verified, and all Python 3.10/3.11/3.12 syntax plus continuous-frontier checks passed.
 
 This gate proves a local bounded engineering workflow, not causal validity, real myBPmyLife availability, online lift, or unattended operation when the local machine/device is offline. The next eligible task is Gate 1 metric correctness review; do not launch the long causal sweep yet.

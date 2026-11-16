@@ -22,6 +22,8 @@ OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 \
 
 The skipped tests are existing optional-backend skips. The warning count is retained as evidence and was not suppressed to manufacture a pass.
 
+GitHub PR #8 Python 3.10/3.11/3.12 syntax checks and both continuous-frontier checks: PASS.
+
 ## Adapter repair evidence
 
 The first attempt successfully created Hermes task A but failed while parsing the pretty-printed `hermes kanban create --json` response because the adapter read only the final line. The parser was changed to parse the complete JSON document. Re-running with the same idempotency keys reused the existing task and did not create a duplicate DAG.

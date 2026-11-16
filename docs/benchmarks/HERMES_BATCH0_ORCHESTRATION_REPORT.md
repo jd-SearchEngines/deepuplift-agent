@@ -68,4 +68,5 @@ This report proves the local bounded orchestration path only. It does not prove 
 
 - Adapter tests: `pytest -q tests/test_hermes_codex_sdk_adapter.py` → `2 passed`.
 - Full project suite: `pytest -q` with Python 3.11 and serial BLAS settings → `111 passed, 2 skipped, 432 warnings`.
+- GitHub PR #8 checks: quality syntax for Python 3.10/3.11/3.12 and both continuous-frontier runs → PASS.
 - The first local adapter attempt exposed a multi-line Hermes `--json` parsing bug. The failure was preserved in the local execution history, the parser was corrected to parse the complete JSON document, and the run was resumed through the same idempotency keys without creating duplicate tasks.
