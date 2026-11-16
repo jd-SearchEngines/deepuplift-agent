@@ -1,0 +1,25 @@
+{
+  "run_id": "hermes-batch2-provenance-20261116",
+  "branch": "codex/batch2-push-provenance",
+  "status": "BLOCKED_NOT_AVAILABLE",
+  "evidence_class": "provenance_audit_only",
+  "local_raw_archive_found": false,
+  "local_search_scope": "Downloads and Projects filename audit",
+  "upstream": {
+    "repository": "WIRED-L-um/MRT_myBPmyLife",
+    "main_commit": "fa86c0d44ced3876f4a7351bc2d475fc4249342e",
+    "archive_name": "Data_MRT.zip",
+    "remote_contents_size_bytes": 13389920,
+    "remote_git_blob_sha1": "69eef5635d05974527ff3b306ac01aeaf4db7b34",
+    "license_info": null,
+    "license_verified": false,
+    "archive_downloaded": false
+  },
+  "historical_evidence_reconciliation": {
+    "push_p0_p1": "PASS_FOR_SUPPLIED_LOCAL_SNAPSHOT",
+    "experiment_a": "NOT_AVAILABLE_ZERO_FORMAL_ROWS",
+    "combined_real_data_gate": "PARTIAL_NOT_VERIFIED"
+  },
+  "raw_data_committed": false,
+  "next_action": "authorized license and local archive fingerprint required"
+}
