@@ -1,0 +1,38 @@
+{
+  "run_id": "hermes-batch1-metrics-20261116",
+  "branch": "codex/batch1-metric-correctness",
+  "commit": "25a93b8",
+  "evidence_class": "hand-calculated-and-synthetic-repeated-unit-fixtures",
+  "status": "PASS_DETERMINISTIC_REVIEW_NOT_COMPLETED",
+  "hand_fixture": {
+    "qini_raw_area": 2.125,
+    "random_baseline_area": 1.5,
+    "qini": 0.625,
+    "auuc": 3.625,
+    "qini_curve": [3.0, 5.0, 4.0],
+    "auuc_gain_curve": [6.0, 7.5, 8.0]
+  },
+  "cluster_bootstrap": {
+    "cluster_count": 2,
+    "rows_per_cluster": 2,
+    "estimate": 6.5,
+    "samples": 32,
+    "random_state": 11
+  },
+  "multiarm_policy_value": {
+    "arms": 3,
+    "estimate": 8.333333333333334,
+    "bootstrap_unit": "cluster",
+    "cluster_count": 2,
+    "assignment_probabilities": "per-row matrix; not inferred from arm counts"
+  },
+  "tests": {
+    "focused": "10 passed",
+    "full": "114 passed, 2 skipped, 432 warnings",
+    "diff_check": "PASS",
+    "py_compile": "PASS"
+  },
+  "independent_sdk_review": "NOT_COMPLETED_TIMEOUT",
+  "raw_data_committed": false,
+  "next_gate": "PUSH_DATA_PROVENANCE"
+}
