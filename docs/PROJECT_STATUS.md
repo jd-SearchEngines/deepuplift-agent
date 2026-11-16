@@ -234,3 +234,40 @@ Compare at least random, treat-none, treat-all where feasible, naive outcome ran
 ### 9.6 CI snapshot before this documentation addendum
 
 On commit `ff75e455893ec2fa2043aecc897fcebead068ece`, GitHub Actions runs `quality` (Python 3.10/3.11/3.12) and `continuous-frontier` completed successfully. The PR description records 109 passed and 2 skipped for the local Python 3.11 suite. These checks validate the tested code paths, not the missing real-data or full-chain evidence above. PR #5 remains OPEN / DRAFT / not merged.
+
+
+## 10. Causal research execution and autonomous orchestration plan
+
+Tracking issue: [#6 — Complete causal research phases with Hermes + Codex SDK orchestration](https://github.com/jd-SearchEngines/deepuplift-agent/issues/6)
+
+Execution plan: [CAUSAL_RESEARCH_EXECUTION_PLAN.md](CAUSAL_RESEARCH_EXECUTION_PLAN.md)
+
+Local executor prompt: [CAUSAL_RESEARCH_CODEX_EXECUTOR_PROMPT.md](CAUSAL_RESEARCH_CODEX_EXECUTOR_PROMPT.md)
+
+**Recommended operating model:** Hermes is the persistent Supervisor (objective, DAG, task scheduling, retry/recovery, approval gates); the official Codex SDK is the coding/experiment Worker; deterministic tests and statistical gates plus a read-only reviewer validate outputs; GitHub is the shared evidence ledger.
+
+The preferred Codex integration for this Python repository is the official Python SDK package `openai-codex`. It supports thread start/resume, async usage, turn streaming/interrupt and sandbox modes. The adapter must inspect the installed SDK version and use only its supported public API. Do not use the removed `codex mcp-server` integration.
+
+### Execution order
+
+1. Prove Hermes↔Codex orchestration reliability with a three-stage DAG, process interruption/restart, idempotent checkpoint recovery, dependency unlock and bounded failed-review recovery.
+2. Close metric gaps: hand-calculated Qini/AUUC, participant-cluster bootstrap, multi-arm policy value.
+3. Reconcile myBPmyLife archive provenance, license, dictionary version and run IDs.
+4. Run integrated `push_e2e_v2` known-truth semi-synthetic lanes for binary and three-arm actions across five seeds.
+5. Improve OPE support/ESS/coverage, implement a policy confidence gate and full sequential DR only after adding a continuation-value model.
+6. Finish optimizer convergence and valid dual-bound evidence.
+7. Complete unified P1–P9 benchmark matrix and product closeout; keep X5 optional.
+
+### Orchestration gate
+
+**Status: NOT VERIFIED.** At the 2026-11-16 audit the registered local Desktop Commander device was offline. No local Hermes/Codex execution is claimed from this session. Do not enable unattended research until the interruption/restart and failed-review recovery test has produced a timestamped local run report.
+
+### Operating constraints
+
+- One write-enabled Codex worker per worktree; read-only review may run separately.
+- Use bounded tasks, persistent Codex thread IDs, heartbeat/checkpoint metadata and a local project execution ledger if Hermes native task metadata is insufficient. Do not mutate undocumented Hermes database tables.
+- Maximum two automatic code-repair cycles after a deterministic validation failure; then BLOCKED.
+- Stop a model/config sweep after three pre-registered attempts without practically meaningful improvement and record the negative result.
+- No raw participant data, credentials, model weights or local caches in Git.
+- No paid data/compute, online experiments, production changes, destructive operations or merge to main without explicit approval.
+- Update this file and the phase report after every meaningful run.
