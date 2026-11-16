@@ -79,3 +79,24 @@ def test_runner_does_not_accept_unmet_dependency(tmp_path: Path):
         run_id="run", repo_root=tmp_path, ledger=ledger, board="test-board", state_root=tmp_path / "state"
     )
     assert runner._ready(ledger.get("run", "b")) is False
+
+
+def test_recovery_consumes_completed_worker_result_without_duplicate_turn(tmp_path: Path, monkeypatch):
+    ledger = RunLedger(tmp_path / "ledger.sqlite3")
+    spec = TaskSpec(key="a", title="A", body="A", acceptance_command="true")
+    ledger.ensure_stage("run", "a", spec=vars(spec))
+    ledger.update("run", "a", status="RUNNING", worker_pid=999999)
+    runner = AutonomousResearchRunner(
+        run_id="run", repo_root=tmp_path, ledger=ledger, board="test-board", state_root=tmp_path / "state"
+    )
+    runner.task_ids["a"] = "task-a"
+    paths = runner._worker_paths("a")
+    paths["metadata"].write_text(json.dumps({"thread_id": "thread-kept", "pid": 999999}), encoding="utf-8")
+    paths["result"].write_text(json.dumps({"status": "completed", "thread_id": "thread-kept", "turn_id": "turn-1"}), encoding="utf-8")
+    monkeypatch.setattr(runner, "_validate", lambda *_args: ValidationResult(True, "ok", {"recovered": True}))
+    monkeypatch.setattr(runner.hermes, "complete", lambda *_args, **_kwargs: None)
+    assert runner._recover_running() is True
+    stage = ledger.get("run", "a")
+    assert stage["status"] == "ACCEPTED"
+    assert stage["codex_thread_id"] == "thread-kept"
+    assert stage["worker_pid"] is None

@@ -366,6 +366,26 @@ class AutonomousResearchRunner:
         raw = json.loads(stage["spec_json"] or "{}")
         return TaskSpec(**raw)
 
+    def _worker_paths(self, phase: str) -> dict[str, Path]:
+        key = phase.replace("/", "_").replace(":", "_")
+        return {
+            "heartbeat": self.state_root / f"{key}.heartbeat",
+            "metadata": self.state_root / f"{key}.worker.json",
+            "result": self.state_root / f"{key}.result.json",
+        }
+
+    @staticmethod
+    def _pid_alive(pid: int | None) -> bool:
+        if not pid:
+            return False
+        try:
+            os.kill(int(pid), 0)
+        except ProcessLookupError:
+            return False
+        except PermissionError:
+            return True
+        return True
+
     def _ready(self, stage: dict[str, Any]) -> bool:
         if stage["status"] in TERMINAL:
             return False
@@ -390,12 +410,7 @@ class AutonomousResearchRunner:
         self.ledger.event(self.run_id, stage["phase_id"], "claimed", task_id=task_id)
 
     def _launch_worker(self, stage: dict[str, Any], spec: TaskSpec) -> tuple[subprocess.Popen[str], dict[str, Path]]:
-        key = stage["phase_id"].replace("/", "_").replace(":", "_")
-        paths = {
-            "heartbeat": self.state_root / f"{key}.heartbeat",
-            "metadata": self.state_root / f"{key}.worker.json",
-            "result": self.state_root / f"{key}.result.json",
-        }
+        paths = self._worker_paths(stage["phase_id"])
         for path in paths.values():
             path.unlink(missing_ok=True)
         command = [
@@ -458,6 +473,70 @@ class AutonomousResearchRunner:
         )
         self.ledger.event(self.run_id, phase, "worker_finished", result={k: v for k, v in result.items() if k != "response"})
         return result
+
+    def _recover_running(self) -> bool:
+        """Adopt an orphaned Worker after Supervisor restart.
+
+        The process ID and deterministic checkpoint paths are project-owned
+        metadata. If the worker is still alive, the new supervisor waits for
+        it instead of starting a duplicate SDK turn. If it has exited, the
+        result file is consumed and independently validated. A missing result
+        is routed through the same bounded repair policy as any other failure.
+        """
+        progressed = False
+        for stage in self.ledger.all_stages(self.run_id):
+            if stage["status"] != "RUNNING" or stage["phase_id"] not in self.task_ids:
+                continue
+            phase = stage["phase_id"]
+            spec = self._spec(stage)
+            paths = self._worker_paths(phase)
+            if paths["metadata"].exists():
+                with contextlib.suppress(OSError, ValueError):
+                    metadata = json.loads(paths["metadata"].read_text(encoding="utf-8"))
+                    if metadata.get("thread_id") and metadata.get("thread_id") != stage.get("codex_thread_id"):
+                        self.ledger.update(self.run_id, phase, codex_thread_id=metadata["thread_id"], heartbeat_at=utc_now())
+                        stage = self.ledger.get(self.run_id, phase)
+                        self.ledger.event(self.run_id, phase, "recovery_thread_checkpoint", thread_id=metadata["thread_id"])
+            pid = stage.get("worker_pid")
+            if self._pid_alive(pid):
+                self.ledger.event(self.run_id, phase, "recovery_adopted_worker", pid=pid)
+                while self._pid_alive(pid) and not self.stop_requested:
+                    now = time.time()
+                    if paths["heartbeat"].exists():
+                        age = now - paths["heartbeat"].stat().st_mtime
+                        self.ledger.update(self.run_id, phase, heartbeat_at=utc_now())
+                        if age > self.heartbeat_timeout:
+                            self.ledger.event(self.run_id, phase, "recovery_heartbeat_stale", age_seconds=age, pid=pid)
+                            with contextlib.suppress(ProcessLookupError):
+                                os.kill(int(pid), signal.SIGTERM)
+                            break
+                    time.sleep(self.poll_interval)
+                if self.stop_requested:
+                    return progressed
+            result = None
+            if paths["result"].exists():
+                with contextlib.suppress(OSError, ValueError):
+                    result = json.loads(paths["result"].read_text(encoding="utf-8"))
+            self.ledger.update(
+                self.run_id,
+                phase,
+                codex_thread_id=(result or {}).get("thread_id") or stage.get("codex_thread_id"),
+                codex_turn_id=(result or {}).get("turn_id"),
+                worker_pid=None,
+                heartbeat_at=utc_now(),
+            )
+            self.ledger.event(self.run_id, phase, "recovery_result_consumed", result={k: v for k, v in (result or {}).items() if k != "response"})
+            if result and result.get("status") in {"completed", "complete", "idle"}:
+                validation = self._validate(self.ledger.get(self.run_id, phase), spec)
+                self._finish(self.ledger.get(self.run_id, phase), spec, validation)
+            else:
+                self._finish(
+                    self.ledger.get(self.run_id, phase),
+                    spec,
+                    ValidationResult(False, "worker exited without a completed result", {"recovered": True, "result": result}),
+                )
+            progressed = True
+        return progressed
 
     def _validate(self, stage: dict[str, Any], spec: TaskSpec) -> ValidationResult:
         if not spec.acceptance_command:
@@ -524,7 +603,9 @@ class AutonomousResearchRunner:
             while max_cycles == 0 or cycles < max_cycles:
                 if self.stop_requested:
                     break
-                progressed = self.run_once()
+                progressed = self._recover_running()
+                if not progressed:
+                    progressed = self.run_once()
                 # Re-plan after every task transition and also on idle. This
                 # is the key difference from the bounded Batch 3 runner: an
                 # accepted phase can unlock a new research phase without a
