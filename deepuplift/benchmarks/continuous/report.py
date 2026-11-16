@@ -13,8 +13,8 @@ def continuous_benchmark_report(result: dict[str, Any]) -> str:
         "",
         "All errors and regrets are computed on the held-out test rows and a shared dose grid. Economic decisions maximize estimated effect times outcome value minus dose cost.",
         "",
-        "| Model | Status | Maturity | MISE | Max-effect dose | Max-net-value dose | Optimal dose error | Economic regret | Train s | Curve s | Decision s | Peak MB |",
-        "|---|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
+        "| Model | Status | Maturity | Response MISE | Effect MISE | Max-effect dose | Max-net-value dose | Optimal dose error | Economic regret | Train s | Curve s | Decision s | Peak MB |",
+        "|---|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
     ]
     for model in result.get("models", []):
         metrics = model.get("metrics", {})
@@ -23,6 +23,7 @@ def continuous_benchmark_report(result: dict[str, Any]) -> str:
             model.get("status"),
             model.get("maturity", "NOT_AVAILABLE"),
             metrics.get("mise"),
+            metrics.get("effect_mise"),
             metrics.get("predicted_max_effect_dose_mean"),
             metrics.get("predicted_max_net_value_dose_mean"),
             metrics.get("optimal_dose_error"),
