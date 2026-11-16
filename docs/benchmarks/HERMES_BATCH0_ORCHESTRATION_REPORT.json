@@ -1,0 +1,451 @@
+{
+  "board": "deepuplift-batch0-20261116",
+  "events": [
+    {
+      "created_at": "2026-11-16T13:04:31+00:00",
+      "event": "dag_created",
+      "payload": {
+        "task_ids": {
+          "A": "t_ae69ce17",
+          "B": "t_f6ef6f10",
+          "BLOCKED_REPAIR": "t_61f4c54f",
+          "C": "t_65aa13a9",
+          "REPAIR": "t_3a83b46e"
+        }
+      },
+      "phase_id": null
+    },
+    {
+      "created_at": "2026-11-16T13:04:31+00:00",
+      "event": "claimed",
+      "payload": {
+        "task_id": "t_ae69ce17"
+      },
+      "phase_id": "A"
+    },
+    {
+      "created_at": "2026-11-16T13:04:32+00:00",
+      "event": "heartbeat",
+      "payload": {
+        "note": "Codex SDK worker started"
+      },
+      "phase_id": "A"
+    },
+    {
+      "created_at": "2026-11-16T13:05:16+00:00",
+      "event": "codex_turn_completed",
+      "payload": {
+        "duration_ms": 40333,
+        "status": "completed",
+        "thread_id": "01a1e475-91ce-7211-87df-dbc5cd3e5547",
+        "turn_id": "01a1e475-9ed7-7e01-8436-1fe28abcdc57"
+      },
+      "phase_id": "A"
+    },
+    {
+      "created_at": "2026-11-16T13:05:16+00:00",
+      "event": "validated",
+      "payload": {
+        "actual": "A_COMPLETED_ONCE",
+        "expected": "A_COMPLETED_ONCE",
+        "path_role": "A_COMPLETED_ONCE.txt"
+      },
+      "phase_id": "A"
+    },
+    {
+      "created_at": "2026-11-16T13:05:17+00:00",
+      "event": "claimed",
+      "payload": {
+        "task_id": "t_f6ef6f10"
+      },
+      "phase_id": "B"
+    },
+    {
+      "created_at": "2026-11-16T13:05:18+00:00",
+      "event": "heartbeat",
+      "payload": {
+        "note": "Codex SDK worker writing durable checkpoint"
+      },
+      "phase_id": "B"
+    },
+    {
+      "created_at": "2026-11-16T13:05:36+00:00",
+      "event": "codex_turn_completed",
+      "payload": {
+        "duration_ms": 18057,
+        "status": "completed",
+        "thread_id": "01a1e476-447a-7d51-8f42-8d3aecde449f",
+        "turn_id": "01a1e476-4494-70f2-a5fb-50b9192c8218"
+      },
+      "phase_id": "B"
+    },
+    {
+      "created_at": "2026-11-16T13:05:36+00:00",
+      "event": "forced_interruption",
+      "payload": {
+        "checkpoint": "b_checkpoint_written"
+      },
+      "phase_id": "B"
+    },
+    {
+      "created_at": "2026-11-16T13:05:58+00:00",
+      "event": "idempotent_skip",
+      "payload": {},
+      "phase_id": "A"
+    },
+    {
+      "created_at": "2026-11-16T13:05:59+00:00",
+      "event": "reclaimed_after_restart",
+      "payload": {},
+      "phase_id": "B"
+    },
+    {
+      "created_at": "2026-11-16T13:06:00+00:00",
+      "event": "claimed",
+      "payload": {
+        "task_id": "t_f6ef6f10"
+      },
+      "phase_id": "B"
+    },
+    {
+      "created_at": "2026-11-16T13:06:00+00:00",
+      "event": "heartbeat",
+      "payload": {
+        "note": "resuming same Codex thread from durable checkpoint"
+      },
+      "phase_id": "B"
+    },
+    {
+      "created_at": "2026-11-16T13:06:13+00:00",
+      "event": "codex_turn_completed",
+      "payload": {
+        "duration_ms": 11234,
+        "status": "completed",
+        "thread_id": "01a1e476-447a-7d51-8f42-8d3aecde449f",
+        "turn_id": "01a1e476-f004-7700-9f49-76d272e75df8"
+      },
+      "phase_id": "B"
+    },
+    {
+      "created_at": "2026-11-16T13:06:13+00:00",
+      "event": "validated",
+      "payload": {
+        "actual": "B_COMPLETED",
+        "expected": "B_COMPLETED",
+        "path_role": "B_COMPLETED.txt"
+      },
+      "phase_id": "B"
+    },
+    {
+      "created_at": "2026-11-16T13:06:14+00:00",
+      "event": "claimed",
+      "payload": {
+        "task_id": "t_65aa13a9"
+      },
+      "phase_id": "C"
+    },
+    {
+      "created_at": "2026-11-16T13:06:15+00:00",
+      "event": "heartbeat",
+      "payload": {
+        "note": "dependency B accepted; unlocking C"
+      },
+      "phase_id": "C"
+    },
+    {
+      "created_at": "2026-11-16T13:07:07+00:00",
+      "event": "codex_turn_completed",
+      "payload": {
+        "duration_ms": 51507,
+        "status": "completed",
+        "thread_id": "01a1e477-2331-7060-8a4a-1c6254e437da",
+        "turn_id": "01a1e477-2349-7c21-b484-b5ad76977c79"
+      },
+      "phase_id": "C"
+    },
+    {
+      "created_at": "2026-11-16T13:07:07+00:00",
+      "event": "validated",
+      "payload": {
+        "actual": "C_COMPLETED",
+        "expected": "C_COMPLETED",
+        "path_role": "C_COMPLETED.txt"
+      },
+      "phase_id": "C"
+    },
+    {
+      "created_at": "2026-11-16T13:07:44+00:00",
+      "event": "claimed",
+      "payload": {
+        "task_id": "t_3a83b46e"
+      },
+      "phase_id": "REPAIR"
+    },
+    {
+      "created_at": "2026-11-16T13:08:04+00:00",
+      "event": "codex_turn_completed",
+      "payload": {
+        "duration_ms": 14124,
+        "status": "completed",
+        "thread_id": "01a1e478-80ae-7c82-98a8-32c84b659585",
+        "turn_id": "01a1e478-946a-7420-9031-962a3f5049b0"
+      },
+      "phase_id": "REPAIR"
+    },
+    {
+      "created_at": "2026-11-16T13:08:04+00:00",
+      "event": "validation_rejected",
+      "payload": {
+        "actual": "WRONG",
+        "expected": "FIXED",
+        "path_role": "repair.txt",
+        "reason": "marker mismatch"
+      },
+      "phase_id": "REPAIR"
+    },
+    {
+      "created_at": "2026-11-16T13:08:14+00:00",
+      "event": "codex_turn_completed",
+      "payload": {
+        "duration_ms": 8824,
+        "status": "completed",
+        "thread_id": "01a1e478-80ae-7c82-98a8-32c84b659585",
+        "turn_id": "01a1e478-d037-7c42-be98-bda8abd7e35d"
+      },
+      "phase_id": "REPAIR"
+    },
+    {
+      "created_at": "2026-11-16T13:08:14+00:00",
+      "event": "validated",
+      "payload": {
+        "actual": "FIXED",
+        "expected": "FIXED",
+        "path_role": "repair.txt"
+      },
+      "phase_id": "REPAIR"
+    },
+    {
+      "created_at": "2026-11-16T13:08:15+00:00",
+      "event": "claimed",
+      "payload": {
+        "task_id": "t_61f4c54f"
+      },
+      "phase_id": "BLOCKED_REPAIR"
+    },
+    {
+      "created_at": "2026-11-16T13:08:23+00:00",
+      "event": "codex_turn_completed",
+      "payload": {
+        "duration_ms": 8436,
+        "status": "completed",
+        "thread_id": "01a1e478-f810-7e22-b6da-55873df4b231",
+        "turn_id": "01a1e478-f829-7eb1-a7bf-4d9a54ca7445"
+      },
+      "phase_id": "BLOCKED_REPAIR"
+    },
+    {
+      "created_at": "2026-11-16T13:08:23+00:00",
+      "event": "validation_rejected",
+      "payload": {
+        "actual": "WRONG",
+        "expected": "FIXED",
+        "path_role": "blocked.txt",
+        "reason": "marker mismatch"
+      },
+      "phase_id": "BLOCKED_REPAIR"
+    },
+    {
+      "created_at": "2026-11-16T13:08:34+00:00",
+      "event": "codex_turn_completed",
+      "payload": {
+        "duration_ms": 9650,
+        "status": "completed",
+        "thread_id": "01a1e478-f810-7e22-b6da-55873df4b231",
+        "turn_id": "01a1e479-1df1-7fe1-a21e-de47e3f2aca9"
+      },
+      "phase_id": "BLOCKED_REPAIR"
+    },
+    {
+      "created_at": "2026-11-16T13:08:34+00:00",
+      "event": "validation_rejected",
+      "payload": {
+        "actual": "WRONG",
+        "expected": "FIXED",
+        "path_role": "blocked.txt",
+        "reason": "marker mismatch"
+      },
+      "phase_id": "BLOCKED_REPAIR"
+    },
+    {
+      "created_at": "2026-11-16T13:08:51+00:00",
+      "event": "codex_turn_completed",
+      "payload": {
+        "duration_ms": 15387,
+        "status": "completed",
+        "thread_id": "01a1e478-f810-7e22-b6da-55873df4b231",
+        "turn_id": "01a1e479-48b5-7252-ba67-1d21672e7b4b"
+      },
+      "phase_id": "BLOCKED_REPAIR"
+    },
+    {
+      "created_at": "2026-11-16T13:08:51+00:00",
+      "event": "validation_rejected",
+      "payload": {
+        "actual": "WRONG",
+        "expected": "FIXED",
+        "path_role": "blocked.txt",
+        "reason": "marker mismatch"
+      },
+      "phase_id": "BLOCKED_REPAIR"
+    },
+    {
+      "created_at": "2026-11-16T13:08:52+00:00",
+      "event": "retry_limit_reached",
+      "payload": {
+        "max_repair_cycles": 2
+      },
+      "phase_id": "BLOCKED_REPAIR"
+    }
+  ],
+  "evidence_class": "synthetic-engineering-fixture",
+  "raw_fixture_committed": false,
+  "run_id": "hermes-batch0-20261116",
+  "stages": [
+    {
+      "attempt": 1,
+      "branch": "",
+      "checkpoint": "validated",
+      "codex_thread_id": "01a1e475-91ce-7211-87df-dbc5cd3e5547",
+      "codex_turn_id": "01a1e475-9ed7-7e01-8436-1fe28abcdc57",
+      "commit_sha": null,
+      "config_hash": "91e6589ed9521a4f",
+      "dataset_fingerprint": "synthetic-fixture-only",
+      "dependency_ids": [],
+      "heartbeat_at": "2026-11-16T13:05:16+00:00",
+      "last_error": null,
+      "phase_id": "A",
+      "pr_url": null,
+      "report_path": null,
+      "run_id": "hermes-batch0-20261116",
+      "started_at": "2026-11-16T13:04:31+00:00",
+      "status": "ACCEPTED",
+      "updated_at": "2026-11-16T13:05:16+00:00",
+      "validation_status": "PASS",
+      "worktree": "disposable-fixture"
+    },
+    {
+      "attempt": 2,
+      "branch": "",
+      "checkpoint": "validated",
+      "codex_thread_id": "01a1e476-447a-7d51-8f42-8d3aecde449f",
+      "codex_turn_id": "01a1e476-f004-7700-9f49-76d272e75df8",
+      "commit_sha": null,
+      "config_hash": "def0c3f3033dc154",
+      "dataset_fingerprint": "synthetic-fixture-only",
+      "dependency_ids": [
+        "A"
+      ],
+      "heartbeat_at": "2026-11-16T13:06:13+00:00",
+      "last_error": null,
+      "phase_id": "B",
+      "pr_url": null,
+      "report_path": null,
+      "run_id": "hermes-batch0-20261116",
+      "started_at": "2026-11-16T13:06:00+00:00",
+      "status": "ACCEPTED",
+      "updated_at": "2026-11-16T13:06:13+00:00",
+      "validation_status": "PASS",
+      "worktree": "disposable-fixture"
+    },
+    {
+      "attempt": 3,
+      "branch": "",
+      "checkpoint": "blocked_cycle_3",
+      "codex_thread_id": "01a1e478-f810-7e22-b6da-55873df4b231",
+      "codex_turn_id": "01a1e479-48b5-7252-ba67-1d21672e7b4b",
+      "commit_sha": null,
+      "config_hash": "cc52b66d88c6f809",
+      "dataset_fingerprint": "synthetic-fixture-only",
+      "dependency_ids": [
+        "C"
+      ],
+      "heartbeat_at": "2026-11-16T13:08:51+00:00",
+      "last_error": "marker mismatch",
+      "phase_id": "BLOCKED_REPAIR",
+      "pr_url": null,
+      "report_path": null,
+      "run_id": "hermes-batch0-20261116",
+      "started_at": "2026-11-16T13:08:15+00:00",
+      "status": "BLOCKED",
+      "updated_at": "2026-11-16T13:08:52+00:00",
+      "validation_status": "BLOCKED",
+      "worktree": "disposable-fixture"
+    },
+    {
+      "attempt": 1,
+      "branch": "",
+      "checkpoint": "validated",
+      "codex_thread_id": "01a1e477-2331-7060-8a4a-1c6254e437da",
+      "codex_turn_id": "01a1e477-2349-7c21-b484-b5ad76977c79",
+      "commit_sha": null,
+      "config_hash": "e82b3da670afb267",
+      "dataset_fingerprint": "synthetic-fixture-only",
+      "dependency_ids": [
+        "B"
+      ],
+      "heartbeat_at": "2026-11-16T13:07:07+00:00",
+      "last_error": null,
+      "phase_id": "C",
+      "pr_url": null,
+      "report_path": null,
+      "run_id": "hermes-batch0-20261116",
+      "started_at": "2026-11-16T13:06:14+00:00",
+      "status": "ACCEPTED",
+      "updated_at": "2026-11-16T13:07:07+00:00",
+      "validation_status": "PASS",
+      "worktree": "disposable-fixture"
+    },
+    {
+      "attempt": 2,
+      "branch": "",
+      "checkpoint": "validated",
+      "codex_thread_id": "01a1e478-80ae-7c82-98a8-32c84b659585",
+      "codex_turn_id": "01a1e478-d037-7c42-be98-bda8abd7e35d",
+      "commit_sha": null,
+      "config_hash": "7a11d6113419b11d",
+      "dataset_fingerprint": "synthetic-fixture-only",
+      "dependency_ids": [
+        "C"
+      ],
+      "heartbeat_at": "2026-11-16T13:08:14+00:00",
+      "last_error": "marker mismatch",
+      "phase_id": "REPAIR",
+      "pr_url": null,
+      "report_path": null,
+      "run_id": "hermes-batch0-20261116",
+      "started_at": "2026-11-16T13:07:44+00:00",
+      "status": "ACCEPTED",
+      "updated_at": "2026-11-16T13:08:14+00:00",
+      "validation_status": "PASS",
+      "worktree": "disposable-fixture"
+    }
+  ],
+  "task_ids": {
+    "A": "t_ae69ce17",
+    "B": "t_f6ef6f10",
+    "BLOCKED_REPAIR": "t_61f4c54f",
+    "C": "t_65aa13a9",
+    "REPAIR": "t_3a83b46e"
+  },
+  "test_results": {
+    "adapter": "2 passed",
+    "full_suite": "111 passed, 2 skipped, 432 warnings",
+    "python": "3.11",
+    "blas_threads": 1,
+    "first_adapter_issue": "multi-line Hermes --json parsing; fixed and rerun with idempotency keys",
+    "github_pr": 8,
+    "github_checks": "PASS",
+    "source_commit": "3a07513533c059ede1b67978374c95c66f93113a"
+  },
+  "pr_url": "https://github.com/jd-SearchEngines/deepuplift-agent/pull/8"
+}

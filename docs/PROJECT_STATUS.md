@@ -271,3 +271,21 @@ The preferred Codex integration for this Python repository is the official Pytho
 - No raw participant data, credentials, model weights or local caches in Git.
 - No paid data/compute, online experiments, production changes, destructive operations or merge to main without explicit approval.
 - Update this file and the phase report after every meaningful run.
+
+## 11. 2026-11-16 Batch 0 Hermes + Codex SDK acceptance
+
+**Gate status: PASS for the bounded local orchestration lane.** This does not authorize long-running causal experiments until the dependent data, metric, OPE and optimizer gates are independently satisfied.
+
+Evidence: [HERMES_BATCH0_ORCHESTRATION_REPORT.md](benchmarks/HERMES_BATCH0_ORCHESTRATION_REPORT.md), [machine-readable run record](benchmarks/HERMES_BATCH0_ORCHESTRATION_REPORT.json), and [test results](benchmarks/evidence/HERMES_BATCH0_TEST_RESULTS.md).
+
+What was actually verified on the local machine:
+
+- Hermes `0.23.1` Kanban created a durable A → B → C DAG using the public `hermes kanban` interface; no Hermes private database tables were modified.
+- Official `openai-codex` was installed in a separate Python 3.11 runtime and its public `Codex.thread_start`, `Thread.run`, and `Codex.thread_resume` APIs were exercised. Existing Codex ChatGPT authentication was reused; no credential was copied into the repository.
+- The supervisor persisted project-specific thread/turn/checkpoint/heartbeat metadata in an external SQLite ledger; Hermes remained the task lifecycle owner.
+- B was interrupted after `b_checkpoint_written`; restart idempotently skipped accepted A, resumed B on the same Codex thread, and unlocked C only after B validation passed.
+- A validation rejection entered `REPAIR_READY` and was repaired on the same Codex thread. A separate repeated-failure case entered `BLOCKED` after three failed attempts / two automatic repair cycles.
+- Adapter tests passed (`2 passed`); full project suite passed (`111 passed, 2 skipped`).
+- Draft PR #8 is open; remote SHA was verified, and all Python 3.10/3.11/3.12 syntax plus continuous-frontier checks passed.
+
+This gate proves a local bounded engineering workflow, not causal validity, real myBPmyLife availability, online lift, or unattended operation when the local machine/device is offline. The next eligible task is Gate 1 metric correctness review; do not launch the long causal sweep yet.
