@@ -4,7 +4,7 @@ from typing import Any
 
 import numpy as np
 
-from .uncertainty import bootstrap_ci
+from .uncertainty import bootstrap_ci, bootstrap_cluster_ci
 
 
 def fixed_budget_topk(
@@ -102,4 +102,80 @@ def fixed_budget_policy_value(
         "policy_value_ci": {"low": interval["low"], "high": interval["high"]},
         "bootstrap": interval,
         "estimand": "IPW value of the fixed-budget binary policy",
+    }
+
+
+def multiarm_policy_value_contributions(
+    treatment: Any,
+    outcome: Any,
+    policy_arm: Any,
+    propensity: Any,
+    *,
+    treatment_cost: Any = 0.0,
+    outcome_value: float = 1.0,
+) -> np.ndarray:
+    """Return IPW contributions for a policy over K randomized arms."""
+    t = np.asarray(treatment, dtype="float64").reshape(-1)
+    y = np.asarray(outcome, dtype="float64").reshape(-1)
+    policy = np.asarray(policy_arm, dtype="float64").reshape(-1)
+    probabilities = np.asarray(propensity, dtype="float64")
+    if probabilities.ndim != 2 or probabilities.shape[0] != len(t):
+        raise ValueError("propensity must be a two-dimensional (rows, arms) matrix.")
+    if not (len(t) == len(y) == len(policy)):
+        raise ValueError("treatment, outcome and policy_arm must have equal length.")
+    if not np.isfinite(t).all() or not np.isin(t, np.arange(probabilities.shape[1])).all():
+        raise ValueError("treatment must contain finite valid arm indices.")
+    if not np.isfinite(policy).all() or not np.isin(policy, np.arange(probabilities.shape[1])).all():
+        raise ValueError("policy_arm must contain finite valid arm indices.")
+    if not np.isfinite(y).all() or not np.isfinite(probabilities).all():
+        raise ValueError("outcome and propensity must be finite.")
+    if np.any(probabilities <= 0) or not np.allclose(probabilities.sum(axis=1), 1.0, atol=1e-8):
+        raise ValueError("propensity rows must be positive and sum to one.")
+    if not np.isfinite(float(outcome_value)):
+        raise ValueError("outcome_value must be finite.")
+    costs = np.asarray(treatment_cost, dtype="float64")
+    if costs.ndim == 0:
+        costs = np.full(probabilities.shape[1], float(costs))
+    costs = costs.reshape(-1)
+    if len(costs) != probabilities.shape[1] or not np.isfinite(costs).all():
+        raise ValueError("treatment_cost must be a finite scalar or one value per arm.")
+    t_index = t.astype("int64")
+    policy_index = policy.astype("int64")
+    policy_probability = probabilities[np.arange(len(t)), policy_index]
+    observed_policy = (t_index == policy_index).astype("float64")
+    return observed_policy * y / policy_probability * float(outcome_value) - costs[policy_index]
+
+
+def multiarm_policy_value(
+    treatment: Any,
+    outcome: Any,
+    policy_arm: Any,
+    propensity: Any,
+    *,
+    treatment_cost: Any = 0.0,
+    outcome_value: float = 1.0,
+    clusters: Any | None = None,
+    bootstrap_samples: int = 1000,
+    random_state: int = 42,
+) -> dict[str, Any]:
+    """Estimate a K-arm policy value with row or participant-cluster bootstrap."""
+    contributions = multiarm_policy_value_contributions(
+        treatment, outcome, policy_arm, propensity,
+        treatment_cost=treatment_cost, outcome_value=outcome_value,
+    )
+    if clusters is None:
+        interval = bootstrap_ci(contributions, samples=bootstrap_samples, random_state=random_state)
+        bootstrap_unit = "row"
+    else:
+        interval = bootstrap_cluster_ci(
+            contributions, clusters, samples=bootstrap_samples, random_state=random_state
+        )
+        bootstrap_unit = "cluster"
+    return {
+        "policy_value": interval["estimate"],
+        "policy_value_ci": {"low": interval["low"], "high": interval["high"]},
+        "bootstrap": interval,
+        "bootstrap_unit": bootstrap_unit,
+        "estimand": "IPW value of a K-arm policy using logged arm probabilities",
+        "arms": int(np.asarray(propensity).shape[1]),
     }
