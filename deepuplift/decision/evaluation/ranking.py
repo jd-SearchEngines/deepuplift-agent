@@ -114,6 +114,9 @@ def ranking_metrics(
             return [None, None]
         return [float(np.quantile(values, 0.025)), float(np.quantile(values, 0.975))]
 
+    if len(balance_fraction) != len(balance_rate):
+        raise RuntimeError("treatment balance curve arrays must have identical lengths")
+
     return {
         "qini": qini,
         "auuc": auuc,
@@ -136,7 +139,7 @@ def ranking_metrics(
         "gain_curve": curve.to_dict(orient="records") if include_curves else None,
         "treatment_balance_curve": [
             {"fraction": float(fraction), "treated_rate": float(rate)}
-            for fraction, rate in zip(balance_fraction, balance_rate, strict=True)
+            for fraction, rate in zip(balance_fraction, balance_rate)
         ] if include_curves else None,
         "bootstrap_stability": {
             "n": len(bootstrap_qini),

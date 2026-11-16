@@ -279,3 +279,18 @@ The research programme is complete only when:
 - the orchestration kill/restart and failed-review recovery tests pass;
 - GitHub PROJECT_STATUS.md points to all final reports and the remaining limitations.
 
+## 11. 2026-11-16 runner and Batch 3 execution update
+
+The earlier blockers about local orchestration are superseded for the bounded
+run `batch3-front-end-20261116`: Hermes public Kanban, asynchronous official
+Codex SDK streaming, heartbeat, same-thread recovery, bounded repair and an
+independent read-only review were executed with evidence in
+`docs/benchmarks/AUTONOMOUS_RESEARCH_RUNNER_REPORT.md/json`.
+
+Batch 3 `push_e2e_v2` is **PASS for the known-truth semi-synthetic lane** across
+five fixed seeds. The overall research gate remains **PARTIAL** because the
+licensed/local real MRT lane is still blocked and full Sequential DR is not
+available without a continuation-value model. Launchd is prepared but not
+installed. The next eligible tasks are continuation-value OPE, multi-arm
+candidate/OPE integration, and optimizer dual-bound/convergence evidence.
+

@@ -305,3 +305,79 @@ The next eligible phase is Gate 2 Push data provenance reconciliation. Real-data
 The bounded local filename audit found no raw `Data_MRT.zip` or participant-level myBPmyLife archive. The upstream repository is public, but GitHub reports no license metadata or root license file; therefore the archive was not downloaded. Historical P0/P1 supplied-snapshot PASS evidence and the Experiment A zero-row `NOT_AVAILABLE` result remain separate and reconcile to `PARTIAL / NOT_VERIFIED`, not a real-data PASS.
 
 The real Push lane is paused at the license/archive-fingerprint gate. Semi-synthetic known-truth work may continue; no raw data download, redistribution or long-running real MRT experiment will be started without authorized provenance evidence.
+
+## 14. 2026-11-16 Autonomous Research Runner and Batch 3
+
+This section supersedes the earlier orchestration `NOT VERIFIED` note for the
+specific local run below; it does not claim that the whole causal research
+programme is complete.
+
+**Runner gate: PASS for the local engineering acceptance run.** Evidence:
+[Autonomous Research Runner report](benchmarks/AUTONOMOUS_RESEARCH_RUNNER_REPORT.md),
+[machine-readable runner record](benchmarks/AUTONOMOUS_RESEARCH_RUNNER_REPORT.json),
+and [Batch 3 validation log](benchmarks/evidence/BATCH3_PUSH_E2E_VALIDATION.md).
+
+- Hermes public Kanban created and persisted a three-task DAG: engineering →
+  `push_e2e_v2` → independent report. Task IDs were `t_e7126026`,
+  `t_2b94bd22`, and `t_57462294`.
+- The official asynchronous Codex SDK produced streaming events while the
+  Supervisor emitted Hermes heartbeats. The engineering task encountered a
+  real shell failure (`python` unavailable), entered `REPAIR_READY`, then
+  passed after the bounded repair using the same Codex thread. No failure was
+  silently converted to PASS.
+- A separate forced-kill test returned `-9`; the resumed worker reused the
+  original Codex thread and completed from the persisted checkpoint. Completed
+  stages were not duplicated.
+- Batch 3 completed the known-truth semi-synthetic lane across five seeds:
+  20 model rows, 25 optimizer rows, 25 OPE rows, and a separate existing
+  three-arm comparison. The experiment gate is PASS for this synthetic lane;
+  the research gate remains PARTIAL because the real MRT lane is blocked and
+  full Sequential DR lacks a continuation-value model.
+- Independent read-only review accepted the evidence only as PARTIAL synthetic
+  evidence, then the report provenance/test-pass issues were repaired and the
+  focused validation returned `7 passed`.
+
+Draft PR [#11](https://github.com/jd-SearchEngines/deepuplift-agent/pull/11)
+contains the runner and Batch 3 evidence; it is intentionally not merged.
+
+Launchd is **NOT_INSTALLED**. The checked-in template and
+`start.sh`/`stop.sh`/`status.sh`/`resume.sh` passed shell validation; service
+installation remains an explicit local deployment step after review.
+
+Next eligible tasks: add a continuation-value model for full Sequential DR,
+add multi-arm candidate/OPE integration, complete optimizer convergence and
+dual-bound evidence, and reopen real MRT only after the license/archive gate.
+
+
+## 15. 2026-11-16 audit: why continuous phase execution has not started
+
+**Current status: Batch 3 bounded run PASS; unattended multi-phase operation NOT YET ACTIVE.**
+
+Follow-up: [Issue #12 — Make Autonomous Research Runner truly continuous across research phases](https://github.com/jd-SearchEngines/deepuplift-agent/issues/12).
+
+### Verified from PR #11 source and evidence
+
+1. Batch 3 local engineering run completed three tasks (runner engineering, push_e2e_v2, independent report); forced worker kill/restart reused the same Codex thread. Full local suite reported 121 passed / 2 skipped; focused runner and Batch 3 tests reported 7 passed. GitHub quality and continuous-frontier CI passed on PR head `05d8024ffef87af867b77b29db7122fe049e4491`.
+2. `launchd` remains `NOT_INSTALLED`; only a plist template and shell scripts are committed. The PR does not prove automatic login startup or OS-level KeepAlive/reboot recovery.
+3. `ResearchPlanner.build_plan()` is a fixed three-task Batch 3 plan, not a phase-aware planner for P1–P9 / Push P0–P6.
+4. `AutonomousResearchRunner.run_once()` only processes already-created READY tasks. The `--cycles 0` loop sleeps when no task is ready; it does not call the Planner again to discover and create the next research phase. Therefore the process may remain alive but idle after its fixed tasks are accepted.
+5. `start.sh` defaults the ledger/checkpoint root to `${TMPDIR}/deepuplift-autonomous-runner`; migrate to a stable per-user Application Support directory before claiming reboot-safe persistence.
+6. The registered Desktop Commander device `jingdongdeMacBook-Pro.local` was OFFLINE at the 2026-11-16 audit (last seen approximately 179 hours earlier). Current local process and launchctl state cannot be inspected or modified from this session until the remote agent reconnects. Codex's Full Access setting does not establish a live remote-device connection or install a background service.
+
+### Required next gate
+
+- Implement phase-aware, idempotent planning from project status and the research execution plan.
+- Re-plan after each accepted/blocked phase; no idle loop without a next-task decision.
+- Move persistent state out of TMPDIR.
+- Install and verify the LaunchAgent with `launchctl print`, login startup and forced process restart.
+- Report process health, active/ready/blocked tasks, last heartbeat and next planned gate.
+- Complete a multi-phase sequence crossing a research-gate boundary, then prove restart recovery without duplicating accepted work.
+
+Until this gate passes:
+- `BATCH3_SYNTHETIC_EXPERIMENT=PASS`
+- `RUNNER_BOUNDED_EXECUTION=PASS`
+- `LAUNCHD=NOT_INSTALLED`
+- `AUTONOMOUS_PHASE_PLANNING=NOT_IMPLEMENTED`
+- `UNATTENDED_MULTI_PHASE_RUN=NOT_VERIFIED`
+
+Batch 3 research remains `PARTIAL`: the three-arm comparison is separate from the binary candidate/optimizer contract, OPE is one-step binary IPS/SNIPS, full Sequential DR lacks a continuation-value model, and real MRT remains blocked by the license/archive gate.
