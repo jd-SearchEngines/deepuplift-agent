@@ -149,3 +149,88 @@ After every meaningful run or phase transition, update this file and the relevan
 - remaining blocker and the next concrete task.
 
 Never fabricate data or metrics. Never treat CI success as proof of causal validity, production readiness, or autonomous orchestration. Keep raw datasets, participant-level records, credentials, model weights and local caches out of Git.
+
+
+## 9. 2026-11-16 end-to-end chain audit
+
+This section supersedes any interpretation that P0–P5 completion means the complete causal-decision workflow has been validated.
+
+### 9.1 What currently runs end to end
+
+The repository records a **semi-synthetic engineering smoke chain**:
+
+`MRT-context DGP → participant-group OOF proximal effect model → model-produced candidates → constrained optimizer → sequential OPE diagnostics`
+
+Evidence: [PUSH_END_TO_END_RESULTS.md](push/PUSH_END_TO_END_RESULTS.md), [PUSH_OPTIMIZATION.md](push/PUSH_OPTIMIZATION.md), [PUSH_OPE.md](push/PUSH_OPE.md).
+
+| Link | Current status | What the evidence actually means |
+|---|---|---|
+| Canonical decision-point schema | PASS | Schema/engineering tests pass; does not establish raw real-MRT availability |
+| Longitudinal fatigue/carryover DGP | PASS | Semi-synthetic known-truth generator and smoke run work |
+| Participant-group proximal effect model | PASS on synthetic; real fixture NOT_AVAILABLE | A WCLS-style OOF model runs on generated data; not validated on the real MRT archive |
+| Model prediction → candidate builder | PASS | Model-produced predictions are converted into explicit user/slot/action candidates |
+| Candidate builder → constrained optimizer | PASS | All five tested solver paths returned feasible solutions on the 800-candidate smoke |
+| Sequential IPS/SNIPS | PASS as API/smoke; support limited | Sequential estimators run, but trajectory support can collapse at longer horizons |
+| Sequential DR | NOT_AVAILABLE | No continuation-value nuisance model is implemented/supplied |
+| Real MRT long-term policy value | NOT_AVAILABLE | Real availability, exposure, delivery, time and outcome semantics are not established end to end |
+| Real three-arm Activity/Diet policy through optimizer and OPE | NOT_RUN | Three-arm synthetic model tests exist, but the integrated Push policy chain is still binary/synthetic |
+
+### 9.2 Important evidence reconciliation: myBPmyLife
+
+There are two different run records and they must not be silently combined:
+
+- The Push P0/P1 reports say PASS **for a supplied local upstream snapshot**.
+- The formal Experiment A summary dated 2026-11-14 records myBPmyLife as `NOT_AVAILABLE`, with zero formal rows; its failure analysis says no raw locally licensed archive was available.
+
+Until a run ID, source archive fingerprint, data dictionary version, and local availability record reconcile these entries, the overall **real Push data gate is PARTIAL / NOT VERIFIED**, not an unconditional PASS. No raw participant data should be committed to resolve this.
+
+### 9.3 OPE and longitudinal limitations
+
+- Sequential IPS/SNIPS API and cluster bootstrap are implemented.
+- Five-seed trajectory-support stress: at horizon 8, finite trajectory SNIPS in 4/5 seeds with trajectory ESS 0–2; at horizon 16, finite estimates in 0/5 seeds and ESS 0. This is a support failure, not a successful long-horizon policy evaluation.
+- One-step/per-decision DR is not full sequential DR. Full sequential DR remains `NOT_AVAILABLE` until a continuation-value model and its diagnostics exist.
+- The learned proximal model has not yet been integrated with the fatigue/carryover longitudinal lab and a valid continuation-value DR pipeline.
+
+### 9.4 Does the current test programme cover the entire causal chain?
+
+**No. It covers a meaningful partial end-to-end smoke, not the full real-data causal decision chain.**
+
+Covered in separate or semi-synthetic lanes:
+- binary S/T/X/R/DR model comparison on synthetic and randomized Hillstrom/Criteo data;
+- multi-treatment synthetic A2;
+- continuous-dose synthetic A3, including monotone, saturating and fatigue shapes;
+- measured-confounding, selection-bias, overlap and hidden-confounding stress tests;
+- monotonic calibration;
+- constrained allocation feasibility and scale tests;
+- sequential IPS/SNIPS API and support diagnostics;
+- one binary synthetic model-to-candidate-to-optimizer-to-OPE smoke.
+
+Not yet covered as one integrated, decision-grade experiment:
+1. a verified real Push MRT archive with assignment, eligibility, delivery/exposure, timestamp, availability and proximal outcome fields;
+2. three-arm Activity/Diet effect predictions passed through the same candidate builder, constrained optimizer and policy evaluator;
+3. learned proximal effects connected to fatigue/carryover and delayed outcomes;
+4. sequential OPE with acceptable positivity/ESS and multi-seed bias/coverage evidence;
+5. full sequential DR with a continuation-value model;
+6. a policy confidence gate that blocks unsupported policies;
+7. real randomized online policy validation. Offline OPE and semi-synthetic regret are not online lift.
+
+### 9.5 Next integrated acceptance run
+
+Create a single reproducible `push_e2e_v2` benchmark with separate evidence lanes:
+
+- **Lane A — known-truth semi-synthetic:** five seeds; binary and three-arm actions; monotone/saturating/fatigue/carryover scenarios; participant-group splits; model → candidate → optimizer → OPE.
+- **Lane B — randomized real data:** only run when the licensed MRT archive and its fingerprint are verified; estimate assignment-based proximal ITT and supported policy estimands; never invent individual counterfactual labels.
+- **Lane C — observational stress:** explicit measured/unmeasured confounding, MAR/MNAR selection and overlap scenarios; report sensitivity and unsupported regions.
+
+Minimum report fields:
+- model: ATE bias, PEHE only where unit-level truth exists, CATE correlation, Qini/AUUC, uplift@K, calibration and interval coverage;
+- data/identification: propensity distribution, overlap, ESS, balance, missingness and selection diagnostics;
+- policy/OPE: IPS/SNIPS/DR only when supported, policy value and CI, importance-weight tails, cluster count, horizon support and regret where truth exists;
+- optimizer: objective, budget/capacity/frequency violations, feasibility, solver stopping reason, dual diagnostics, runtime and memory;
+- provenance: dataset class, source/version/fingerprint, seed, configuration, model version, commit and exact command.
+
+Compare at least random, treat-none, treat-all where feasible, naive outcome ranking, uplift Top-K, cost-aware greedy, and constrained solver policies. A stage is PASS only if the experiment runs, its estimand is supported, uncertainty/diagnostics are reported, and limitations are explicit. A code smoke alone is not a causal-validity PASS.
+
+### 9.6 CI snapshot before this documentation addendum
+
+On commit `ff75e455893ec2fa2043aecc897fcebead068ece`, GitHub Actions runs `quality` (Python 3.10/3.11/3.12) and `continuous-frontier` completed successfully. The PR description records 109 passed and 2 skipped for the local Python 3.11 suite. These checks validate the tested code paths, not the missing real-data or full-chain evidence above. PR #5 remains OPEN / DRAFT / not merged.
