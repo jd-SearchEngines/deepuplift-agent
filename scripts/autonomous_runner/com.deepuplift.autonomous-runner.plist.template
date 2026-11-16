@@ -5,12 +5,23 @@
   <key>Label</key><string>com.deepuplift.autonomous-runner</string>
   <key>ProgramArguments</key>
   <array>
-    <string>REPLACE_WITH_REPO/scripts/autonomous_runner/start.sh</string>
+    <string>REPLACE_WITH_PYTHON</string>
+    <string>REPLACE_WITH_REPO/scripts/run_autonomous_runner.py</string>
+    <string>--repo-root</string><string>REPLACE_WITH_REPO</string>
+    <string>--run-id</string><string>deepuplift-longterm</string>
+    <string>--board</string><string>deepuplift-longterm</string>
+    <string>--ledger</string><string>REPLACE_WITH_STATE/runner.sqlite3</string>
+    <string>--state-root</string><string>REPLACE_WITH_STATE</string>
+    <string>--cycles</string><string>0</string>
   </array>
+  <key>WorkingDirectory</key><string>REPLACE_WITH_REPO</string>
+  <key>EnvironmentVariables</key>
+  <dict><key>PYTHONPATH</key><string>REPLACE_WITH_REPO</string><key>PATH</key><string>/Users/jingdong/.local/bin:/opt/homebrew/bin:/usr/bin:/bin</string></dict>
   <key>RunAtLoad</key><true/>
   <key>KeepAlive</key><true/>
   <key>ProcessType</key><string>Background</string>
   <key>StandardOutPath</key><string>REPLACE_WITH_STATE/logs/launchd.stdout.log</string>
   <key>StandardErrorPath</key><string>REPLACE_WITH_STATE/logs/launchd.stderr.log</string>
+  <key>ThrottleInterval</key><integer>10</integer>
 </dict>
 </plist>

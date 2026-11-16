@@ -22,8 +22,13 @@ def test_planner_reads_status_and_emits_stable_dag(tmp_path: Path):
     first = planner.build_plan()
     second = planner.build_plan()
     assert [item.key for item in first] == [item.key for item in second]
-    assert first[1].dependencies == (first[0].key,)
-    assert first[2].dependencies == (first[1].key,)
+    assert len(first) == 1
+    assert first[0].key == "research:sequential-dr:v1"
+    report = tmp_path / "docs/benchmarks/SEQUENTIAL_DR_REPORT.json"
+    report.write_text(json.dumps({"status": "PASS"}), encoding="utf-8")
+    next_plan = planner.build_plan()
+    assert [item.key for item in next_plan] == ["research:multi-arm-chain:v1"]
+    assert next_plan[0].dependencies == (first[0].key,)
     assert "BLOCKED" in planner.context()["blocked_items"][0]
 
 

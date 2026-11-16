@@ -1,0 +1,221 @@
+{
+  "benchmark": "push_multiarm_candidate_optimizer_ope",
+  "config": {
+    "arms": [
+      0,
+      1,
+      2
+    ],
+    "bootstrap": 40,
+    "horizon": 4,
+    "seeds": [
+      42,
+      52,
+      62,
+      72,
+      82
+    ],
+    "users": 180
+  },
+  "data_provenance": "runtime-generated Push-shaped DGP; no raw MRT data",
+  "evidence_class": "SEMI_SYNTHETIC_KNOWN_TRUTH",
+  "gates": {
+    "candidate_optimizer_chain": "PASS",
+    "online_lift": "NOT_RUN",
+    "real_mrt": "BLOCKED; local authorized raw myBPmyLife archive is not available",
+    "three_arm_logged_probability_ope": "PASS"
+  },
+  "git_sha": "05d8024ffef87af867b77b29db7122fe049e4491",
+  "limitations": [
+    "Candidates use known truth as an oracle diagnostic; this is not a fitted-model quality claim.",
+    "Policy value uses logged arm probabilities and cluster bootstrap but remains offline semi-synthetic evidence."
+  ],
+  "results": [
+    {
+      "max_truth_value": 0.3482420934535516,
+      "rows": 720,
+      "seed": 42,
+      "solvers": [
+        {
+          "abs_ipw_truth_error": 0.025436985082798513,
+          "bootstrap_unit": "cluster",
+          "feasible": true,
+          "objective_net_value": 0.0,
+          "policy_value_ci": {
+            "high": 0.34951487501504,
+            "low": 0.290795405867544
+          },
+          "policy_value_ipw": 0.3228051083707531,
+          "runtime_seconds": 0.0002304590000000717,
+          "selected_count": 0,
+          "solver": "greedy",
+          "truth_policy_value": 0.3482420934535516
+        },
+        {
+          "abs_ipw_truth_error": 0.025436985082798513,
+          "bootstrap_unit": "cluster",
+          "feasible": true,
+          "objective_net_value": 0.0,
+          "policy_value_ci": {
+            "high": 0.34951487501504,
+            "low": 0.290795405867544
+          },
+          "policy_value_ipw": 0.3228051083707531,
+          "runtime_seconds": 0.0005886250000000093,
+          "selected_count": 0,
+          "solver": "heap",
+          "truth_policy_value": 0.3482420934535516
+        }
+      ]
+    },
+    {
+      "max_truth_value": 0.35351085793850806,
+      "rows": 720,
+      "seed": 52,
+      "solvers": [
+        {
+          "abs_ipw_truth_error": 0.02343687212905554,
+          "bootstrap_unit": "cluster",
+          "feasible": true,
+          "objective_net_value": 0.0,
+          "policy_value_ci": {
+            "high": 0.41873747505727904,
+            "low": 0.34881301253584285
+          },
+          "policy_value_ipw": 0.3769477300675636,
+          "runtime_seconds": 0.0002459160000001237,
+          "selected_count": 0,
+          "solver": "greedy",
+          "truth_policy_value": 0.35351085793850806
+        },
+        {
+          "abs_ipw_truth_error": 0.02343687212905554,
+          "bootstrap_unit": "cluster",
+          "feasible": true,
+          "objective_net_value": 0.0,
+          "policy_value_ci": {
+            "high": 0.41873747505727904,
+            "low": 0.34881301253584285
+          },
+          "policy_value_ipw": 0.3769477300675636,
+          "runtime_seconds": 0.0005905840000000051,
+          "selected_count": 0,
+          "solver": "heap",
+          "truth_policy_value": 0.35351085793850806
+        }
+      ]
+    },
+    {
+      "max_truth_value": 0.3474546446381975,
+      "rows": 720,
+      "seed": 62,
+      "solvers": [
+        {
+          "abs_ipw_truth_error": 0.029892558388094237,
+          "bootstrap_unit": "cluster",
+          "feasible": true,
+          "objective_net_value": 0.0,
+          "policy_value_ci": {
+            "high": 0.42561486343747806,
+            "low": 0.34269804938369935
+          },
+          "policy_value_ipw": 0.3773472030262917,
+          "runtime_seconds": 0.0002414589999999439,
+          "selected_count": 0,
+          "solver": "greedy",
+          "truth_policy_value": 0.3474546446381975
+        },
+        {
+          "abs_ipw_truth_error": 0.029892558388094237,
+          "bootstrap_unit": "cluster",
+          "feasible": true,
+          "objective_net_value": 0.0,
+          "policy_value_ci": {
+            "high": 0.42561486343747806,
+            "low": 0.34269804938369935
+          },
+          "policy_value_ipw": 0.3773472030262917,
+          "runtime_seconds": 0.0005842080000000305,
+          "selected_count": 0,
+          "solver": "heap",
+          "truth_policy_value": 0.3474546446381975
+        }
+      ]
+    },
+    {
+      "max_truth_value": 0.3499582869131962,
+      "rows": 720,
+      "seed": 72,
+      "solvers": [
+        {
+          "abs_ipw_truth_error": 0.004922140181292889,
+          "bootstrap_unit": "cluster",
+          "feasible": true,
+          "objective_net_value": 0.0,
+          "policy_value_ci": {
+            "high": 0.3880895336862021,
+            "low": 0.3079726965243726
+          },
+          "policy_value_ipw": 0.3450361467319033,
+          "runtime_seconds": 0.00023641699999998878,
+          "selected_count": 0,
+          "solver": "greedy",
+          "truth_policy_value": 0.3499582869131962
+        },
+        {
+          "abs_ipw_truth_error": 0.004922140181292889,
+          "bootstrap_unit": "cluster",
+          "feasible": true,
+          "objective_net_value": 0.0,
+          "policy_value_ci": {
+            "high": 0.3880895336862021,
+            "low": 0.3079726965243726
+          },
+          "policy_value_ipw": 0.3450361467319033,
+          "runtime_seconds": 0.0005875840000000299,
+          "selected_count": 0,
+          "solver": "heap",
+          "truth_policy_value": 0.3499582869131962
+        }
+      ]
+    },
+    {
+      "max_truth_value": 0.3534899501616361,
+      "rows": 720,
+      "seed": 82,
+      "solvers": [
+        {
+          "abs_ipw_truth_error": 0.02976515009724051,
+          "bootstrap_unit": "cluster",
+          "feasible": true,
+          "objective_net_value": 0.0,
+          "policy_value_ci": {
+            "high": 0.41814498130387073,
+            "low": 0.3462401210554073
+          },
+          "policy_value_ipw": 0.3832551002588766,
+          "runtime_seconds": 0.0002363340000000047,
+          "selected_count": 0,
+          "solver": "greedy",
+          "truth_policy_value": 0.3534899501616361
+        },
+        {
+          "abs_ipw_truth_error": 0.02976515009724051,
+          "bootstrap_unit": "cluster",
+          "feasible": true,
+          "objective_net_value": 0.0,
+          "policy_value_ci": {
+            "high": 0.41814498130387073,
+            "low": 0.3462401210554073
+          },
+          "policy_value_ipw": 0.3832551002588766,
+          "runtime_seconds": 0.0005812499999999776,
+          "selected_count": 0,
+          "solver": "heap",
+          "truth_policy_value": 0.3534899501616361
+        }
+      ]
+    }
+  ],
+  "status": "PASS"
+}

@@ -83,6 +83,7 @@ class RunLedger:
                     pr_url TEXT,
                     last_error TEXT,
                     task_key TEXT,
+                    hermes_task_id TEXT,
                     spec_json TEXT,
                     repair_count INTEGER NOT NULL DEFAULT 0,
                     worker_pid INTEGER,
@@ -105,6 +106,7 @@ class RunLedger:
             columns = {row[1] for row in db.execute("PRAGMA table_info(stages)")}
             for name, definition in (
                 ("task_key", "TEXT"),
+                ("hermes_task_id", "TEXT"),
                 ("spec_json", "TEXT"),
                 ("repair_count", "INTEGER NOT NULL DEFAULT 0"),
                 ("worker_pid", "INTEGER"),
@@ -157,7 +159,7 @@ class RunLedger:
             "status", "attempt", "codex_thread_id", "codex_turn_id", "started_at",
             "heartbeat_at", "checkpoint", "validation_status", "report_path",
             "commit_sha", "pr_url", "last_error", "task_key", "spec_json",
-            "repair_count", "worker_pid",
+            "hermes_task_id", "repair_count", "worker_pid",
         }
         invalid = set(fields) - allowed
         if invalid:

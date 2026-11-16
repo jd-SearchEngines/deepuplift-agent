@@ -77,73 +77,93 @@ class ResearchPlanner:
             "blocked_items": blocked[-30:],
         }
 
-    def build_plan(self) -> list[TaskSpec]:
-        context = self.context()
-        status = context["status_excerpt"]
-        runner_needed = "Autonomous Research Runner" not in status or "NOT VERIFIED" in status
-        prefix = "batch3" if runner_needed else "batch3-followup"
-        runner_task = TaskSpec(
-            key=f"{prefix}:runner-engineering",
-            title="DeepUplift Autonomous Research Runner engineering validation",
-            body=(
-                "Implement and validate the persistent Hermes Supervisor, official Codex SDK worker, "
-                "independent validator, heartbeat/checkpoint/recovery and launchd front-end. "
-                "Use the repository documents as the acceptance contract."
-            ),
-            acceptance_command="python3 -m pytest -q tests/orchestration",
-            evidence_class="ENGINEERING",
-            prompt=(
-                "Audit the current Autonomous Research Runner implementation in this repository. "
-                "Run the focused orchestration tests and fix only concrete failures. Preserve all "
-                "historical reports and do not touch raw data or credentials. Summarize commands and results."
-            ),
-        )
-        experiment = TaskSpec(
-            key=f"{prefix}:push-e2e-v2",
-            title="Run Push semi-synthetic push_e2e_v2",
-            body=(
-                "Run the known-truth semi-synthetic Push benchmark with binary and three-arm actions, "
-                "five fixed seeds, policy/OPE/optimizer diagnostics, and explicit limitations."
-            ),
-            dependencies=(runner_task.key,),
-            acceptance_command="python3 -m pytest -q tests/benchmarks/test_push_e2e_v2.py",
+    def _report_passed(self, relative: str) -> bool:
+        path = self.repo_root / relative
+        if not path.exists():
+            return False
+        try:
+            payload = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            return False
+        return payload.get("status") == "PASS" or payload.get("gate_status") == "PASS"
+
+    def build_plan(self, existing: dict[str, dict[str, Any]] | None = None) -> list[TaskSpec]:
+        """Select the next eligible research task from evidence, not a fixed batch."""
+        existing = existing or {}
+        sequential = TaskSpec(
+            key="research:sequential-dr:v1",
+            title="Implement and evaluate Sequential DR continuation values",
+            body="Add a continuation-value model and a true sequential doubly robust estimator on known-truth trajectories. Keep ordinary per-decision DR labelled separately.",
+            acceptance_command="python3 -m pytest -q tests/decision/test_sequential_dr.py",
             evidence_class="SEMI_SYNTHETIC_KNOWN_TRUTH",
             prompt=(
-                "Run exactly `python3 scripts/run_push_e2e_v2.py --users 300 --horizon 4 --seeds 42 52 62 72 82 "
-                "--output-json docs/benchmarks/BATCH3_PUSH_E2E_REPORT.json --output-md docs/benchmarks/BATCH3_PUSH_E2E_REPORT.md`. "
-                "Use only synthetic data or already authorized local fixtures. Do not download the blocked "
-                "myBPmyLife archive. Preserve historical outputs and report unsupported real-data and full "
-                "sequential-DR gates honestly."
+                "Run exactly `python3 scripts/run_sequential_dr_benchmark.py --output-json docs/benchmarks/SEQUENTIAL_DR_REPORT.json --output-md docs/benchmarks/SEQUENTIAL_DR_REPORT.md`. "
+                "Use only the known-truth synthetic trajectory DGP. Verify the continuation-value estimator, compare IPS/SNIPS/ordinary per-decision DR/true sequential DR, and record ESS, weight tails, cluster bootstrap and coverage. Do not claim real MRT or online lift."
             ),
         )
-        report = TaskSpec(
-            key=f"{prefix}:independent-report",
-            title="Independently validate and publish Batch 3 evidence",
-            body=(
-                "Read the Batch 3 code, tests and generated report in a read-only validation context; "
-                "check provenance, metrics, seeds, constraints and unsupported claims, then update project status."
-            ),
-            dependencies=(experiment.key,),
-            acceptance_command="python3 -m pytest -q tests/benchmarks/test_push_e2e_v2.py tests/orchestration",
-            evidence_class="REVIEW",
+        multiarm = TaskSpec(
+            key="research:multi-arm-chain:v1",
+            title="Complete the three-arm treatment-to-policy chain",
+            body="Connect the existing three-arm effect models to candidate construction, constrained optimization, multi-arm OPE and policy evaluation.",
+            dependencies=(sequential.key,),
+            acceptance_command="python3 -m pytest -q tests/benchmarks/test_push_multiarm_chain.py",
+            evidence_class="SEMI_SYNTHETIC_KNOWN_TRUTH",
             prompt=(
-                "Act as an independent read-only reviewer. Inspect the Batch 3 report, code diff, test "
-                "logs and project status. Run the focused tests without modifying code. Reject claims "
-                "not supported by the evidence and return a concise verdict."
+                "Run exactly `python3 scripts/run_push_multiarm_chain.py --output-json docs/benchmarks/MULTIARM_PUSH_CHAIN_REPORT.json --output-md docs/benchmarks/MULTIARM_PUSH_CHAIN_REPORT.md`. "
+                "Use known-truth synthetic data, actual logged arm probabilities, the existing candidate/optimizer APIs and cluster bootstrap. Keep three-arm integrated evidence separate from the earlier one-vs-control comparison."
             ),
-            sandbox="read-only",
         )
-        # Keep the planner's evidence visible in the ledger; it is useful when
-        # a later run explains why a blocked task was not scheduled.
-        if context["blocked_items"]:
-            return [runner_task, experiment, report]
-        return [runner_task, experiment, report]
+        optimizer = TaskSpec(
+            key="research:optimizer-evidence:v1",
+            title="Complete optimizer convergence and dual-bound evidence",
+            body="Compare constrained solvers against exact small references with valid feasibility, stopping and dual-bound diagnostics; do not claim a strict gap without a valid bound.",
+            dependencies=(multiarm.key,),
+            acceptance_command="python3 -m pytest -q tests/decision/test_optimizer_evidence.py",
+            evidence_class="SYNTHETIC_SCALE_STRESS",
+            prompt="Audit the existing optimizer evidence and run the pre-registered small-reference and scale diagnostics. Add only mathematically valid convergence or dual-bound evidence, preserving negative results.",
+        )
+        matrix = TaskSpec(
+            key="research:benchmark-matrix:v1",
+            title="Build the unified P1-P9 and Push P0-P6 benchmark matrix",
+            body="Reconcile every phase status, evidence class, seed/config, report and blocker into a machine-readable matrix.",
+            dependencies=(optimizer.key,),
+            acceptance_command="python3 -m pytest -q tests/benchmarks/test_benchmark_manifest.py",
+            evidence_class="RESEARCH_EVIDENCE_INDEX",
+            prompt="Build and validate the unified benchmark matrix from existing reports. Do not rerun completed experiments or convert BLOCKED/NOT_AVAILABLE evidence into PASS.",
+        )
+        candidates = (sequential, multiarm, optimizer, matrix)
+        report_paths = {
+            sequential.key: "docs/benchmarks/SEQUENTIAL_DR_REPORT.json",
+            multiarm.key: "docs/benchmarks/MULTIARM_PUSH_CHAIN_REPORT.json",
+        }
+        for spec in candidates:
+            stage = existing.get(spec.key)
+            if stage and stage["status"] in TERMINAL:
+                continue
+            if spec.key in report_paths and self._report_passed(report_paths[spec.key]):
+                continue
+            return [spec]
+        return []
 
     def sync(self, *, run_id: str, board: str, ledger: RunLedger) -> list[TaskSpec]:
-        specs = self.build_plan()
+        existing = {stage["phase_id"]: stage for stage in ledger.all_stages(run_id)}
+        specs = self.build_plan(existing)
         hermes = HermesKanban(board)
-        ids: dict[str, str] = {}
+        ids: dict[str, str] = {
+            phase_id: str(stage["hermes_task_id"])
+            for phase_id, stage in existing.items()
+            if stage.get("hermes_task_id")
+        }
         for spec in specs:
+            for dependency in spec.dependencies:
+                if dependency not in existing:
+                    report_path = {
+                        "research:sequential-dr:v1": "docs/benchmarks/SEQUENTIAL_DR_REPORT.json",
+                        "research:multi-arm-chain:v1": "docs/benchmarks/MULTIARM_PUSH_CHAIN_REPORT.json",
+                    }.get(dependency)
+                    if report_path and self._report_passed(report_path):
+                        ledger.ensure_stage(run_id, dependency, (), task_key=dependency)
+                        ledger.update(run_id, dependency, status="ACCEPTED", validation_status="PASS", checkpoint="report_reconciled")
             ids[spec.key] = hermes.create(
                 spec.title,
                 spec.body,
@@ -155,17 +175,23 @@ class ResearchPlanner:
                 run_id,
                 spec.key,
                 spec.dependencies,
-                branch="codex/batch3-autonomous-runner",
+                branch=subprocess.check_output(["git", "branch", "--show-current"], cwd=self.repo_root, text=True).strip(),
                 worktree=str(self.repo_root),
                 config={"task_key": spec.key, "acceptance_command": spec.acceptance_command},
                 dataset_fingerprint="synthetic-only-unless-provenance-gate-opens",
                 task_key=spec.key,
                 spec=asdict(spec),
             )
+            ledger.update(run_id, spec.key, hermes_task_id=ids[spec.key])
         for spec in specs:
             for dependency in spec.dependencies:
-                hermes.link(ids[dependency], ids[spec.key])
-        ledger.event(run_id, None, "planner_synced", task_ids=ids, context=self.context())
+                # A dependency may have been accepted in an earlier planner
+                # invocation. Its public Hermes id is persisted in our ledger;
+                # never reach into Hermes' private database to rediscover it.
+                dependency_id = ids.get(dependency)
+                if dependency_id and ids.get(spec.key):
+                    hermes.link(dependency_id, ids[spec.key])
+        ledger.event(run_id, None, "planner_synced", task_ids=ids, context=self.context(), selected_keys=[spec.key for spec in specs])
         return specs
 
 
@@ -322,13 +348,17 @@ class AutonomousResearchRunner:
         specs = self.planner.sync(run_id=self.run_id, board=self.hermes.board, ledger=self.ledger)
         # Resolve ids from the public board snapshot without touching Hermes DB.
         snapshot = self.hermes.list()
-        self.task_ids = {
+        resolved = {
             spec.key: next(
                 row["id"] for row in snapshot
                 if row.get("title") == spec.title and row.get("created_by") == "hermes-autonomous-runner"
             )
             for spec in specs
         }
+        for stage in self.ledger.all_stages(self.run_id):
+            if stage.get("hermes_task_id"):
+                resolved[stage["phase_id"]] = stage["hermes_task_id"]
+        self.task_ids = resolved
         self.ledger.event(self.run_id, None, "planner_task_ids_resolved", task_ids=self.task_ids)
         return specs
 
@@ -471,7 +501,7 @@ class AutonomousResearchRunner:
     def run_once(self) -> bool:
         progressed = False
         for stage in self.ledger.all_stages(self.run_id):
-            if not self._ready(stage):
+            if not self._ready(stage) or stage["phase_id"] not in self.task_ids:
                 continue
             spec = self._spec(stage)
             self._claim(stage)
@@ -489,11 +519,23 @@ class AutonomousResearchRunner:
 
     def run(self, *, max_cycles: int = 1) -> None:
         with SingleInstanceLock(self.state_root / "runner.lock"):
-            for _ in range(max_cycles):
+            cycles = 0
+            self.plan()
+            while max_cycles == 0 or cycles < max_cycles:
                 if self.stop_requested:
                     break
-                if not self.run_once():
-                    break
+                progressed = self.run_once()
+                # Re-plan after every task transition and also on idle. This
+                # is the key difference from the bounded Batch 3 runner: an
+                # accepted phase can unlock a new research phase without a
+                # human or process restart.
+                self.plan()
+                cycles += 1
+                if not progressed:
+                    self.ledger.event(self.run_id, None, "planner_idle", next_plan=self.planner.context())
+                    if max_cycles > 0:
+                        break
+                    time.sleep(max(self.poll_interval, 5.0))
 
 
 def _parser() -> argparse.ArgumentParser:
