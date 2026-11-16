@@ -1,6 +1,6 @@
 {
-  "run_id": "push_e2e_v2_1794839941",
-  "git_sha": "9e1e8ff36e38af977e4a842be8c9a74bbadb0eac",
+  "run_id": "push_e2e_v2_1794840473",
+  "git_sha": "e9919f67ba98fa63216c9c09b7d01b1c05c73373",
   "evidence_class": "SEMI_SYNTHETIC_KNOWN_TRUTH",
   "status": "PASS",
   "config": {
@@ -41,7 +41,7 @@
       "qini": 1.4329045638652804,
       "auuc": 11.956696577817084,
       "calibration_mae": 0.024035232719577047,
-      "runtime_seconds": 0.5395332909999999,
+      "runtime_seconds": 0.5316554579999999,
       "backend": "DeepUplift native model registry"
     },
     {
@@ -55,7 +55,7 @@
       "qini": 0.8922445152130396,
       "auuc": 10.575287392209745,
       "calibration_mae": 0.03672555984388572,
-      "runtime_seconds": 0.6032973339999999,
+      "runtime_seconds": 0.5867507089999997,
       "backend": "DeepUplift native model registry"
     },
     {
@@ -69,7 +69,7 @@
       "qini": 1.095020374583536,
       "auuc": 11.616142753636177,
       "calibration_mae": 0.04532072459307251,
-      "runtime_seconds": 0.765627125,
+      "runtime_seconds": 0.7600376249999998,
       "backend": "DeepUplift native model registry"
     },
     {
@@ -83,7 +83,7 @@
       "qini": 0.9328593663501792,
       "auuc": 10.635655132680538,
       "calibration_mae": 0.0557860704060333,
-      "runtime_seconds": 0.689264208,
+      "runtime_seconds": 0.6923183750000002,
       "backend": "DeepUplift native model registry"
     },
     {
@@ -97,7 +97,7 @@
       "qini": 2.180764471392845,
       "auuc": 14.229240696236182,
       "calibration_mae": 0.07317998300048549,
-      "runtime_seconds": 0.5310163750000005,
+      "runtime_seconds": 0.5212735,
       "backend": "DeepUplift native model registry"
     },
     {
@@ -111,7 +111,7 @@
       "qini": 1.8430051622402268,
       "auuc": 12.986755655825634,
       "calibration_mae": 0.03048820998886296,
-      "runtime_seconds": 0.5831446250000001,
+      "runtime_seconds": 0.5825834580000002,
       "backend": "DeepUplift native model registry"
     },
     {
@@ -125,7 +125,7 @@
       "qini": 2.2293577384922405,
       "auuc": 14.045024209266227,
       "calibration_mae": 0.03093696457287657,
-      "runtime_seconds": 0.7531246249999999,
+      "runtime_seconds": 0.7590712499999999,
       "backend": "DeepUplift native model registry"
     },
     {
@@ -139,7 +139,7 @@
       "qini": 1.8220382416923837,
       "auuc": 12.565690692510653,
       "calibration_mae": 0.042692541263351015,
-      "runtime_seconds": 0.6880395830000001,
+      "runtime_seconds": 0.6919419579999992,
       "backend": "DeepUplift native model registry"
     },
     {
@@ -153,7 +153,7 @@
       "qini": 1.3217820787447088,
       "auuc": 13.909399021867712,
       "calibration_mae": 0.03835105282099509,
-      "runtime_seconds": 0.5337393750000006,
+      "runtime_seconds": 0.5227810000000002,
       "backend": "DeepUplift native model registry"
     },
     {
@@ -167,7 +167,7 @@
       "qini": 1.4134166001533086,
       "auuc": 14.457953512455365,
       "calibration_mae": 0.029713806815916444,
-      "runtime_seconds": 0.5846929169999999,
+      "runtime_seconds": 0.5847827910000003,
       "backend": "DeepUplift native model registry"
     },
     {
@@ -181,7 +181,7 @@
       "qini": 1.2507414421175622,
       "auuc": 14.14423278112582,
       "calibration_mae": 0.03136615152470147,
-      "runtime_seconds": 0.7547390410000006,
+      "runtime_seconds": 0.7592235840000008,
       "backend": "DeepUplift native model registry"
     },
     {
@@ -195,7 +195,7 @@
       "qini": 1.2678810986021403,
       "auuc": 14.099829993680029,
       "calibration_mae": 0.046546522362588674,
-      "runtime_seconds": 0.6891186659999988,
+      "runtime_seconds": 0.6937942079999999,
       "backend": "DeepUplift native model registry"
     },
     {
@@ -209,7 +209,7 @@
       "qini": 1.0208085214680325,
       "auuc": 14.3694441547744,
       "calibration_mae": 0.028063852783837134,
-      "runtime_seconds": 0.5305545419999991,
+      "runtime_seconds": 0.5222136670000008,
       "backend": "DeepUplift native model registry"
     },
     {
@@ -223,7 +223,7 @@
       "qini": 0.3347547856585167,
       "auuc": 11.444310316048883,
       "calibration_mae": 0.06226162100928741,
-      "runtime_seconds": 0.5808091659999999,
+      "runtime_seconds": 0.5852723750000006,
       "backend": "DeepUplift native model registry"
     },
     {
@@ -237,7 +237,7 @@
       "qini": 0.5192789066458174,
       "auuc": 12.444545601838776,
       "calibration_mae": 0.045945000015770954,
-      "runtime_seconds": 0.7578793749999999,
+      "runtime_seconds": 0.7598311249999998,
       "backend": "DeepUplift native model registry"
     },
     {
@@ -251,7 +251,7 @@
       "qini": 0.09711297021513676,
       "auuc": 11.42727525348223,
       "calibration_mae": 0.08846529827021272,
-      "runtime_seconds": 0.7257993330000012,
+      "runtime_seconds": 0.702543416000001,
       "backend": "DeepUplift native model registry"
     },
     {
@@ -265,7 +265,7 @@
       "qini": 1.553010781923068,
       "auuc": 16.33152948870542,
       "calibration_mae": 0.047094546780984806,
-      "runtime_seconds": 0.5297250840000007,
+      "runtime_seconds": 0.521556125,
       "backend": "DeepUplift native model registry"
     },
     {
@@ -279,7 +279,7 @@
       "qini": 1.5047700123681897,
       "auuc": 15.747876981203994,
       "calibration_mae": 0.04245316148953922,
-      "runtime_seconds": 0.5834305830000002,
+      "runtime_seconds": 0.5926364579999994,
       "backend": "DeepUplift native model registry"
     },
     {
@@ -293,7 +293,7 @@
       "qini": 1.4389958305523738,
       "auuc": 16.04907259617674,
       "calibration_mae": 0.04055595970127919,
-      "runtime_seconds": 0.7527378749999993,
+      "runtime_seconds": 0.762550666000001,
       "backend": "DeepUplift native model registry"
     },
     {
@@ -307,7 +307,7 @@
       "qini": 1.2902825863573186,
       "auuc": 16.134620455683773,
       "calibration_mae": 0.03815138239224479,
-      "runtime_seconds": 0.6969430410000008,
+      "runtime_seconds": 0.6918137909999995,
       "backend": "DeepUplift native model registry"
     }
   ],
@@ -1044,7 +1044,7 @@
       "feasible": true,
       "stopping_reason": "sorted_net_value",
       "converged": null,
-      "runtime_seconds": 0.00014587500000029507,
+      "runtime_seconds": 0.00014800000000025904,
       "constraint_diagnostics": {
         "feasible": true,
         "max_constraint_violation": 0.0,
@@ -1099,39 +1099,15 @@
           },
           "decision_key": [
             [
-              "push-e2e-42-134",
-              2
-            ],
-            [
-              "push-e2e-42-117",
-              2
-            ],
-            [
-              "push-e2e-42-239",
-              1
-            ],
-            [
-              "push-e2e-42-54",
-              2
-            ],
-            [
-              "push-e2e-42-100",
-              2
-            ],
-            [
-              "push-e2e-42-60",
-              1
+              "push-e2e-42-6",
+              0
             ],
             [
               "push-e2e-42-66",
               1
             ],
             [
-              "push-e2e-42-6",
-              0
-            ],
-            [
-              "push-e2e-42-152",
+              "push-e2e-42-239",
               1
             ],
             [
@@ -1139,12 +1115,36 @@
               2
             ],
             [
-              "push-e2e-42-42",
-              3
+              "push-e2e-42-134",
+              2
             ],
             [
               "push-e2e-42-209",
               1
+            ],
+            [
+              "push-e2e-42-60",
+              1
+            ],
+            [
+              "push-e2e-42-100",
+              2
+            ],
+            [
+              "push-e2e-42-152",
+              1
+            ],
+            [
+              "push-e2e-42-117",
+              2
+            ],
+            [
+              "push-e2e-42-54",
+              2
+            ],
+            [
+              "push-e2e-42-42",
+              3
             ],
             [
               "push-e2e-42-57",
@@ -1165,7 +1165,7 @@
       "feasible": true,
       "stopping_reason": "heap_exhausted_static_net_order",
       "converged": null,
-      "runtime_seconds": 0.00020058300000025397,
+      "runtime_seconds": 0.00019420900000000074,
       "constraint_diagnostics": {
         "feasible": true,
         "max_constraint_violation": 0.0,
@@ -1220,39 +1220,15 @@
           },
           "decision_key": [
             [
-              "push-e2e-42-134",
-              2
-            ],
-            [
-              "push-e2e-42-117",
-              2
-            ],
-            [
-              "push-e2e-42-239",
-              1
-            ],
-            [
-              "push-e2e-42-54",
-              2
-            ],
-            [
-              "push-e2e-42-100",
-              2
-            ],
-            [
-              "push-e2e-42-60",
-              1
+              "push-e2e-42-6",
+              0
             ],
             [
               "push-e2e-42-66",
               1
             ],
             [
-              "push-e2e-42-6",
-              0
-            ],
-            [
-              "push-e2e-42-152",
+              "push-e2e-42-239",
               1
             ],
             [
@@ -1260,12 +1236,36 @@
               2
             ],
             [
-              "push-e2e-42-42",
-              3
+              "push-e2e-42-134",
+              2
             ],
             [
               "push-e2e-42-209",
               1
+            ],
+            [
+              "push-e2e-42-60",
+              1
+            ],
+            [
+              "push-e2e-42-100",
+              2
+            ],
+            [
+              "push-e2e-42-152",
+              1
+            ],
+            [
+              "push-e2e-42-117",
+              2
+            ],
+            [
+              "push-e2e-42-54",
+              2
+            ],
+            [
+              "push-e2e-42-42",
+              3
             ],
             [
               "push-e2e-42-57",
@@ -1286,7 +1286,7 @@
       "feasible": true,
       "stopping_reason": "primal_dual_tolerance",
       "converged": null,
-      "runtime_seconds": 0.0006436669999998479,
+      "runtime_seconds": 0.0006283329999998699,
       "constraint_diagnostics": {
         "feasible": true,
         "max_constraint_violation": 0.0,
@@ -1341,39 +1341,15 @@
           },
           "decision_key": [
             [
-              "push-e2e-42-134",
-              2
-            ],
-            [
-              "push-e2e-42-117",
-              2
-            ],
-            [
-              "push-e2e-42-239",
-              1
-            ],
-            [
-              "push-e2e-42-54",
-              2
-            ],
-            [
-              "push-e2e-42-100",
-              2
-            ],
-            [
-              "push-e2e-42-60",
-              1
+              "push-e2e-42-6",
+              0
             ],
             [
               "push-e2e-42-66",
               1
             ],
             [
-              "push-e2e-42-6",
-              0
-            ],
-            [
-              "push-e2e-42-152",
+              "push-e2e-42-239",
               1
             ],
             [
@@ -1381,12 +1357,36 @@
               2
             ],
             [
-              "push-e2e-42-42",
-              3
+              "push-e2e-42-134",
+              2
             ],
             [
               "push-e2e-42-209",
               1
+            ],
+            [
+              "push-e2e-42-60",
+              1
+            ],
+            [
+              "push-e2e-42-100",
+              2
+            ],
+            [
+              "push-e2e-42-152",
+              1
+            ],
+            [
+              "push-e2e-42-117",
+              2
+            ],
+            [
+              "push-e2e-42-54",
+              2
+            ],
+            [
+              "push-e2e-42-42",
+              3
             ],
             [
               "push-e2e-42-57",
@@ -1407,7 +1407,7 @@
       "feasible": true,
       "stopping_reason": "line_search_tolerance",
       "converged": null,
-      "runtime_seconds": 0.0012307919999998695,
+      "runtime_seconds": 0.0012460420000000028,
       "constraint_diagnostics": {
         "feasible": true,
         "max_constraint_violation": 0.0,
@@ -1462,39 +1462,15 @@
           },
           "decision_key": [
             [
-              "push-e2e-42-134",
-              2
-            ],
-            [
-              "push-e2e-42-117",
-              2
-            ],
-            [
-              "push-e2e-42-239",
-              1
-            ],
-            [
-              "push-e2e-42-54",
-              2
-            ],
-            [
-              "push-e2e-42-100",
-              2
-            ],
-            [
-              "push-e2e-42-60",
-              1
+              "push-e2e-42-6",
+              0
             ],
             [
               "push-e2e-42-66",
               1
             ],
             [
-              "push-e2e-42-6",
-              0
-            ],
-            [
-              "push-e2e-42-152",
+              "push-e2e-42-239",
               1
             ],
             [
@@ -1502,12 +1478,36 @@
               2
             ],
             [
-              "push-e2e-42-42",
-              3
+              "push-e2e-42-134",
+              2
             ],
             [
               "push-e2e-42-209",
               1
+            ],
+            [
+              "push-e2e-42-60",
+              1
+            ],
+            [
+              "push-e2e-42-100",
+              2
+            ],
+            [
+              "push-e2e-42-152",
+              1
+            ],
+            [
+              "push-e2e-42-117",
+              2
+            ],
+            [
+              "push-e2e-42-54",
+              2
+            ],
+            [
+              "push-e2e-42-42",
+              3
             ],
             [
               "push-e2e-42-57",
@@ -1528,7 +1528,7 @@
       "feasible": true,
       "stopping_reason": "coordinate_tolerance",
       "converged": null,
-      "runtime_seconds": 0.0031582920000001735,
+      "runtime_seconds": 0.0031680000000000597,
       "constraint_diagnostics": {
         "feasible": true,
         "max_constraint_violation": 0.0,
@@ -1583,39 +1583,15 @@
           },
           "decision_key": [
             [
-              "push-e2e-42-134",
-              2
-            ],
-            [
-              "push-e2e-42-117",
-              2
-            ],
-            [
-              "push-e2e-42-239",
-              1
-            ],
-            [
-              "push-e2e-42-54",
-              2
-            ],
-            [
-              "push-e2e-42-100",
-              2
-            ],
-            [
-              "push-e2e-42-60",
-              1
+              "push-e2e-42-6",
+              0
             ],
             [
               "push-e2e-42-66",
               1
             ],
             [
-              "push-e2e-42-6",
-              0
-            ],
-            [
-              "push-e2e-42-152",
+              "push-e2e-42-239",
               1
             ],
             [
@@ -1623,12 +1599,36 @@
               2
             ],
             [
-              "push-e2e-42-42",
-              3
+              "push-e2e-42-134",
+              2
             ],
             [
               "push-e2e-42-209",
               1
+            ],
+            [
+              "push-e2e-42-60",
+              1
+            ],
+            [
+              "push-e2e-42-100",
+              2
+            ],
+            [
+              "push-e2e-42-152",
+              1
+            ],
+            [
+              "push-e2e-42-117",
+              2
+            ],
+            [
+              "push-e2e-42-54",
+              2
+            ],
+            [
+              "push-e2e-42-42",
+              3
             ],
             [
               "push-e2e-42-57",
@@ -1649,7 +1649,7 @@
       "feasible": true,
       "stopping_reason": "sorted_net_value",
       "converged": null,
-      "runtime_seconds": 0.00018854200000006927,
+      "runtime_seconds": 0.00018549999999972755,
       "constraint_diagnostics": {
         "feasible": true,
         "max_constraint_violation": 0.0,
@@ -1726,19 +1726,19 @@
           },
           "decision_key": [
             [
+              "push-e2e-52-175",
+              3
+            ],
+            [
+              "push-e2e-52-297",
+              2
+            ],
+            [
               "push-e2e-52-181",
               0
             ],
             [
-              "push-e2e-52-53",
-              1
-            ],
-            [
-              "push-e2e-52-132",
-              3
-            ],
-            [
-              "push-e2e-52-97",
+              "push-e2e-52-33",
               1
             ],
             [
@@ -1746,31 +1746,39 @@
               2
             ],
             [
-              "push-e2e-52-63",
+              "push-e2e-52-229",
               1
+            ],
+            [
+              "push-e2e-52-107",
+              2
             ],
             [
               "push-e2e-52-77",
               2
             ],
             [
-              "push-e2e-52-175",
-              3
+              "push-e2e-52-174",
+              1
             ],
             [
               "push-e2e-52-256",
               2
             ],
             [
-              "push-e2e-52-229",
+              "push-e2e-52-226",
               1
             ],
             [
-              "push-e2e-52-146",
+              "push-e2e-52-208",
               1
             ],
             [
-              "push-e2e-52-174",
+              "push-e2e-52-153",
+              1
+            ],
+            [
+              "push-e2e-52-93",
               1
             ],
             [
@@ -1778,19 +1786,15 @@
               0
             ],
             [
-              "push-e2e-52-208",
+              "push-e2e-52-132",
+              3
+            ],
+            [
+              "push-e2e-52-63",
               1
             ],
             [
-              "push-e2e-52-297",
-              2
-            ],
-            [
-              "push-e2e-52-153",
-              1
-            ],
-            [
-              "push-e2e-52-226",
+              "push-e2e-52-275",
               1
             ],
             [
@@ -1798,28 +1802,24 @@
               3
             ],
             [
-              "push-e2e-52-275",
+              "push-e2e-52-189",
+              0
+            ],
+            [
+              "push-e2e-52-53",
               1
             ],
             [
-              "push-e2e-52-33",
+              "push-e2e-52-146",
+              1
+            ],
+            [
+              "push-e2e-52-97",
               1
             ],
             [
               "push-e2e-52-31",
               1
-            ],
-            [
-              "push-e2e-52-189",
-              0
-            ],
-            [
-              "push-e2e-52-93",
-              1
-            ],
-            [
-              "push-e2e-52-107",
-              2
             ]
           ]
         },
@@ -1836,7 +1836,7 @@
       "feasible": true,
       "stopping_reason": "heap_exhausted_static_net_order",
       "converged": null,
-      "runtime_seconds": 0.00023350000000021964,
+      "runtime_seconds": 0.00023775000000014757,
       "constraint_diagnostics": {
         "feasible": true,
         "max_constraint_violation": 0.0,
@@ -1913,19 +1913,19 @@
           },
           "decision_key": [
             [
+              "push-e2e-52-175",
+              3
+            ],
+            [
+              "push-e2e-52-297",
+              2
+            ],
+            [
               "push-e2e-52-181",
               0
             ],
             [
-              "push-e2e-52-53",
-              1
-            ],
-            [
-              "push-e2e-52-132",
-              3
-            ],
-            [
-              "push-e2e-52-97",
+              "push-e2e-52-33",
               1
             ],
             [
@@ -1933,31 +1933,39 @@
               2
             ],
             [
-              "push-e2e-52-63",
+              "push-e2e-52-229",
               1
+            ],
+            [
+              "push-e2e-52-107",
+              2
             ],
             [
               "push-e2e-52-77",
               2
             ],
             [
-              "push-e2e-52-175",
-              3
+              "push-e2e-52-174",
+              1
             ],
             [
               "push-e2e-52-256",
               2
             ],
             [
-              "push-e2e-52-229",
+              "push-e2e-52-226",
               1
             ],
             [
-              "push-e2e-52-146",
+              "push-e2e-52-208",
               1
             ],
             [
-              "push-e2e-52-174",
+              "push-e2e-52-153",
+              1
+            ],
+            [
+              "push-e2e-52-93",
               1
             ],
             [
@@ -1965,19 +1973,15 @@
               0
             ],
             [
-              "push-e2e-52-208",
+              "push-e2e-52-132",
+              3
+            ],
+            [
+              "push-e2e-52-63",
               1
             ],
             [
-              "push-e2e-52-297",
-              2
-            ],
-            [
-              "push-e2e-52-153",
-              1
-            ],
-            [
-              "push-e2e-52-226",
+              "push-e2e-52-275",
               1
             ],
             [
@@ -1985,28 +1989,24 @@
               3
             ],
             [
-              "push-e2e-52-275",
+              "push-e2e-52-189",
+              0
+            ],
+            [
+              "push-e2e-52-53",
               1
             ],
             [
-              "push-e2e-52-33",
+              "push-e2e-52-146",
+              1
+            ],
+            [
+              "push-e2e-52-97",
               1
             ],
             [
               "push-e2e-52-31",
               1
-            ],
-            [
-              "push-e2e-52-189",
-              0
-            ],
-            [
-              "push-e2e-52-93",
-              1
-            ],
-            [
-              "push-e2e-52-107",
-              2
             ]
           ]
         },
@@ -2023,7 +2023,7 @@
       "feasible": true,
       "stopping_reason": "primal_dual_tolerance",
       "converged": null,
-      "runtime_seconds": 0.0007200840000001207,
+      "runtime_seconds": 0.0007317909999997596,
       "constraint_diagnostics": {
         "feasible": true,
         "max_constraint_violation": 0.0,
@@ -2100,19 +2100,19 @@
           },
           "decision_key": [
             [
+              "push-e2e-52-175",
+              3
+            ],
+            [
+              "push-e2e-52-297",
+              2
+            ],
+            [
               "push-e2e-52-181",
               0
             ],
             [
-              "push-e2e-52-53",
-              1
-            ],
-            [
-              "push-e2e-52-132",
-              3
-            ],
-            [
-              "push-e2e-52-97",
+              "push-e2e-52-33",
               1
             ],
             [
@@ -2120,31 +2120,39 @@
               2
             ],
             [
-              "push-e2e-52-63",
+              "push-e2e-52-229",
               1
+            ],
+            [
+              "push-e2e-52-107",
+              2
             ],
             [
               "push-e2e-52-77",
               2
             ],
             [
-              "push-e2e-52-175",
-              3
+              "push-e2e-52-174",
+              1
             ],
             [
               "push-e2e-52-256",
               2
             ],
             [
-              "push-e2e-52-229",
+              "push-e2e-52-226",
               1
             ],
             [
-              "push-e2e-52-146",
+              "push-e2e-52-208",
               1
             ],
             [
-              "push-e2e-52-174",
+              "push-e2e-52-153",
+              1
+            ],
+            [
+              "push-e2e-52-93",
               1
             ],
             [
@@ -2152,19 +2160,15 @@
               0
             ],
             [
-              "push-e2e-52-208",
+              "push-e2e-52-132",
+              3
+            ],
+            [
+              "push-e2e-52-63",
               1
             ],
             [
-              "push-e2e-52-297",
-              2
-            ],
-            [
-              "push-e2e-52-153",
-              1
-            ],
-            [
-              "push-e2e-52-226",
+              "push-e2e-52-275",
               1
             ],
             [
@@ -2172,28 +2176,24 @@
               3
             ],
             [
-              "push-e2e-52-275",
+              "push-e2e-52-189",
+              0
+            ],
+            [
+              "push-e2e-52-53",
               1
             ],
             [
-              "push-e2e-52-33",
+              "push-e2e-52-146",
+              1
+            ],
+            [
+              "push-e2e-52-97",
               1
             ],
             [
               "push-e2e-52-31",
               1
-            ],
-            [
-              "push-e2e-52-189",
-              0
-            ],
-            [
-              "push-e2e-52-93",
-              1
-            ],
-            [
-              "push-e2e-52-107",
-              2
             ]
           ]
         },
@@ -2210,7 +2210,7 @@
       "feasible": true,
       "stopping_reason": "line_search_tolerance",
       "converged": null,
-      "runtime_seconds": 0.0013675830000003941,
+      "runtime_seconds": 0.0013797499999999019,
       "constraint_diagnostics": {
         "feasible": true,
         "max_constraint_violation": 0.0,
@@ -2287,19 +2287,19 @@
           },
           "decision_key": [
             [
+              "push-e2e-52-175",
+              3
+            ],
+            [
+              "push-e2e-52-297",
+              2
+            ],
+            [
               "push-e2e-52-181",
               0
             ],
             [
-              "push-e2e-52-53",
-              1
-            ],
-            [
-              "push-e2e-52-132",
-              3
-            ],
-            [
-              "push-e2e-52-97",
+              "push-e2e-52-33",
               1
             ],
             [
@@ -2307,31 +2307,39 @@
               2
             ],
             [
-              "push-e2e-52-63",
+              "push-e2e-52-229",
               1
+            ],
+            [
+              "push-e2e-52-107",
+              2
             ],
             [
               "push-e2e-52-77",
               2
             ],
             [
-              "push-e2e-52-175",
-              3
+              "push-e2e-52-174",
+              1
             ],
             [
               "push-e2e-52-256",
               2
             ],
             [
-              "push-e2e-52-229",
+              "push-e2e-52-226",
               1
             ],
             [
-              "push-e2e-52-146",
+              "push-e2e-52-208",
               1
             ],
             [
-              "push-e2e-52-174",
+              "push-e2e-52-153",
+              1
+            ],
+            [
+              "push-e2e-52-93",
               1
             ],
             [
@@ -2339,19 +2347,15 @@
               0
             ],
             [
-              "push-e2e-52-208",
+              "push-e2e-52-132",
+              3
+            ],
+            [
+              "push-e2e-52-63",
               1
             ],
             [
-              "push-e2e-52-297",
-              2
-            ],
-            [
-              "push-e2e-52-153",
-              1
-            ],
-            [
-              "push-e2e-52-226",
+              "push-e2e-52-275",
               1
             ],
             [
@@ -2359,28 +2363,24 @@
               3
             ],
             [
-              "push-e2e-52-275",
+              "push-e2e-52-189",
+              0
+            ],
+            [
+              "push-e2e-52-53",
               1
             ],
             [
-              "push-e2e-52-33",
+              "push-e2e-52-146",
+              1
+            ],
+            [
+              "push-e2e-52-97",
               1
             ],
             [
               "push-e2e-52-31",
               1
-            ],
-            [
-              "push-e2e-52-189",
-              0
-            ],
-            [
-              "push-e2e-52-93",
-              1
-            ],
-            [
-              "push-e2e-52-107",
-              2
             ]
           ]
         },
@@ -2397,7 +2397,7 @@
       "feasible": true,
       "stopping_reason": "coordinate_tolerance",
       "converged": null,
-      "runtime_seconds": 0.003488874999999503,
+      "runtime_seconds": 0.003506665999999825,
       "constraint_diagnostics": {
         "feasible": true,
         "max_constraint_violation": 0.0,
@@ -2474,19 +2474,19 @@
           },
           "decision_key": [
             [
+              "push-e2e-52-175",
+              3
+            ],
+            [
+              "push-e2e-52-297",
+              2
+            ],
+            [
               "push-e2e-52-181",
               0
             ],
             [
-              "push-e2e-52-53",
-              1
-            ],
-            [
-              "push-e2e-52-132",
-              3
-            ],
-            [
-              "push-e2e-52-97",
+              "push-e2e-52-33",
               1
             ],
             [
@@ -2494,31 +2494,39 @@
               2
             ],
             [
-              "push-e2e-52-63",
+              "push-e2e-52-229",
               1
+            ],
+            [
+              "push-e2e-52-107",
+              2
             ],
             [
               "push-e2e-52-77",
               2
             ],
             [
-              "push-e2e-52-175",
-              3
+              "push-e2e-52-174",
+              1
             ],
             [
               "push-e2e-52-256",
               2
             ],
             [
-              "push-e2e-52-229",
+              "push-e2e-52-226",
               1
             ],
             [
-              "push-e2e-52-146",
+              "push-e2e-52-208",
               1
             ],
             [
-              "push-e2e-52-174",
+              "push-e2e-52-153",
+              1
+            ],
+            [
+              "push-e2e-52-93",
               1
             ],
             [
@@ -2526,19 +2534,15 @@
               0
             ],
             [
-              "push-e2e-52-208",
+              "push-e2e-52-132",
+              3
+            ],
+            [
+              "push-e2e-52-63",
               1
             ],
             [
-              "push-e2e-52-297",
-              2
-            ],
-            [
-              "push-e2e-52-153",
-              1
-            ],
-            [
-              "push-e2e-52-226",
+              "push-e2e-52-275",
               1
             ],
             [
@@ -2546,28 +2550,24 @@
               3
             ],
             [
-              "push-e2e-52-275",
+              "push-e2e-52-189",
+              0
+            ],
+            [
+              "push-e2e-52-53",
               1
             ],
             [
-              "push-e2e-52-33",
+              "push-e2e-52-146",
+              1
+            ],
+            [
+              "push-e2e-52-97",
               1
             ],
             [
               "push-e2e-52-31",
               1
-            ],
-            [
-              "push-e2e-52-189",
-              0
-            ],
-            [
-              "push-e2e-52-93",
-              1
-            ],
-            [
-              "push-e2e-52-107",
-              2
             ]
           ]
         },
@@ -2584,7 +2584,7 @@
       "feasible": true,
       "stopping_reason": "sorted_net_value",
       "converged": null,
-      "runtime_seconds": 0.00021416700000020938,
+      "runtime_seconds": 0.00021254100000067666,
       "constraint_diagnostics": {
         "feasible": true,
         "max_constraint_violation": 0.0,
@@ -2671,100 +2671,36 @@
           },
           "decision_key": [
             [
-              "push-e2e-62-195",
-              2
-            ],
-            [
-              "push-e2e-62-122",
-              3
-            ],
-            [
-              "push-e2e-62-85",
-              1
-            ],
-            [
-              "push-e2e-62-289",
-              1
-            ],
-            [
               "push-e2e-62-135",
               1
             ],
             [
-              "push-e2e-62-20",
-              3
-            ],
-            [
-              "push-e2e-62-77",
-              1
-            ],
-            [
-              "push-e2e-62-298",
-              1
-            ],
-            [
-              "push-e2e-62-14",
-              1
-            ],
-            [
-              "push-e2e-62-243",
-              1
-            ],
-            [
-              "push-e2e-62-74",
-              1
-            ],
-            [
-              "push-e2e-62-241",
-              1
-            ],
-            [
-              "push-e2e-62-150",
-              1
-            ],
-            [
-              "push-e2e-62-285",
-              1
-            ],
-            [
-              "push-e2e-62-213",
-              1
-            ],
-            [
-              "push-e2e-62-117",
+              "push-e2e-62-200",
               2
-            ],
-            [
-              "push-e2e-62-116",
-              1
-            ],
-            [
-              "push-e2e-62-32",
-              2
-            ],
-            [
-              "push-e2e-62-245",
-              1
-            ],
-            [
-              "push-e2e-62-267",
-              1
-            ],
-            [
-              "push-e2e-62-205",
-              3
-            ],
-            [
-              "push-e2e-62-279",
-              1
             ],
             [
               "push-e2e-62-127",
               3
             ],
             [
-              "push-e2e-62-200",
+              "push-e2e-62-117",
               2
+            ],
+            [
+              "push-e2e-62-195",
+              2
+            ],
+            [
+              "push-e2e-62-213",
+              1
+            ],
+            [
+              "push-e2e-62-279",
+              1
+            ],
+            [
+              "push-e2e-62-243",
+              1
             ],
             [
               "push-e2e-62-248",
@@ -2775,15 +2711,79 @@
               0
             ],
             [
-              "push-e2e-62-76",
+              "push-e2e-62-245",
               1
+            ],
+            [
+              "push-e2e-62-237",
+              1
+            ],
+            [
+              "push-e2e-62-20",
+              3
+            ],
+            [
+              "push-e2e-62-289",
+              1
+            ],
+            [
+              "push-e2e-62-241",
+              1
+            ],
+            [
+              "push-e2e-62-74",
+              1
+            ],
+            [
+              "push-e2e-62-85",
+              1
+            ],
+            [
+              "push-e2e-62-285",
+              1
+            ],
+            [
+              "push-e2e-62-14",
+              1
+            ],
+            [
+              "push-e2e-62-298",
+              1
+            ],
+            [
+              "push-e2e-62-205",
+              3
             ],
             [
               "push-e2e-62-129",
               1
             ],
             [
-              "push-e2e-62-237",
+              "push-e2e-62-122",
+              3
+            ],
+            [
+              "push-e2e-62-267",
+              1
+            ],
+            [
+              "push-e2e-62-32",
+              2
+            ],
+            [
+              "push-e2e-62-76",
+              1
+            ],
+            [
+              "push-e2e-62-77",
+              1
+            ],
+            [
+              "push-e2e-62-150",
+              1
+            ],
+            [
+              "push-e2e-62-116",
               1
             ]
           ]
@@ -2801,7 +2801,7 @@
       "feasible": true,
       "stopping_reason": "heap_exhausted_static_net_order",
       "converged": null,
-      "runtime_seconds": 0.0002607089999999701,
+      "runtime_seconds": 0.00026524999999999466,
       "constraint_diagnostics": {
         "feasible": true,
         "max_constraint_violation": 0.0,
@@ -2888,100 +2888,36 @@
           },
           "decision_key": [
             [
-              "push-e2e-62-195",
-              2
-            ],
-            [
-              "push-e2e-62-122",
-              3
-            ],
-            [
-              "push-e2e-62-85",
-              1
-            ],
-            [
-              "push-e2e-62-289",
-              1
-            ],
-            [
               "push-e2e-62-135",
               1
             ],
             [
-              "push-e2e-62-20",
-              3
-            ],
-            [
-              "push-e2e-62-77",
-              1
-            ],
-            [
-              "push-e2e-62-298",
-              1
-            ],
-            [
-              "push-e2e-62-14",
-              1
-            ],
-            [
-              "push-e2e-62-243",
-              1
-            ],
-            [
-              "push-e2e-62-74",
-              1
-            ],
-            [
-              "push-e2e-62-241",
-              1
-            ],
-            [
-              "push-e2e-62-150",
-              1
-            ],
-            [
-              "push-e2e-62-285",
-              1
-            ],
-            [
-              "push-e2e-62-213",
-              1
-            ],
-            [
-              "push-e2e-62-117",
+              "push-e2e-62-200",
               2
-            ],
-            [
-              "push-e2e-62-116",
-              1
-            ],
-            [
-              "push-e2e-62-32",
-              2
-            ],
-            [
-              "push-e2e-62-245",
-              1
-            ],
-            [
-              "push-e2e-62-267",
-              1
-            ],
-            [
-              "push-e2e-62-205",
-              3
-            ],
-            [
-              "push-e2e-62-279",
-              1
             ],
             [
               "push-e2e-62-127",
               3
             ],
             [
-              "push-e2e-62-200",
+              "push-e2e-62-117",
               2
+            ],
+            [
+              "push-e2e-62-195",
+              2
+            ],
+            [
+              "push-e2e-62-213",
+              1
+            ],
+            [
+              "push-e2e-62-279",
+              1
+            ],
+            [
+              "push-e2e-62-243",
+              1
             ],
             [
               "push-e2e-62-248",
@@ -2992,15 +2928,79 @@
               0
             ],
             [
-              "push-e2e-62-76",
+              "push-e2e-62-245",
               1
+            ],
+            [
+              "push-e2e-62-237",
+              1
+            ],
+            [
+              "push-e2e-62-20",
+              3
+            ],
+            [
+              "push-e2e-62-289",
+              1
+            ],
+            [
+              "push-e2e-62-241",
+              1
+            ],
+            [
+              "push-e2e-62-74",
+              1
+            ],
+            [
+              "push-e2e-62-85",
+              1
+            ],
+            [
+              "push-e2e-62-285",
+              1
+            ],
+            [
+              "push-e2e-62-14",
+              1
+            ],
+            [
+              "push-e2e-62-298",
+              1
+            ],
+            [
+              "push-e2e-62-205",
+              3
             ],
             [
               "push-e2e-62-129",
               1
             ],
             [
-              "push-e2e-62-237",
+              "push-e2e-62-122",
+              3
+            ],
+            [
+              "push-e2e-62-267",
+              1
+            ],
+            [
+              "push-e2e-62-32",
+              2
+            ],
+            [
+              "push-e2e-62-76",
+              1
+            ],
+            [
+              "push-e2e-62-77",
+              1
+            ],
+            [
+              "push-e2e-62-150",
+              1
+            ],
+            [
+              "push-e2e-62-116",
               1
             ]
           ]
@@ -3018,7 +3018,7 @@
       "feasible": true,
       "stopping_reason": "primal_dual_tolerance",
       "converged": null,
-      "runtime_seconds": 0.0007872090000002885,
+      "runtime_seconds": 0.0007937499999997044,
       "constraint_diagnostics": {
         "feasible": true,
         "max_constraint_violation": 0.0,
@@ -3105,100 +3105,36 @@
           },
           "decision_key": [
             [
-              "push-e2e-62-195",
-              2
-            ],
-            [
-              "push-e2e-62-122",
-              3
-            ],
-            [
-              "push-e2e-62-85",
-              1
-            ],
-            [
-              "push-e2e-62-289",
-              1
-            ],
-            [
               "push-e2e-62-135",
               1
             ],
             [
-              "push-e2e-62-20",
-              3
-            ],
-            [
-              "push-e2e-62-77",
-              1
-            ],
-            [
-              "push-e2e-62-298",
-              1
-            ],
-            [
-              "push-e2e-62-14",
-              1
-            ],
-            [
-              "push-e2e-62-243",
-              1
-            ],
-            [
-              "push-e2e-62-74",
-              1
-            ],
-            [
-              "push-e2e-62-241",
-              1
-            ],
-            [
-              "push-e2e-62-150",
-              1
-            ],
-            [
-              "push-e2e-62-285",
-              1
-            ],
-            [
-              "push-e2e-62-213",
-              1
-            ],
-            [
-              "push-e2e-62-117",
+              "push-e2e-62-200",
               2
-            ],
-            [
-              "push-e2e-62-116",
-              1
-            ],
-            [
-              "push-e2e-62-32",
-              2
-            ],
-            [
-              "push-e2e-62-245",
-              1
-            ],
-            [
-              "push-e2e-62-267",
-              1
-            ],
-            [
-              "push-e2e-62-205",
-              3
-            ],
-            [
-              "push-e2e-62-279",
-              1
             ],
             [
               "push-e2e-62-127",
               3
             ],
             [
-              "push-e2e-62-200",
+              "push-e2e-62-117",
               2
+            ],
+            [
+              "push-e2e-62-195",
+              2
+            ],
+            [
+              "push-e2e-62-213",
+              1
+            ],
+            [
+              "push-e2e-62-279",
+              1
+            ],
+            [
+              "push-e2e-62-243",
+              1
             ],
             [
               "push-e2e-62-248",
@@ -3209,15 +3145,79 @@
               0
             ],
             [
-              "push-e2e-62-76",
+              "push-e2e-62-245",
               1
+            ],
+            [
+              "push-e2e-62-237",
+              1
+            ],
+            [
+              "push-e2e-62-20",
+              3
+            ],
+            [
+              "push-e2e-62-289",
+              1
+            ],
+            [
+              "push-e2e-62-241",
+              1
+            ],
+            [
+              "push-e2e-62-74",
+              1
+            ],
+            [
+              "push-e2e-62-85",
+              1
+            ],
+            [
+              "push-e2e-62-285",
+              1
+            ],
+            [
+              "push-e2e-62-14",
+              1
+            ],
+            [
+              "push-e2e-62-298",
+              1
+            ],
+            [
+              "push-e2e-62-205",
+              3
             ],
             [
               "push-e2e-62-129",
               1
             ],
             [
-              "push-e2e-62-237",
+              "push-e2e-62-122",
+              3
+            ],
+            [
+              "push-e2e-62-267",
+              1
+            ],
+            [
+              "push-e2e-62-32",
+              2
+            ],
+            [
+              "push-e2e-62-76",
+              1
+            ],
+            [
+              "push-e2e-62-77",
+              1
+            ],
+            [
+              "push-e2e-62-150",
+              1
+            ],
+            [
+              "push-e2e-62-116",
               1
             ]
           ]
@@ -3235,7 +3235,7 @@
       "feasible": true,
       "stopping_reason": "line_search_tolerance",
       "converged": null,
-      "runtime_seconds": 0.0014882500000004129,
+      "runtime_seconds": 0.0014863750000007059,
       "constraint_diagnostics": {
         "feasible": true,
         "max_constraint_violation": 0.0,
@@ -3322,100 +3322,36 @@
           },
           "decision_key": [
             [
-              "push-e2e-62-195",
-              2
-            ],
-            [
-              "push-e2e-62-122",
-              3
-            ],
-            [
-              "push-e2e-62-85",
-              1
-            ],
-            [
-              "push-e2e-62-289",
-              1
-            ],
-            [
               "push-e2e-62-135",
               1
             ],
             [
-              "push-e2e-62-20",
-              3
-            ],
-            [
-              "push-e2e-62-77",
-              1
-            ],
-            [
-              "push-e2e-62-298",
-              1
-            ],
-            [
-              "push-e2e-62-14",
-              1
-            ],
-            [
-              "push-e2e-62-243",
-              1
-            ],
-            [
-              "push-e2e-62-74",
-              1
-            ],
-            [
-              "push-e2e-62-241",
-              1
-            ],
-            [
-              "push-e2e-62-150",
-              1
-            ],
-            [
-              "push-e2e-62-285",
-              1
-            ],
-            [
-              "push-e2e-62-213",
-              1
-            ],
-            [
-              "push-e2e-62-117",
+              "push-e2e-62-200",
               2
-            ],
-            [
-              "push-e2e-62-116",
-              1
-            ],
-            [
-              "push-e2e-62-32",
-              2
-            ],
-            [
-              "push-e2e-62-245",
-              1
-            ],
-            [
-              "push-e2e-62-267",
-              1
-            ],
-            [
-              "push-e2e-62-205",
-              3
-            ],
-            [
-              "push-e2e-62-279",
-              1
             ],
             [
               "push-e2e-62-127",
               3
             ],
             [
-              "push-e2e-62-200",
+              "push-e2e-62-117",
               2
+            ],
+            [
+              "push-e2e-62-195",
+              2
+            ],
+            [
+              "push-e2e-62-213",
+              1
+            ],
+            [
+              "push-e2e-62-279",
+              1
+            ],
+            [
+              "push-e2e-62-243",
+              1
             ],
             [
               "push-e2e-62-248",
@@ -3426,15 +3362,79 @@
               0
             ],
             [
-              "push-e2e-62-76",
+              "push-e2e-62-245",
               1
+            ],
+            [
+              "push-e2e-62-237",
+              1
+            ],
+            [
+              "push-e2e-62-20",
+              3
+            ],
+            [
+              "push-e2e-62-289",
+              1
+            ],
+            [
+              "push-e2e-62-241",
+              1
+            ],
+            [
+              "push-e2e-62-74",
+              1
+            ],
+            [
+              "push-e2e-62-85",
+              1
+            ],
+            [
+              "push-e2e-62-285",
+              1
+            ],
+            [
+              "push-e2e-62-14",
+              1
+            ],
+            [
+              "push-e2e-62-298",
+              1
+            ],
+            [
+              "push-e2e-62-205",
+              3
             ],
             [
               "push-e2e-62-129",
               1
             ],
             [
-              "push-e2e-62-237",
+              "push-e2e-62-122",
+              3
+            ],
+            [
+              "push-e2e-62-267",
+              1
+            ],
+            [
+              "push-e2e-62-32",
+              2
+            ],
+            [
+              "push-e2e-62-76",
+              1
+            ],
+            [
+              "push-e2e-62-77",
+              1
+            ],
+            [
+              "push-e2e-62-150",
+              1
+            ],
+            [
+              "push-e2e-62-116",
               1
             ]
           ]
@@ -3452,7 +3452,7 @@
       "feasible": true,
       "stopping_reason": "coordinate_tolerance",
       "converged": null,
-      "runtime_seconds": 0.0037396669999996135,
+      "runtime_seconds": 0.0037310420000000732,
       "constraint_diagnostics": {
         "feasible": true,
         "max_constraint_violation": 0.0,
@@ -3539,100 +3539,36 @@
           },
           "decision_key": [
             [
-              "push-e2e-62-195",
-              2
-            ],
-            [
-              "push-e2e-62-122",
-              3
-            ],
-            [
-              "push-e2e-62-85",
-              1
-            ],
-            [
-              "push-e2e-62-289",
-              1
-            ],
-            [
               "push-e2e-62-135",
               1
             ],
             [
-              "push-e2e-62-20",
-              3
-            ],
-            [
-              "push-e2e-62-77",
-              1
-            ],
-            [
-              "push-e2e-62-298",
-              1
-            ],
-            [
-              "push-e2e-62-14",
-              1
-            ],
-            [
-              "push-e2e-62-243",
-              1
-            ],
-            [
-              "push-e2e-62-74",
-              1
-            ],
-            [
-              "push-e2e-62-241",
-              1
-            ],
-            [
-              "push-e2e-62-150",
-              1
-            ],
-            [
-              "push-e2e-62-285",
-              1
-            ],
-            [
-              "push-e2e-62-213",
-              1
-            ],
-            [
-              "push-e2e-62-117",
+              "push-e2e-62-200",
               2
-            ],
-            [
-              "push-e2e-62-116",
-              1
-            ],
-            [
-              "push-e2e-62-32",
-              2
-            ],
-            [
-              "push-e2e-62-245",
-              1
-            ],
-            [
-              "push-e2e-62-267",
-              1
-            ],
-            [
-              "push-e2e-62-205",
-              3
-            ],
-            [
-              "push-e2e-62-279",
-              1
             ],
             [
               "push-e2e-62-127",
               3
             ],
             [
-              "push-e2e-62-200",
+              "push-e2e-62-117",
               2
+            ],
+            [
+              "push-e2e-62-195",
+              2
+            ],
+            [
+              "push-e2e-62-213",
+              1
+            ],
+            [
+              "push-e2e-62-279",
+              1
+            ],
+            [
+              "push-e2e-62-243",
+              1
             ],
             [
               "push-e2e-62-248",
@@ -3643,15 +3579,79 @@
               0
             ],
             [
-              "push-e2e-62-76",
+              "push-e2e-62-245",
               1
+            ],
+            [
+              "push-e2e-62-237",
+              1
+            ],
+            [
+              "push-e2e-62-20",
+              3
+            ],
+            [
+              "push-e2e-62-289",
+              1
+            ],
+            [
+              "push-e2e-62-241",
+              1
+            ],
+            [
+              "push-e2e-62-74",
+              1
+            ],
+            [
+              "push-e2e-62-85",
+              1
+            ],
+            [
+              "push-e2e-62-285",
+              1
+            ],
+            [
+              "push-e2e-62-14",
+              1
+            ],
+            [
+              "push-e2e-62-298",
+              1
+            ],
+            [
+              "push-e2e-62-205",
+              3
             ],
             [
               "push-e2e-62-129",
               1
             ],
             [
-              "push-e2e-62-237",
+              "push-e2e-62-122",
+              3
+            ],
+            [
+              "push-e2e-62-267",
+              1
+            ],
+            [
+              "push-e2e-62-32",
+              2
+            ],
+            [
+              "push-e2e-62-76",
+              1
+            ],
+            [
+              "push-e2e-62-77",
+              1
+            ],
+            [
+              "push-e2e-62-150",
+              1
+            ],
+            [
+              "push-e2e-62-116",
               1
             ]
           ]
@@ -3669,7 +3669,7 @@
       "feasible": true,
       "stopping_reason": "sorted_net_value",
       "converged": null,
-      "runtime_seconds": 0.0002085419999993121,
+      "runtime_seconds": 0.00021029200000022286,
       "constraint_diagnostics": {
         "feasible": true,
         "max_constraint_violation": 0.0,
@@ -3754,8 +3754,40 @@
           },
           "decision_key": [
             [
+              "push-e2e-72-77",
+              2
+            ],
+            [
+              "push-e2e-72-85",
+              0
+            ],
+            [
               "push-e2e-72-39",
               2
+            ],
+            [
+              "push-e2e-72-284",
+              1
+            ],
+            [
+              "push-e2e-72-123",
+              0
+            ],
+            [
+              "push-e2e-72-104",
+              1
+            ],
+            [
+              "push-e2e-72-195",
+              1
+            ],
+            [
+              "push-e2e-72-289",
+              3
+            ],
+            [
+              "push-e2e-72-60",
+              1
             ],
             [
               "push-e2e-72-143",
@@ -3766,79 +3798,19 @@
               0
             ],
             [
-              "push-e2e-72-85",
+              "push-e2e-72-117",
               0
-            ],
-            [
-              "push-e2e-72-291",
-              1
-            ],
-            [
-              "push-e2e-72-184",
-              3
-            ],
-            [
-              "push-e2e-72-289",
-              3
-            ],
-            [
-              "push-e2e-72-214",
-              2
-            ],
-            [
-              "push-e2e-72-241",
-              2
-            ],
-            [
-              "push-e2e-72-297",
-              2
-            ],
-            [
-              "push-e2e-72-182",
-              0
-            ],
-            [
-              "push-e2e-72-135",
-              0
-            ],
-            [
-              "push-e2e-72-104",
-              1
             ],
             [
               "push-e2e-72-76",
               1
             ],
             [
-              "push-e2e-72-157",
+              "push-e2e-72-241",
               2
             ],
             [
-              "push-e2e-72-13",
-              1
-            ],
-            [
-              "push-e2e-72-19",
-              0
-            ],
-            [
-              "push-e2e-72-123",
-              0
-            ],
-            [
-              "push-e2e-72-117",
-              0
-            ],
-            [
-              "push-e2e-72-58",
-              1
-            ],
-            [
-              "push-e2e-72-60",
-              1
-            ],
-            [
-              "push-e2e-72-284",
+              "push-e2e-72-291",
               1
             ],
             [
@@ -3846,8 +3818,36 @@
               2
             ],
             [
+              "push-e2e-72-157",
+              2
+            ],
+            [
+              "push-e2e-72-19",
+              0
+            ],
+            [
+              "push-e2e-72-182",
+              0
+            ],
+            [
+              "push-e2e-72-58",
+              1
+            ],
+            [
               "push-e2e-72-140",
               1
+            ],
+            [
+              "push-e2e-72-13",
+              1
+            ],
+            [
+              "push-e2e-72-214",
+              2
+            ],
+            [
+              "push-e2e-72-297",
+              2
             ],
             [
               "push-e2e-72-221",
@@ -3858,12 +3858,12 @@
               1
             ],
             [
-              "push-e2e-72-77",
-              2
+              "push-e2e-72-184",
+              3
             ],
             [
-              "push-e2e-72-195",
-              1
+              "push-e2e-72-135",
+              0
             ]
           ]
         },
@@ -3880,7 +3880,7 @@
       "feasible": true,
       "stopping_reason": "heap_exhausted_static_net_order",
       "converged": null,
-      "runtime_seconds": 0.0002584169999995112,
+      "runtime_seconds": 0.00026129100000105154,
       "constraint_diagnostics": {
         "feasible": true,
         "max_constraint_violation": 0.0,
@@ -3965,8 +3965,40 @@
           },
           "decision_key": [
             [
+              "push-e2e-72-77",
+              2
+            ],
+            [
+              "push-e2e-72-85",
+              0
+            ],
+            [
               "push-e2e-72-39",
               2
+            ],
+            [
+              "push-e2e-72-284",
+              1
+            ],
+            [
+              "push-e2e-72-123",
+              0
+            ],
+            [
+              "push-e2e-72-104",
+              1
+            ],
+            [
+              "push-e2e-72-195",
+              1
+            ],
+            [
+              "push-e2e-72-289",
+              3
+            ],
+            [
+              "push-e2e-72-60",
+              1
             ],
             [
               "push-e2e-72-143",
@@ -3977,79 +4009,19 @@
               0
             ],
             [
-              "push-e2e-72-85",
+              "push-e2e-72-117",
               0
-            ],
-            [
-              "push-e2e-72-291",
-              1
-            ],
-            [
-              "push-e2e-72-184",
-              3
-            ],
-            [
-              "push-e2e-72-289",
-              3
-            ],
-            [
-              "push-e2e-72-214",
-              2
-            ],
-            [
-              "push-e2e-72-241",
-              2
-            ],
-            [
-              "push-e2e-72-297",
-              2
-            ],
-            [
-              "push-e2e-72-182",
-              0
-            ],
-            [
-              "push-e2e-72-135",
-              0
-            ],
-            [
-              "push-e2e-72-104",
-              1
             ],
             [
               "push-e2e-72-76",
               1
             ],
             [
-              "push-e2e-72-157",
+              "push-e2e-72-241",
               2
             ],
             [
-              "push-e2e-72-13",
-              1
-            ],
-            [
-              "push-e2e-72-19",
-              0
-            ],
-            [
-              "push-e2e-72-123",
-              0
-            ],
-            [
-              "push-e2e-72-117",
-              0
-            ],
-            [
-              "push-e2e-72-58",
-              1
-            ],
-            [
-              "push-e2e-72-60",
-              1
-            ],
-            [
-              "push-e2e-72-284",
+              "push-e2e-72-291",
               1
             ],
             [
@@ -4057,8 +4029,36 @@
               2
             ],
             [
+              "push-e2e-72-157",
+              2
+            ],
+            [
+              "push-e2e-72-19",
+              0
+            ],
+            [
+              "push-e2e-72-182",
+              0
+            ],
+            [
+              "push-e2e-72-58",
+              1
+            ],
+            [
               "push-e2e-72-140",
               1
+            ],
+            [
+              "push-e2e-72-13",
+              1
+            ],
+            [
+              "push-e2e-72-214",
+              2
+            ],
+            [
+              "push-e2e-72-297",
+              2
             ],
             [
               "push-e2e-72-221",
@@ -4069,12 +4069,12 @@
               1
             ],
             [
-              "push-e2e-72-77",
-              2
+              "push-e2e-72-184",
+              3
             ],
             [
-              "push-e2e-72-195",
-              1
+              "push-e2e-72-135",
+              0
             ]
           ]
         },
@@ -4091,7 +4091,7 @@
       "feasible": true,
       "stopping_reason": "primal_dual_tolerance",
       "converged": null,
-      "runtime_seconds": 0.0007787500000002723,
+      "runtime_seconds": 0.0007857500000003625,
       "constraint_diagnostics": {
         "feasible": true,
         "max_constraint_violation": 0.0,
@@ -4176,8 +4176,40 @@
           },
           "decision_key": [
             [
+              "push-e2e-72-77",
+              2
+            ],
+            [
+              "push-e2e-72-85",
+              0
+            ],
+            [
               "push-e2e-72-39",
               2
+            ],
+            [
+              "push-e2e-72-284",
+              1
+            ],
+            [
+              "push-e2e-72-123",
+              0
+            ],
+            [
+              "push-e2e-72-104",
+              1
+            ],
+            [
+              "push-e2e-72-195",
+              1
+            ],
+            [
+              "push-e2e-72-289",
+              3
+            ],
+            [
+              "push-e2e-72-60",
+              1
             ],
             [
               "push-e2e-72-143",
@@ -4188,79 +4220,19 @@
               0
             ],
             [
-              "push-e2e-72-85",
+              "push-e2e-72-117",
               0
-            ],
-            [
-              "push-e2e-72-291",
-              1
-            ],
-            [
-              "push-e2e-72-184",
-              3
-            ],
-            [
-              "push-e2e-72-289",
-              3
-            ],
-            [
-              "push-e2e-72-214",
-              2
-            ],
-            [
-              "push-e2e-72-241",
-              2
-            ],
-            [
-              "push-e2e-72-297",
-              2
-            ],
-            [
-              "push-e2e-72-182",
-              0
-            ],
-            [
-              "push-e2e-72-135",
-              0
-            ],
-            [
-              "push-e2e-72-104",
-              1
             ],
             [
               "push-e2e-72-76",
               1
             ],
             [
-              "push-e2e-72-157",
+              "push-e2e-72-241",
               2
             ],
             [
-              "push-e2e-72-13",
-              1
-            ],
-            [
-              "push-e2e-72-19",
-              0
-            ],
-            [
-              "push-e2e-72-123",
-              0
-            ],
-            [
-              "push-e2e-72-117",
-              0
-            ],
-            [
-              "push-e2e-72-58",
-              1
-            ],
-            [
-              "push-e2e-72-60",
-              1
-            ],
-            [
-              "push-e2e-72-284",
+              "push-e2e-72-291",
               1
             ],
             [
@@ -4268,8 +4240,36 @@
               2
             ],
             [
+              "push-e2e-72-157",
+              2
+            ],
+            [
+              "push-e2e-72-19",
+              0
+            ],
+            [
+              "push-e2e-72-182",
+              0
+            ],
+            [
+              "push-e2e-72-58",
+              1
+            ],
+            [
               "push-e2e-72-140",
               1
+            ],
+            [
+              "push-e2e-72-13",
+              1
+            ],
+            [
+              "push-e2e-72-214",
+              2
+            ],
+            [
+              "push-e2e-72-297",
+              2
             ],
             [
               "push-e2e-72-221",
@@ -4280,12 +4280,12 @@
               1
             ],
             [
-              "push-e2e-72-77",
-              2
+              "push-e2e-72-184",
+              3
             ],
             [
-              "push-e2e-72-195",
-              1
+              "push-e2e-72-135",
+              0
             ]
           ]
         },
@@ -4302,7 +4302,7 @@
       "feasible": true,
       "stopping_reason": "line_search_tolerance",
       "converged": null,
-      "runtime_seconds": 0.0015219999999995792,
+      "runtime_seconds": 0.001481708000000026,
       "constraint_diagnostics": {
         "feasible": true,
         "max_constraint_violation": 0.0,
@@ -4387,8 +4387,40 @@
           },
           "decision_key": [
             [
+              "push-e2e-72-77",
+              2
+            ],
+            [
+              "push-e2e-72-85",
+              0
+            ],
+            [
               "push-e2e-72-39",
               2
+            ],
+            [
+              "push-e2e-72-284",
+              1
+            ],
+            [
+              "push-e2e-72-123",
+              0
+            ],
+            [
+              "push-e2e-72-104",
+              1
+            ],
+            [
+              "push-e2e-72-195",
+              1
+            ],
+            [
+              "push-e2e-72-289",
+              3
+            ],
+            [
+              "push-e2e-72-60",
+              1
             ],
             [
               "push-e2e-72-143",
@@ -4399,79 +4431,19 @@
               0
             ],
             [
-              "push-e2e-72-85",
+              "push-e2e-72-117",
               0
-            ],
-            [
-              "push-e2e-72-291",
-              1
-            ],
-            [
-              "push-e2e-72-184",
-              3
-            ],
-            [
-              "push-e2e-72-289",
-              3
-            ],
-            [
-              "push-e2e-72-214",
-              2
-            ],
-            [
-              "push-e2e-72-241",
-              2
-            ],
-            [
-              "push-e2e-72-297",
-              2
-            ],
-            [
-              "push-e2e-72-182",
-              0
-            ],
-            [
-              "push-e2e-72-135",
-              0
-            ],
-            [
-              "push-e2e-72-104",
-              1
             ],
             [
               "push-e2e-72-76",
               1
             ],
             [
-              "push-e2e-72-157",
+              "push-e2e-72-241",
               2
             ],
             [
-              "push-e2e-72-13",
-              1
-            ],
-            [
-              "push-e2e-72-19",
-              0
-            ],
-            [
-              "push-e2e-72-123",
-              0
-            ],
-            [
-              "push-e2e-72-117",
-              0
-            ],
-            [
-              "push-e2e-72-58",
-              1
-            ],
-            [
-              "push-e2e-72-60",
-              1
-            ],
-            [
-              "push-e2e-72-284",
+              "push-e2e-72-291",
               1
             ],
             [
@@ -4479,8 +4451,36 @@
               2
             ],
             [
+              "push-e2e-72-157",
+              2
+            ],
+            [
+              "push-e2e-72-19",
+              0
+            ],
+            [
+              "push-e2e-72-182",
+              0
+            ],
+            [
+              "push-e2e-72-58",
+              1
+            ],
+            [
               "push-e2e-72-140",
               1
+            ],
+            [
+              "push-e2e-72-13",
+              1
+            ],
+            [
+              "push-e2e-72-214",
+              2
+            ],
+            [
+              "push-e2e-72-297",
+              2
             ],
             [
               "push-e2e-72-221",
@@ -4491,12 +4491,12 @@
               1
             ],
             [
-              "push-e2e-72-77",
-              2
+              "push-e2e-72-184",
+              3
             ],
             [
-              "push-e2e-72-195",
-              1
+              "push-e2e-72-135",
+              0
             ]
           ]
         },
@@ -4513,7 +4513,7 @@
       "feasible": true,
       "stopping_reason": "coordinate_tolerance",
       "converged": null,
-      "runtime_seconds": 0.003716457999999534,
+      "runtime_seconds": 0.00372545800000168,
       "constraint_diagnostics": {
         "feasible": true,
         "max_constraint_violation": 0.0,
@@ -4598,8 +4598,40 @@
           },
           "decision_key": [
             [
+              "push-e2e-72-77",
+              2
+            ],
+            [
+              "push-e2e-72-85",
+              0
+            ],
+            [
               "push-e2e-72-39",
               2
+            ],
+            [
+              "push-e2e-72-284",
+              1
+            ],
+            [
+              "push-e2e-72-123",
+              0
+            ],
+            [
+              "push-e2e-72-104",
+              1
+            ],
+            [
+              "push-e2e-72-195",
+              1
+            ],
+            [
+              "push-e2e-72-289",
+              3
+            ],
+            [
+              "push-e2e-72-60",
+              1
             ],
             [
               "push-e2e-72-143",
@@ -4610,79 +4642,19 @@
               0
             ],
             [
-              "push-e2e-72-85",
+              "push-e2e-72-117",
               0
-            ],
-            [
-              "push-e2e-72-291",
-              1
-            ],
-            [
-              "push-e2e-72-184",
-              3
-            ],
-            [
-              "push-e2e-72-289",
-              3
-            ],
-            [
-              "push-e2e-72-214",
-              2
-            ],
-            [
-              "push-e2e-72-241",
-              2
-            ],
-            [
-              "push-e2e-72-297",
-              2
-            ],
-            [
-              "push-e2e-72-182",
-              0
-            ],
-            [
-              "push-e2e-72-135",
-              0
-            ],
-            [
-              "push-e2e-72-104",
-              1
             ],
             [
               "push-e2e-72-76",
               1
             ],
             [
-              "push-e2e-72-157",
+              "push-e2e-72-241",
               2
             ],
             [
-              "push-e2e-72-13",
-              1
-            ],
-            [
-              "push-e2e-72-19",
-              0
-            ],
-            [
-              "push-e2e-72-123",
-              0
-            ],
-            [
-              "push-e2e-72-117",
-              0
-            ],
-            [
-              "push-e2e-72-58",
-              1
-            ],
-            [
-              "push-e2e-72-60",
-              1
-            ],
-            [
-              "push-e2e-72-284",
+              "push-e2e-72-291",
               1
             ],
             [
@@ -4690,8 +4662,36 @@
               2
             ],
             [
+              "push-e2e-72-157",
+              2
+            ],
+            [
+              "push-e2e-72-19",
+              0
+            ],
+            [
+              "push-e2e-72-182",
+              0
+            ],
+            [
+              "push-e2e-72-58",
+              1
+            ],
+            [
               "push-e2e-72-140",
               1
+            ],
+            [
+              "push-e2e-72-13",
+              1
+            ],
+            [
+              "push-e2e-72-214",
+              2
+            ],
+            [
+              "push-e2e-72-297",
+              2
             ],
             [
               "push-e2e-72-221",
@@ -4702,12 +4702,12 @@
               1
             ],
             [
-              "push-e2e-72-77",
-              2
+              "push-e2e-72-184",
+              3
             ],
             [
-              "push-e2e-72-195",
-              1
+              "push-e2e-72-135",
+              0
             ]
           ]
         },
@@ -4724,7 +4724,7 @@
       "feasible": true,
       "stopping_reason": "sorted_net_value",
       "converged": null,
-      "runtime_seconds": 0.00023975000000042712,
+      "runtime_seconds": 0.0002487920000007193,
       "constraint_diagnostics": {
         "feasible": true,
         "max_constraint_violation": 0.0,
@@ -4813,87 +4813,7 @@
           },
           "decision_key": [
             [
-              "push-e2e-82-110",
-              2
-            ],
-            [
               "push-e2e-82-273",
-              2
-            ],
-            [
-              "push-e2e-82-269",
-              1
-            ],
-            [
-              "push-e2e-82-158",
-              1
-            ],
-            [
-              "push-e2e-82-126",
-              1
-            ],
-            [
-              "push-e2e-82-78",
-              1
-            ],
-            [
-              "push-e2e-82-25",
-              1
-            ],
-            [
-              "push-e2e-82-180",
-              1
-            ],
-            [
-              "push-e2e-82-257",
-              2
-            ],
-            [
-              "push-e2e-82-33",
-              1
-            ],
-            [
-              "push-e2e-82-259",
-              1
-            ],
-            [
-              "push-e2e-82-51",
-              3
-            ],
-            [
-              "push-e2e-82-214",
-              1
-            ],
-            [
-              "push-e2e-82-175",
-              1
-            ],
-            [
-              "push-e2e-82-87",
-              3
-            ],
-            [
-              "push-e2e-82-187",
-              1
-            ],
-            [
-              "push-e2e-82-215",
-              1
-            ],
-            [
-              "push-e2e-82-44",
-              1
-            ],
-            [
-              "push-e2e-82-39",
-              1
-            ],
-            [
-              "push-e2e-82-227",
-              1
-            ],
-            [
-              "push-e2e-82-149",
               2
             ],
             [
@@ -4901,19 +4821,7 @@
               1
             ],
             [
-              "push-e2e-82-154",
-              1
-            ],
-            [
-              "push-e2e-82-88",
-              1
-            ],
-            [
-              "push-e2e-82-48",
-              1
-            ],
-            [
-              "push-e2e-82-146",
+              "push-e2e-82-215",
               1
             ],
             [
@@ -4921,7 +4829,79 @@
               1
             ],
             [
+              "push-e2e-82-126",
+              1
+            ],
+            [
+              "push-e2e-82-51",
+              3
+            ],
+            [
+              "push-e2e-82-257",
+              2
+            ],
+            [
+              "push-e2e-82-163",
+              1
+            ],
+            [
+              "push-e2e-82-87",
+              3
+            ],
+            [
               "push-e2e-82-13",
+              1
+            ],
+            [
+              "push-e2e-82-149",
+              2
+            ],
+            [
+              "push-e2e-82-259",
+              1
+            ],
+            [
+              "push-e2e-82-78",
+              1
+            ],
+            [
+              "push-e2e-82-33",
+              1
+            ],
+            [
+              "push-e2e-82-154",
+              1
+            ],
+            [
+              "push-e2e-82-158",
+              1
+            ],
+            [
+              "push-e2e-82-88",
+              1
+            ],
+            [
+              "push-e2e-82-39",
+              1
+            ],
+            [
+              "push-e2e-82-180",
+              1
+            ],
+            [
+              "push-e2e-82-110",
+              2
+            ],
+            [
+              "push-e2e-82-175",
+              1
+            ],
+            [
+              "push-e2e-82-25",
+              1
+            ],
+            [
+              "push-e2e-82-187",
               1
             ],
             [
@@ -4929,11 +4909,31 @@
               1
             ],
             [
+              "push-e2e-82-269",
+              1
+            ],
+            [
+              "push-e2e-82-48",
+              1
+            ],
+            [
+              "push-e2e-82-227",
+              1
+            ],
+            [
+              "push-e2e-82-146",
+              1
+            ],
+            [
+              "push-e2e-82-214",
+              1
+            ],
+            [
               "push-e2e-82-290",
               1
             ],
             [
-              "push-e2e-82-163",
+              "push-e2e-82-44",
               1
             ]
           ]
@@ -4951,7 +4951,7 @@
       "feasible": true,
       "stopping_reason": "heap_exhausted_static_net_order",
       "converged": null,
-      "runtime_seconds": 0.00027975000000068917,
+      "runtime_seconds": 0.0002945830000005145,
       "constraint_diagnostics": {
         "feasible": true,
         "max_constraint_violation": 0.0,
@@ -5040,87 +5040,7 @@
           },
           "decision_key": [
             [
-              "push-e2e-82-110",
-              2
-            ],
-            [
               "push-e2e-82-273",
-              2
-            ],
-            [
-              "push-e2e-82-269",
-              1
-            ],
-            [
-              "push-e2e-82-158",
-              1
-            ],
-            [
-              "push-e2e-82-126",
-              1
-            ],
-            [
-              "push-e2e-82-78",
-              1
-            ],
-            [
-              "push-e2e-82-25",
-              1
-            ],
-            [
-              "push-e2e-82-180",
-              1
-            ],
-            [
-              "push-e2e-82-257",
-              2
-            ],
-            [
-              "push-e2e-82-33",
-              1
-            ],
-            [
-              "push-e2e-82-259",
-              1
-            ],
-            [
-              "push-e2e-82-51",
-              3
-            ],
-            [
-              "push-e2e-82-214",
-              1
-            ],
-            [
-              "push-e2e-82-175",
-              1
-            ],
-            [
-              "push-e2e-82-87",
-              3
-            ],
-            [
-              "push-e2e-82-187",
-              1
-            ],
-            [
-              "push-e2e-82-215",
-              1
-            ],
-            [
-              "push-e2e-82-44",
-              1
-            ],
-            [
-              "push-e2e-82-39",
-              1
-            ],
-            [
-              "push-e2e-82-227",
-              1
-            ],
-            [
-              "push-e2e-82-149",
               2
             ],
             [
@@ -5128,19 +5048,7 @@
               1
             ],
             [
-              "push-e2e-82-154",
-              1
-            ],
-            [
-              "push-e2e-82-88",
-              1
-            ],
-            [
-              "push-e2e-82-48",
-              1
-            ],
-            [
-              "push-e2e-82-146",
+              "push-e2e-82-215",
               1
             ],
             [
@@ -5148,7 +5056,79 @@
               1
             ],
             [
+              "push-e2e-82-126",
+              1
+            ],
+            [
+              "push-e2e-82-51",
+              3
+            ],
+            [
+              "push-e2e-82-257",
+              2
+            ],
+            [
+              "push-e2e-82-163",
+              1
+            ],
+            [
+              "push-e2e-82-87",
+              3
+            ],
+            [
               "push-e2e-82-13",
+              1
+            ],
+            [
+              "push-e2e-82-149",
+              2
+            ],
+            [
+              "push-e2e-82-259",
+              1
+            ],
+            [
+              "push-e2e-82-78",
+              1
+            ],
+            [
+              "push-e2e-82-33",
+              1
+            ],
+            [
+              "push-e2e-82-154",
+              1
+            ],
+            [
+              "push-e2e-82-158",
+              1
+            ],
+            [
+              "push-e2e-82-88",
+              1
+            ],
+            [
+              "push-e2e-82-39",
+              1
+            ],
+            [
+              "push-e2e-82-180",
+              1
+            ],
+            [
+              "push-e2e-82-110",
+              2
+            ],
+            [
+              "push-e2e-82-175",
+              1
+            ],
+            [
+              "push-e2e-82-25",
+              1
+            ],
+            [
+              "push-e2e-82-187",
               1
             ],
             [
@@ -5156,11 +5136,31 @@
               1
             ],
             [
+              "push-e2e-82-269",
+              1
+            ],
+            [
+              "push-e2e-82-48",
+              1
+            ],
+            [
+              "push-e2e-82-227",
+              1
+            ],
+            [
+              "push-e2e-82-146",
+              1
+            ],
+            [
+              "push-e2e-82-214",
+              1
+            ],
+            [
               "push-e2e-82-290",
               1
             ],
             [
-              "push-e2e-82-163",
+              "push-e2e-82-44",
               1
             ]
           ]
@@ -5178,7 +5178,7 @@
       "feasible": true,
       "stopping_reason": "primal_dual_tolerance",
       "converged": null,
-      "runtime_seconds": 0.0020258749999992887,
+      "runtime_seconds": 0.0021260000000005164,
       "constraint_diagnostics": {
         "feasible": true,
         "max_constraint_violation": 0.0,
@@ -5275,95 +5275,7 @@
           },
           "decision_key": [
             [
-              "push-e2e-82-110",
-              2
-            ],
-            [
               "push-e2e-82-273",
-              2
-            ],
-            [
-              "push-e2e-82-269",
-              1
-            ],
-            [
-              "push-e2e-82-158",
-              1
-            ],
-            [
-              "push-e2e-82-35",
-              1
-            ],
-            [
-              "push-e2e-82-48",
-              0
-            ],
-            [
-              "push-e2e-82-78",
-              1
-            ],
-            [
-              "push-e2e-82-25",
-              1
-            ],
-            [
-              "push-e2e-82-29",
-              1
-            ],
-            [
-              "push-e2e-82-180",
-              1
-            ],
-            [
-              "push-e2e-82-257",
-              2
-            ],
-            [
-              "push-e2e-82-33",
-              1
-            ],
-            [
-              "push-e2e-82-259",
-              1
-            ],
-            [
-              "push-e2e-82-51",
-              3
-            ],
-            [
-              "push-e2e-82-214",
-              1
-            ],
-            [
-              "push-e2e-82-175",
-              1
-            ],
-            [
-              "push-e2e-82-87",
-              3
-            ],
-            [
-              "push-e2e-82-187",
-              1
-            ],
-            [
-              "push-e2e-82-44",
-              1
-            ],
-            [
-              "push-e2e-82-39",
-              1
-            ],
-            [
-              "push-e2e-82-201",
-              1
-            ],
-            [
-              "push-e2e-82-227",
-              1
-            ],
-            [
-              "push-e2e-82-149",
               2
             ],
             [
@@ -5371,7 +5283,39 @@
               1
             ],
             [
-              "push-e2e-82-154",
+              "push-e2e-82-190",
+              1
+            ],
+            [
+              "push-e2e-82-48",
+              0
+            ],
+            [
+              "push-e2e-82-51",
+              3
+            ],
+            [
+              "push-e2e-82-257",
+              2
+            ],
+            [
+              "push-e2e-82-163",
+              1
+            ],
+            [
+              "push-e2e-82-87",
+              3
+            ],
+            [
+              "push-e2e-82-13",
+              1
+            ],
+            [
+              "push-e2e-82-149",
+              2
+            ],
+            [
+              "push-e2e-82-259",
               1
             ],
             [
@@ -5379,23 +5323,59 @@
               3
             ],
             [
+              "push-e2e-82-35",
+              1
+            ],
+            [
+              "push-e2e-82-78",
+              1
+            ],
+            [
+              "push-e2e-82-29",
+              1
+            ],
+            [
+              "push-e2e-82-33",
+              1
+            ],
+            [
+              "push-e2e-82-154",
+              1
+            ],
+            [
+              "push-e2e-82-158",
+              1
+            ],
+            [
               "push-e2e-82-88",
               1
             ],
             [
-              "push-e2e-82-146",
+              "push-e2e-82-39",
               1
             ],
             [
-              "push-e2e-82-126",
+              "push-e2e-82-180",
+              1
+            ],
+            [
+              "push-e2e-82-110",
               2
             ],
             [
-              "push-e2e-82-190",
+              "push-e2e-82-175",
               1
             ],
             [
-              "push-e2e-82-13",
+              "push-e2e-82-25",
+              1
+            ],
+            [
+              "push-e2e-82-187",
+              1
+            ],
+            [
+              "push-e2e-82-201",
               1
             ],
             [
@@ -5403,11 +5383,31 @@
               1
             ],
             [
+              "push-e2e-82-126",
+              2
+            ],
+            [
+              "push-e2e-82-269",
+              1
+            ],
+            [
+              "push-e2e-82-227",
+              1
+            ],
+            [
+              "push-e2e-82-146",
+              1
+            ],
+            [
+              "push-e2e-82-214",
+              1
+            ],
+            [
               "push-e2e-82-290",
               1
             ],
             [
-              "push-e2e-82-163",
+              "push-e2e-82-44",
               1
             ]
           ]
@@ -5425,7 +5425,7 @@
       "feasible": true,
       "stopping_reason": "line_search_tolerance",
       "converged": null,
-      "runtime_seconds": 0.002763708999999892,
+      "runtime_seconds": 0.0029392499999989496,
       "constraint_diagnostics": {
         "feasible": true,
         "max_constraint_violation": 0.0,
@@ -5522,95 +5522,7 @@
           },
           "decision_key": [
             [
-              "push-e2e-82-110",
-              2
-            ],
-            [
               "push-e2e-82-273",
-              2
-            ],
-            [
-              "push-e2e-82-269",
-              1
-            ],
-            [
-              "push-e2e-82-158",
-              1
-            ],
-            [
-              "push-e2e-82-35",
-              1
-            ],
-            [
-              "push-e2e-82-48",
-              0
-            ],
-            [
-              "push-e2e-82-78",
-              1
-            ],
-            [
-              "push-e2e-82-25",
-              1
-            ],
-            [
-              "push-e2e-82-29",
-              1
-            ],
-            [
-              "push-e2e-82-180",
-              1
-            ],
-            [
-              "push-e2e-82-257",
-              2
-            ],
-            [
-              "push-e2e-82-33",
-              1
-            ],
-            [
-              "push-e2e-82-259",
-              1
-            ],
-            [
-              "push-e2e-82-51",
-              3
-            ],
-            [
-              "push-e2e-82-214",
-              1
-            ],
-            [
-              "push-e2e-82-175",
-              1
-            ],
-            [
-              "push-e2e-82-87",
-              3
-            ],
-            [
-              "push-e2e-82-187",
-              1
-            ],
-            [
-              "push-e2e-82-44",
-              1
-            ],
-            [
-              "push-e2e-82-39",
-              1
-            ],
-            [
-              "push-e2e-82-201",
-              1
-            ],
-            [
-              "push-e2e-82-227",
-              1
-            ],
-            [
-              "push-e2e-82-149",
               2
             ],
             [
@@ -5618,7 +5530,39 @@
               1
             ],
             [
-              "push-e2e-82-154",
+              "push-e2e-82-190",
+              1
+            ],
+            [
+              "push-e2e-82-48",
+              0
+            ],
+            [
+              "push-e2e-82-51",
+              3
+            ],
+            [
+              "push-e2e-82-257",
+              2
+            ],
+            [
+              "push-e2e-82-163",
+              1
+            ],
+            [
+              "push-e2e-82-87",
+              3
+            ],
+            [
+              "push-e2e-82-13",
+              1
+            ],
+            [
+              "push-e2e-82-149",
+              2
+            ],
+            [
+              "push-e2e-82-259",
               1
             ],
             [
@@ -5626,23 +5570,59 @@
               3
             ],
             [
+              "push-e2e-82-35",
+              1
+            ],
+            [
+              "push-e2e-82-78",
+              1
+            ],
+            [
+              "push-e2e-82-29",
+              1
+            ],
+            [
+              "push-e2e-82-33",
+              1
+            ],
+            [
+              "push-e2e-82-154",
+              1
+            ],
+            [
+              "push-e2e-82-158",
+              1
+            ],
+            [
               "push-e2e-82-88",
               1
             ],
             [
-              "push-e2e-82-146",
+              "push-e2e-82-39",
               1
             ],
             [
-              "push-e2e-82-126",
+              "push-e2e-82-180",
+              1
+            ],
+            [
+              "push-e2e-82-110",
               2
             ],
             [
-              "push-e2e-82-190",
+              "push-e2e-82-175",
               1
             ],
             [
-              "push-e2e-82-13",
+              "push-e2e-82-25",
+              1
+            ],
+            [
+              "push-e2e-82-187",
+              1
+            ],
+            [
+              "push-e2e-82-201",
               1
             ],
             [
@@ -5650,11 +5630,31 @@
               1
             ],
             [
+              "push-e2e-82-126",
+              2
+            ],
+            [
+              "push-e2e-82-269",
+              1
+            ],
+            [
+              "push-e2e-82-227",
+              1
+            ],
+            [
+              "push-e2e-82-146",
+              1
+            ],
+            [
+              "push-e2e-82-214",
+              1
+            ],
+            [
               "push-e2e-82-290",
               1
             ],
             [
-              "push-e2e-82-163",
+              "push-e2e-82-44",
               1
             ]
           ]
@@ -5672,7 +5672,7 @@
       "feasible": true,
       "stopping_reason": "coordinate_tolerance",
       "converged": null,
-      "runtime_seconds": 0.004034624999999181,
+      "runtime_seconds": 0.0042349159999997,
       "constraint_diagnostics": {
         "feasible": true,
         "max_constraint_violation": 0.0,
@@ -5769,95 +5769,7 @@
           },
           "decision_key": [
             [
-              "push-e2e-82-110",
-              2
-            ],
-            [
               "push-e2e-82-273",
-              2
-            ],
-            [
-              "push-e2e-82-269",
-              1
-            ],
-            [
-              "push-e2e-82-158",
-              1
-            ],
-            [
-              "push-e2e-82-35",
-              1
-            ],
-            [
-              "push-e2e-82-48",
-              0
-            ],
-            [
-              "push-e2e-82-78",
-              1
-            ],
-            [
-              "push-e2e-82-25",
-              1
-            ],
-            [
-              "push-e2e-82-29",
-              1
-            ],
-            [
-              "push-e2e-82-180",
-              1
-            ],
-            [
-              "push-e2e-82-257",
-              2
-            ],
-            [
-              "push-e2e-82-33",
-              1
-            ],
-            [
-              "push-e2e-82-259",
-              1
-            ],
-            [
-              "push-e2e-82-51",
-              3
-            ],
-            [
-              "push-e2e-82-214",
-              1
-            ],
-            [
-              "push-e2e-82-175",
-              1
-            ],
-            [
-              "push-e2e-82-87",
-              3
-            ],
-            [
-              "push-e2e-82-187",
-              1
-            ],
-            [
-              "push-e2e-82-44",
-              1
-            ],
-            [
-              "push-e2e-82-39",
-              1
-            ],
-            [
-              "push-e2e-82-201",
-              1
-            ],
-            [
-              "push-e2e-82-227",
-              1
-            ],
-            [
-              "push-e2e-82-149",
               2
             ],
             [
@@ -5865,7 +5777,39 @@
               1
             ],
             [
-              "push-e2e-82-154",
+              "push-e2e-82-190",
+              1
+            ],
+            [
+              "push-e2e-82-48",
+              0
+            ],
+            [
+              "push-e2e-82-51",
+              3
+            ],
+            [
+              "push-e2e-82-257",
+              2
+            ],
+            [
+              "push-e2e-82-163",
+              1
+            ],
+            [
+              "push-e2e-82-87",
+              3
+            ],
+            [
+              "push-e2e-82-13",
+              1
+            ],
+            [
+              "push-e2e-82-149",
+              2
+            ],
+            [
+              "push-e2e-82-259",
               1
             ],
             [
@@ -5873,23 +5817,59 @@
               3
             ],
             [
+              "push-e2e-82-35",
+              1
+            ],
+            [
+              "push-e2e-82-78",
+              1
+            ],
+            [
+              "push-e2e-82-29",
+              1
+            ],
+            [
+              "push-e2e-82-33",
+              1
+            ],
+            [
+              "push-e2e-82-154",
+              1
+            ],
+            [
+              "push-e2e-82-158",
+              1
+            ],
+            [
               "push-e2e-82-88",
               1
             ],
             [
-              "push-e2e-82-146",
+              "push-e2e-82-39",
               1
             ],
             [
-              "push-e2e-82-126",
+              "push-e2e-82-180",
+              1
+            ],
+            [
+              "push-e2e-82-110",
               2
             ],
             [
-              "push-e2e-82-190",
+              "push-e2e-82-175",
               1
             ],
             [
-              "push-e2e-82-13",
+              "push-e2e-82-25",
+              1
+            ],
+            [
+              "push-e2e-82-187",
+              1
+            ],
+            [
+              "push-e2e-82-201",
               1
             ],
             [
@@ -5897,11 +5877,31 @@
               1
             ],
             [
+              "push-e2e-82-126",
+              2
+            ],
+            [
+              "push-e2e-82-269",
+              1
+            ],
+            [
+              "push-e2e-82-227",
+              1
+            ],
+            [
+              "push-e2e-82-146",
+              1
+            ],
+            [
+              "push-e2e-82-214",
+              1
+            ],
+            [
               "push-e2e-82-290",
               1
             ],
             [
-              "push-e2e-82-163",
+              "push-e2e-82-44",
               1
             ]
           ]
@@ -5942,8 +5942,8 @@
         "size": 300,
         "seed": 42,
         "status": "PASS",
-        "runtime_seconds": 0.27317104199999953,
-        "peak_rss_mb": 171.9375,
+        "runtime_seconds": 0.2640777500000002,
+        "peak_rss_mb": 172.234375,
         "device": "cpu",
         "arm_metrics": {
           "1": {
@@ -5968,8 +5968,8 @@
         "size": 300,
         "seed": 42,
         "status": "PASS",
-        "runtime_seconds": 0.1945277920000006,
-        "peak_rss_mb": 172.078125,
+        "runtime_seconds": 0.19036391700000088,
+        "peak_rss_mb": 172.359375,
         "device": "cpu",
         "arm_metrics": {
           "1": {
@@ -5994,8 +5994,8 @@
         "size": 300,
         "seed": 52,
         "status": "PASS",
-        "runtime_seconds": 0.26085058399999994,
-        "peak_rss_mb": 172.078125,
+        "runtime_seconds": 0.2628572910000013,
+        "peak_rss_mb": 172.359375,
         "device": "cpu",
         "arm_metrics": {
           "1": {
@@ -6020,8 +6020,8 @@
         "size": 300,
         "seed": 52,
         "status": "PASS",
-        "runtime_seconds": 0.18541275000000113,
-        "peak_rss_mb": 172.078125,
+        "runtime_seconds": 0.18752987500000096,
+        "peak_rss_mb": 172.34375,
         "device": "cpu",
         "arm_metrics": {
           "1": {
@@ -6046,8 +6046,8 @@
         "size": 300,
         "seed": 62,
         "status": "PASS",
-        "runtime_seconds": 0.2612303340000004,
-        "peak_rss_mb": 172.078125,
+        "runtime_seconds": 0.2621448330000007,
+        "peak_rss_mb": 172.390625,
         "device": "cpu",
         "arm_metrics": {
           "1": {
@@ -6072,8 +6072,8 @@
         "size": 300,
         "seed": 62,
         "status": "PASS",
-        "runtime_seconds": 0.18556941699999996,
-        "peak_rss_mb": 172.078125,
+        "runtime_seconds": 0.1884049999999995,
+        "peak_rss_mb": 172.390625,
         "device": "cpu",
         "arm_metrics": {
           "1": {
@@ -6098,8 +6098,8 @@
         "size": 300,
         "seed": 72,
         "status": "PASS",
-        "runtime_seconds": 0.2585598750000013,
-        "peak_rss_mb": 172.078125,
+        "runtime_seconds": 0.25839904100000055,
+        "peak_rss_mb": 172.390625,
         "device": "cpu",
         "arm_metrics": {
           "1": {
@@ -6124,8 +6124,8 @@
         "size": 300,
         "seed": 72,
         "status": "PASS",
-        "runtime_seconds": 0.18491537499999922,
-        "peak_rss_mb": 172.078125,
+        "runtime_seconds": 0.18445137500000008,
+        "peak_rss_mb": 172.40625,
         "device": "cpu",
         "arm_metrics": {
           "1": {
@@ -6150,8 +6150,8 @@
         "size": 300,
         "seed": 82,
         "status": "PASS",
-        "runtime_seconds": 0.2580410000000022,
-        "peak_rss_mb": 172.078125,
+        "runtime_seconds": 0.257691540999998,
+        "peak_rss_mb": 172.40625,
         "device": "cpu",
         "arm_metrics": {
           "1": {
@@ -6176,8 +6176,8 @@
         "size": 300,
         "seed": 82,
         "status": "PASS",
-        "runtime_seconds": 0.18483770899999996,
-        "peak_rss_mb": 172.078125,
+        "runtime_seconds": 0.18507095800000073,
+        "peak_rss_mb": 172.40625,
         "device": "cpu",
         "arm_metrics": {
           "1": {
@@ -6205,7 +6205,7 @@
     ],
     "status": "PASS"
   },
-  "runtime_seconds": 15.286908332999998,
+  "runtime_seconds": 15.234110167,
   "gates": {
     "code_pass": "PASS",
     "test_pass": "PASS",
@@ -6228,7 +6228,7 @@
   "validation": {
     "command": "python3 -m pytest -q tests/orchestration tests/benchmarks/test_push_e2e_v2.py",
     "returncode": 0,
-    "stdout": ".......                                                                  [100%]\n7 passed in 4.12s\n",
+    "stdout": ".......                                                                  [100%]\n7 passed in 4.09s\n",
     "stderr": ""
   }
 }

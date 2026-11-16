@@ -1,0 +1,6234 @@
+{
+  "run_id": "push_e2e_v2_1794839941",
+  "git_sha": "9e1e8ff36e38af977e4a842be8c9a74bbadb0eac",
+  "evidence_class": "SEMI_SYNTHETIC_KNOWN_TRUTH",
+  "status": "PASS",
+  "config": {
+    "users": 300,
+    "horizon": 4,
+    "seeds": [
+      42,
+      52,
+      62,
+      72,
+      82
+    ],
+    "models": [
+      "S-Learner",
+      "T-Learner",
+      "X-Learner",
+      "DR-Learner"
+    ],
+    "scenarios": [
+      "heterogeneity",
+      "selection",
+      "fatigue",
+      "carryover"
+    ],
+    "context_source": "documented Push-shaped DGP; MRT archive not used",
+    "value_multiplier": 10.0,
+    "value_mapping_unit": "mapped_value_units; not revenue"
+  },
+  "model_rows": [
+    {
+      "seed": 42,
+      "model": "S-Learner",
+      "status": "PASS",
+      "n_train": 900,
+      "n_test": 300,
+      "ate_bias": -0.07537767440412449,
+      "pehe": 0.09660814973629864,
+      "qini": 1.4329045638652804,
+      "auuc": 11.956696577817084,
+      "calibration_mae": 0.024035232719577047,
+      "runtime_seconds": 0.5395332909999999,
+      "backend": "DeepUplift native model registry"
+    },
+    {
+      "seed": 42,
+      "model": "T-Learner",
+      "status": "PASS",
+      "n_train": 900,
+      "n_test": 300,
+      "ate_bias": -0.08444441819327417,
+      "pehe": 0.10745847333834288,
+      "qini": 0.8922445152130396,
+      "auuc": 10.575287392209745,
+      "calibration_mae": 0.03672555984388572,
+      "runtime_seconds": 0.6032973339999999,
+      "backend": "DeepUplift native model registry"
+    },
+    {
+      "seed": 42,
+      "model": "X-Learner",
+      "status": "PASS",
+      "n_train": 900,
+      "n_test": 300,
+      "ate_bias": -0.0796123504622589,
+      "pehe": 0.09955011295762313,
+      "qini": 1.095020374583536,
+      "auuc": 11.616142753636177,
+      "calibration_mae": 0.04532072459307251,
+      "runtime_seconds": 0.765627125,
+      "backend": "DeepUplift native model registry"
+    },
+    {
+      "seed": 42,
+      "model": "DR-Learner",
+      "status": "PASS",
+      "n_train": 900,
+      "n_test": 300,
+      "ate_bias": -0.07998250370791854,
+      "pehe": 0.10769490704520368,
+      "qini": 0.9328593663501792,
+      "auuc": 10.635655132680538,
+      "calibration_mae": 0.0557860704060333,
+      "runtime_seconds": 0.689264208,
+      "backend": "DeepUplift native model registry"
+    },
+    {
+      "seed": 52,
+      "model": "S-Learner",
+      "status": "PASS",
+      "n_train": 900,
+      "n_test": 300,
+      "ate_bias": -0.08573260692573596,
+      "pehe": 0.10079324371155837,
+      "qini": 2.180764471392845,
+      "auuc": 14.229240696236182,
+      "calibration_mae": 0.07317998300048549,
+      "runtime_seconds": 0.5310163750000005,
+      "backend": "DeepUplift native model registry"
+    },
+    {
+      "seed": 52,
+      "model": "T-Learner",
+      "status": "PASS",
+      "n_train": 900,
+      "n_test": 300,
+      "ate_bias": -0.09566184596172404,
+      "pehe": 0.11648097584405,
+      "qini": 1.8430051622402268,
+      "auuc": 12.986755655825634,
+      "calibration_mae": 0.03048820998886296,
+      "runtime_seconds": 0.5831446250000001,
+      "backend": "DeepUplift native model registry"
+    },
+    {
+      "seed": 52,
+      "model": "X-Learner",
+      "status": "PASS",
+      "n_train": 900,
+      "n_test": 300,
+      "ate_bias": -0.09226058052486033,
+      "pehe": 0.11007524654381629,
+      "qini": 2.2293577384922405,
+      "auuc": 14.045024209266227,
+      "calibration_mae": 0.03093696457287657,
+      "runtime_seconds": 0.7531246249999999,
+      "backend": "DeepUplift native model registry"
+    },
+    {
+      "seed": 52,
+      "model": "DR-Learner",
+      "status": "PASS",
+      "n_train": 900,
+      "n_test": 300,
+      "ate_bias": -0.09872699923727532,
+      "pehe": 0.14315867381210504,
+      "qini": 1.8220382416923837,
+      "auuc": 12.565690692510653,
+      "calibration_mae": 0.042692541263351015,
+      "runtime_seconds": 0.6880395830000001,
+      "backend": "DeepUplift native model registry"
+    },
+    {
+      "seed": 62,
+      "model": "S-Learner",
+      "status": "PASS",
+      "n_train": 900,
+      "n_test": 300,
+      "ate_bias": -0.08025190122367637,
+      "pehe": 0.0983936734313837,
+      "qini": 1.3217820787447088,
+      "auuc": 13.909399021867712,
+      "calibration_mae": 0.03835105282099509,
+      "runtime_seconds": 0.5337393750000006,
+      "backend": "DeepUplift native model registry"
+    },
+    {
+      "seed": 62,
+      "model": "T-Learner",
+      "status": "PASS",
+      "n_train": 900,
+      "n_test": 300,
+      "ate_bias": -0.07482618457941123,
+      "pehe": 0.09499042083052477,
+      "qini": 1.4134166001533086,
+      "auuc": 14.457953512455365,
+      "calibration_mae": 0.029713806815916444,
+      "runtime_seconds": 0.5846929169999999,
+      "backend": "DeepUplift native model registry"
+    },
+    {
+      "seed": 62,
+      "model": "X-Learner",
+      "status": "PASS",
+      "n_train": 900,
+      "n_test": 300,
+      "ate_bias": -0.0756062139058341,
+      "pehe": 0.09198476893375593,
+      "qini": 1.2507414421175622,
+      "auuc": 14.14423278112582,
+      "calibration_mae": 0.03136615152470147,
+      "runtime_seconds": 0.7547390410000006,
+      "backend": "DeepUplift native model registry"
+    },
+    {
+      "seed": 62,
+      "model": "DR-Learner",
+      "status": "PASS",
+      "n_train": 900,
+      "n_test": 300,
+      "ate_bias": -0.07456133520939698,
+      "pehe": 0.09784897919981868,
+      "qini": 1.2678810986021403,
+      "auuc": 14.099829993680029,
+      "calibration_mae": 0.046546522362588674,
+      "runtime_seconds": 0.6891186659999988,
+      "backend": "DeepUplift native model registry"
+    },
+    {
+      "seed": 72,
+      "model": "S-Learner",
+      "status": "PASS",
+      "n_train": 900,
+      "n_test": 300,
+      "ate_bias": -0.07854134695934847,
+      "pehe": 0.09488367308470258,
+      "qini": 1.0208085214680325,
+      "auuc": 14.3694441547744,
+      "calibration_mae": 0.028063852783837134,
+      "runtime_seconds": 0.5305545419999991,
+      "backend": "DeepUplift native model registry"
+    },
+    {
+      "seed": 72,
+      "model": "T-Learner",
+      "status": "PASS",
+      "n_train": 900,
+      "n_test": 300,
+      "ate_bias": -0.07634197056829876,
+      "pehe": 0.1097805224914573,
+      "qini": 0.3347547856585167,
+      "auuc": 11.444310316048883,
+      "calibration_mae": 0.06226162100928741,
+      "runtime_seconds": 0.5808091659999999,
+      "backend": "DeepUplift native model registry"
+    },
+    {
+      "seed": 72,
+      "model": "X-Learner",
+      "status": "PASS",
+      "n_train": 900,
+      "n_test": 300,
+      "ate_bias": -0.07150508735902567,
+      "pehe": 0.09586109103712281,
+      "qini": 0.5192789066458174,
+      "auuc": 12.444545601838776,
+      "calibration_mae": 0.045945000015770954,
+      "runtime_seconds": 0.7578793749999999,
+      "backend": "DeepUplift native model registry"
+    },
+    {
+      "seed": 72,
+      "model": "DR-Learner",
+      "status": "PASS",
+      "n_train": 900,
+      "n_test": 300,
+      "ate_bias": -0.08056102058736661,
+      "pehe": 0.11787471269491989,
+      "qini": 0.09711297021513676,
+      "auuc": 11.42727525348223,
+      "calibration_mae": 0.08846529827021272,
+      "runtime_seconds": 0.7257993330000012,
+      "backend": "DeepUplift native model registry"
+    },
+    {
+      "seed": 82,
+      "model": "S-Learner",
+      "status": "PASS",
+      "n_train": 900,
+      "n_test": 300,
+      "ate_bias": -0.08671228384340203,
+      "pehe": 0.09643301743006541,
+      "qini": 1.553010781923068,
+      "auuc": 16.33152948870542,
+      "calibration_mae": 0.047094546780984806,
+      "runtime_seconds": 0.5297250840000007,
+      "backend": "DeepUplift native model registry"
+    },
+    {
+      "seed": 82,
+      "model": "T-Learner",
+      "status": "PASS",
+      "n_train": 900,
+      "n_test": 300,
+      "ate_bias": -0.08115984556232722,
+      "pehe": 0.1030420021536491,
+      "qini": 1.5047700123681897,
+      "auuc": 15.747876981203994,
+      "calibration_mae": 0.04245316148953922,
+      "runtime_seconds": 0.5834305830000002,
+      "backend": "DeepUplift native model registry"
+    },
+    {
+      "seed": 82,
+      "model": "X-Learner",
+      "status": "PASS",
+      "n_train": 900,
+      "n_test": 300,
+      "ate_bias": -0.08219105988551322,
+      "pehe": 0.09656607611275969,
+      "qini": 1.4389958305523738,
+      "auuc": 16.04907259617674,
+      "calibration_mae": 0.04055595970127919,
+      "runtime_seconds": 0.7527378749999993,
+      "backend": "DeepUplift native model registry"
+    },
+    {
+      "seed": 82,
+      "model": "DR-Learner",
+      "status": "PASS",
+      "n_train": 900,
+      "n_test": 300,
+      "ate_bias": -0.07884687671573382,
+      "pehe": 0.10713502053618751,
+      "qini": 1.2902825863573186,
+      "auuc": 16.134620455683773,
+      "calibration_mae": 0.03815138239224479,
+      "runtime_seconds": 0.6969430410000008,
+      "backend": "DeepUplift native model registry"
+    }
+  ],
+  "policy_rows": [
+    {
+      "policy": "greedy",
+      "selected_count": 13,
+      "policy_value_truth": 0.35883167198462057,
+      "oracle_value_truth": 0.4617720107038816,
+      "regret": 0.102940338719261,
+      "selection_rate": 0.043333333333333335
+    },
+    {
+      "policy": "heap",
+      "selected_count": 13,
+      "policy_value_truth": 0.35883167198462057,
+      "oracle_value_truth": 0.4617720107038816,
+      "regret": 0.102940338719261,
+      "selection_rate": 0.043333333333333335
+    },
+    {
+      "policy": "primal_dual",
+      "selected_count": 13,
+      "policy_value_truth": 0.35883167198462057,
+      "oracle_value_truth": 0.4617720107038816,
+      "regret": 0.102940338719261,
+      "selection_rate": 0.043333333333333335
+    },
+    {
+      "policy": "line_search",
+      "selected_count": 13,
+      "policy_value_truth": 0.35883167198462057,
+      "oracle_value_truth": 0.4617720107038816,
+      "regret": 0.102940338719261,
+      "selection_rate": 0.043333333333333335
+    },
+    {
+      "policy": "coordinate",
+      "selected_count": 13,
+      "policy_value_truth": 0.35883167198462057,
+      "oracle_value_truth": 0.4617720107038816,
+      "regret": 0.102940338719261,
+      "selection_rate": 0.043333333333333335
+    },
+    {
+      "policy": "random_same_count",
+      "selected_count": 13,
+      "policy_value_truth": 0.3530558338804471,
+      "oracle_value_truth": 0.4617720107038816,
+      "regret": 0.10871617682343448,
+      "selection_rate": 0.043333333333333335
+    },
+    {
+      "policy": "treat_none",
+      "selected_count": 0,
+      "policy_value_truth": 0.34885957397750245,
+      "oracle_value_truth": 0.4617720107038816,
+      "regret": 0.11291243672637913,
+      "selection_rate": 0.0
+    },
+    {
+      "policy": "treat_all_eligible",
+      "selected_count": 269,
+      "policy_value_truth": 0.4483946754555224,
+      "oracle_value_truth": 0.4617720107038816,
+      "regret": 0.013377335248359157,
+      "selection_rate": 0.8966666666666666
+    },
+    {
+      "policy": "oracle_constrained",
+      "selected_count": 42,
+      "policy_value_truth": 0.37521948632116003,
+      "oracle_value_truth": 0.4617720107038816,
+      "regret": 0.08655252438272154,
+      "selection_rate": 0.14
+    },
+    {
+      "policy": "greedy",
+      "selected_count": 24,
+      "policy_value_truth": 0.3636652744238944,
+      "oracle_value_truth": 0.46673312217729196,
+      "regret": 0.10306784775339756,
+      "selection_rate": 0.08
+    },
+    {
+      "policy": "heap",
+      "selected_count": 24,
+      "policy_value_truth": 0.3636652744238944,
+      "oracle_value_truth": 0.46673312217729196,
+      "regret": 0.10306784775339756,
+      "selection_rate": 0.08
+    },
+    {
+      "policy": "primal_dual",
+      "selected_count": 24,
+      "policy_value_truth": 0.3636652744238944,
+      "oracle_value_truth": 0.46673312217729196,
+      "regret": 0.10306784775339756,
+      "selection_rate": 0.08
+    },
+    {
+      "policy": "line_search",
+      "selected_count": 24,
+      "policy_value_truth": 0.3636652744238944,
+      "oracle_value_truth": 0.46673312217729196,
+      "regret": 0.10306784775339756,
+      "selection_rate": 0.08
+    },
+    {
+      "policy": "coordinate",
+      "selected_count": 24,
+      "policy_value_truth": 0.3636652744238944,
+      "oracle_value_truth": 0.46673312217729196,
+      "regret": 0.10306784775339756,
+      "selection_rate": 0.08
+    },
+    {
+      "policy": "random_same_count",
+      "selected_count": 24,
+      "policy_value_truth": 0.35786124270399855,
+      "oracle_value_truth": 0.46673312217729196,
+      "regret": 0.10887187947329341,
+      "selection_rate": 0.08
+    },
+    {
+      "policy": "treat_none",
+      "selected_count": 0,
+      "policy_value_truth": 0.3473833752527534,
+      "oracle_value_truth": 0.46673312217729196,
+      "regret": 0.11934974692453854,
+      "selection_rate": 0.0
+    },
+    {
+      "policy": "treat_all_eligible",
+      "selected_count": 282,
+      "policy_value_truth": 0.4572981569082209,
+      "oracle_value_truth": 0.46673312217729196,
+      "regret": 0.00943496526907106,
+      "selection_rate": 0.94
+    },
+    {
+      "policy": "oracle_constrained",
+      "selected_count": 54,
+      "policy_value_truth": 0.37921960054399867,
+      "oracle_value_truth": 0.46673312217729196,
+      "regret": 0.08751352163329329,
+      "selection_rate": 0.18
+    },
+    {
+      "policy": "greedy",
+      "selected_count": 29,
+      "policy_value_truth": 0.3696371870253624,
+      "oracle_value_truth": 0.4742570372492469,
+      "regret": 0.10461985022388448,
+      "selection_rate": 0.09666666666666666
+    },
+    {
+      "policy": "heap",
+      "selected_count": 29,
+      "policy_value_truth": 0.3696371870253624,
+      "oracle_value_truth": 0.4742570372492469,
+      "regret": 0.10461985022388448,
+      "selection_rate": 0.09666666666666666
+    },
+    {
+      "policy": "primal_dual",
+      "selected_count": 29,
+      "policy_value_truth": 0.3696371870253624,
+      "oracle_value_truth": 0.4742570372492469,
+      "regret": 0.10461985022388448,
+      "selection_rate": 0.09666666666666666
+    },
+    {
+      "policy": "line_search",
+      "selected_count": 29,
+      "policy_value_truth": 0.3696371870253624,
+      "oracle_value_truth": 0.4742570372492469,
+      "regret": 0.10461985022388448,
+      "selection_rate": 0.09666666666666666
+    },
+    {
+      "policy": "coordinate",
+      "selected_count": 29,
+      "policy_value_truth": 0.3696371870253624,
+      "oracle_value_truth": 0.4742570372492469,
+      "regret": 0.10461985022388448,
+      "selection_rate": 0.09666666666666666
+    },
+    {
+      "policy": "random_same_count",
+      "selected_count": 29,
+      "policy_value_truth": 0.3652911710141722,
+      "oracle_value_truth": 0.4742570372492469,
+      "regret": 0.1089658662350747,
+      "selection_rate": 0.09666666666666666
+    },
+    {
+      "policy": "treat_none",
+      "selected_count": 0,
+      "policy_value_truth": 0.3512262910883291,
+      "oracle_value_truth": 0.4742570372492469,
+      "regret": 0.1230307461609178,
+      "selection_rate": 0.0
+    },
+    {
+      "policy": "treat_all_eligible",
+      "selected_count": 263,
+      "policy_value_truth": 0.45760732054053876,
+      "oracle_value_truth": 0.4742570372492469,
+      "regret": 0.01664971670870813,
+      "selection_rate": 0.8766666666666667
+    },
+    {
+      "policy": "oracle_constrained",
+      "selected_count": 51,
+      "policy_value_truth": 0.3830147664945168,
+      "oracle_value_truth": 0.4742570372492469,
+      "regret": 0.09124227075473007,
+      "selection_rate": 0.17
+    },
+    {
+      "policy": "greedy",
+      "selected_count": 28,
+      "policy_value_truth": 0.37239305083896435,
+      "oracle_value_truth": 0.47958819180001444,
+      "regret": 0.1071951409610501,
+      "selection_rate": 0.09333333333333334
+    },
+    {
+      "policy": "heap",
+      "selected_count": 28,
+      "policy_value_truth": 0.37239305083896435,
+      "oracle_value_truth": 0.47958819180001444,
+      "regret": 0.1071951409610501,
+      "selection_rate": 0.09333333333333334
+    },
+    {
+      "policy": "primal_dual",
+      "selected_count": 28,
+      "policy_value_truth": 0.37239305083896435,
+      "oracle_value_truth": 0.47958819180001444,
+      "regret": 0.1071951409610501,
+      "selection_rate": 0.09333333333333334
+    },
+    {
+      "policy": "line_search",
+      "selected_count": 28,
+      "policy_value_truth": 0.37239305083896435,
+      "oracle_value_truth": 0.47958819180001444,
+      "regret": 0.1071951409610501,
+      "selection_rate": 0.09333333333333334
+    },
+    {
+      "policy": "coordinate",
+      "selected_count": 28,
+      "policy_value_truth": 0.37239305083896435,
+      "oracle_value_truth": 0.47958819180001444,
+      "regret": 0.1071951409610501,
+      "selection_rate": 0.09333333333333334
+    },
+    {
+      "policy": "random_same_count",
+      "selected_count": 28,
+      "policy_value_truth": 0.3670785623556315,
+      "oracle_value_truth": 0.47958819180001444,
+      "regret": 0.11250962944438292,
+      "selection_rate": 0.09333333333333334
+    },
+    {
+      "policy": "treat_none",
+      "selected_count": 0,
+      "policy_value_truth": 0.3547729401314587,
+      "oracle_value_truth": 0.47958819180001444,
+      "regret": 0.12481525166855573,
+      "selection_rate": 0.0
+    },
+    {
+      "policy": "treat_all_eligible",
+      "selected_count": 266,
+      "policy_value_truth": 0.46525342885258075,
+      "oracle_value_truth": 0.47958819180001444,
+      "regret": 0.014334762947433688,
+      "selection_rate": 0.8866666666666667
+    },
+    {
+      "policy": "oracle_constrained",
+      "selected_count": 54,
+      "policy_value_truth": 0.38769069558411423,
+      "oracle_value_truth": 0.47958819180001444,
+      "regret": 0.09189749621590021,
+      "selection_rate": 0.18
+    },
+    {
+      "policy": "greedy",
+      "selected_count": 31,
+      "policy_value_truth": 0.3567676645496267,
+      "oracle_value_truth": 0.46991325271058687,
+      "regret": 0.11314558816096015,
+      "selection_rate": 0.10333333333333333
+    },
+    {
+      "policy": "heap",
+      "selected_count": 31,
+      "policy_value_truth": 0.3567676645496267,
+      "oracle_value_truth": 0.46991325271058687,
+      "regret": 0.11314558816096015,
+      "selection_rate": 0.10333333333333333
+    },
+    {
+      "policy": "primal_dual",
+      "selected_count": 34,
+      "policy_value_truth": 0.35767267424690097,
+      "oracle_value_truth": 0.46991325271058687,
+      "regret": 0.1122405784636859,
+      "selection_rate": 0.11333333333333333
+    },
+    {
+      "policy": "line_search",
+      "selected_count": 34,
+      "policy_value_truth": 0.35767267424690097,
+      "oracle_value_truth": 0.46991325271058687,
+      "regret": 0.1122405784636859,
+      "selection_rate": 0.11333333333333333
+    },
+    {
+      "policy": "coordinate",
+      "selected_count": 34,
+      "policy_value_truth": 0.35767267424690097,
+      "oracle_value_truth": 0.46991325271058687,
+      "regret": 0.1122405784636859,
+      "selection_rate": 0.11333333333333333
+    },
+    {
+      "policy": "random_same_count",
+      "selected_count": 31,
+      "policy_value_truth": 0.3485985393290206,
+      "oracle_value_truth": 0.46991325271058687,
+      "regret": 0.1213147133815663,
+      "selection_rate": 0.10333333333333333
+    },
+    {
+      "policy": "treat_none",
+      "selected_count": 0,
+      "policy_value_truth": 0.33643965633184064,
+      "oracle_value_truth": 0.46991325271058687,
+      "regret": 0.13347359637874623,
+      "selection_rate": 0.0
+    },
+    {
+      "policy": "treat_all_eligible",
+      "selected_count": 277,
+      "policy_value_truth": 0.45959777351902914,
+      "oracle_value_truth": 0.46991325271058687,
+      "regret": 0.01031547919155773,
+      "selection_rate": 0.9233333333333333
+    },
+    {
+      "policy": "oracle_constrained",
+      "selected_count": 57,
+      "policy_value_truth": 0.3720028834625696,
+      "oracle_value_truth": 0.46991325271058687,
+      "regret": 0.09791036924801727,
+      "selection_rate": 0.19
+    }
+  ],
+  "ope_rows": [
+    {
+      "seed": 42,
+      "policy": "greedy",
+      "ips": 1.2510653370719154,
+      "snips": 0.417055602975564,
+      "ess": 202.56278716255437,
+      "max_weight": 8.626931438430297
+    },
+    {
+      "seed": 42,
+      "policy": "heap",
+      "ips": 1.2510653370719154,
+      "snips": 0.417055602975564,
+      "ess": 202.56278716255437,
+      "max_weight": 8.626931438430297
+    },
+    {
+      "seed": 42,
+      "policy": "primal_dual",
+      "ips": 1.2510653370719154,
+      "snips": 0.417055602975564,
+      "ess": 202.56278716255437,
+      "max_weight": 8.626931438430297
+    },
+    {
+      "seed": 42,
+      "policy": "line_search",
+      "ips": 1.2510653370719154,
+      "snips": 0.417055602975564,
+      "ess": 202.56278716255437,
+      "max_weight": 8.626931438430297
+    },
+    {
+      "seed": 42,
+      "policy": "coordinate",
+      "ips": 1.2510653370719154,
+      "snips": 0.417055602975564,
+      "ess": 202.56278716255437,
+      "max_weight": 8.626931438430297
+    },
+    {
+      "seed": 42,
+      "policy": "random_same_count",
+      "ips": 1.235498581066465,
+      "snips": 0.4161247020426774,
+      "ess": 202.45590231283325,
+      "max_weight": 8.626931438430297
+    },
+    {
+      "seed": 42,
+      "policy": "treat_none",
+      "ips": 1.2650053723539167,
+      "snips": 0.4148857815741454,
+      "ess": 206.97047133194948,
+      "max_weight": 8.626931438430297
+    },
+    {
+      "seed": 42,
+      "policy": "treat_all_eligible",
+      "ips": 0.5481255982811963,
+      "snips": 0.4359571528722524,
+      "ess": 87.4788022588825,
+      "max_weight": 8.376708141751758
+    },
+    {
+      "seed": 42,
+      "policy": "oracle_constrained",
+      "ips": 1.1988495717730445,
+      "snips": 0.4179794290751904,
+      "ess": 191.0971591578806,
+      "max_weight": 8.626931438430297
+    },
+    {
+      "seed": 52,
+      "policy": "greedy",
+      "ips": 1.3412365749901738,
+      "snips": 0.4391901068988222,
+      "ess": 194.89893899794694,
+      "max_weight": 10.157605672562157
+    },
+    {
+      "seed": 52,
+      "policy": "heap",
+      "ips": 1.3412365749901738,
+      "snips": 0.4391901068988222,
+      "ess": 194.89893899794694,
+      "max_weight": 10.157605672562157
+    },
+    {
+      "seed": 52,
+      "policy": "primal_dual",
+      "ips": 1.3412365749901738,
+      "snips": 0.4391901068988222,
+      "ess": 194.89893899794694,
+      "max_weight": 10.157605672562157
+    },
+    {
+      "seed": 52,
+      "policy": "line_search",
+      "ips": 1.3412365749901738,
+      "snips": 0.4391901068988222,
+      "ess": 194.89893899794694,
+      "max_weight": 10.157605672562157
+    },
+    {
+      "seed": 52,
+      "policy": "coordinate",
+      "ips": 1.3412365749901738,
+      "snips": 0.4391901068988222,
+      "ess": 194.89893899794694,
+      "max_weight": 10.157605672562157
+    },
+    {
+      "seed": 52,
+      "policy": "random_same_count",
+      "ips": 1.3448118368188697,
+      "snips": 0.43565554418607877,
+      "ess": 198.87022786130075,
+      "max_weight": 10.157605672562157
+    },
+    {
+      "seed": 52,
+      "policy": "treat_none",
+      "ips": 1.3865897671039373,
+      "snips": 0.43711273335123496,
+      "ess": 205.19899469244152,
+      "max_weight": 10.157605672562157
+    },
+    {
+      "seed": 52,
+      "policy": "treat_all_eligible",
+      "ips": 0.46751481801237066,
+      "snips": 0.4452578880085367,
+      "ess": 73.52547714436743,
+      "max_weight": 10.535941696724187
+    },
+    {
+      "seed": 52,
+      "policy": "oracle_constrained",
+      "ips": 1.1776827272369814,
+      "snips": 0.4358321877613351,
+      "ess": 168.01975406779474,
+      "max_weight": 10.157605672562157
+    },
+    {
+      "seed": 62,
+      "policy": "greedy",
+      "ips": 1.2068098462278658,
+      "snips": 0.43439916673607354,
+      "ess": 198.83708311565027,
+      "max_weight": 6.549904706579762
+    },
+    {
+      "seed": 62,
+      "policy": "heap",
+      "ips": 1.2068098462278658,
+      "snips": 0.43439916673607354,
+      "ess": 198.83708311565027,
+      "max_weight": 6.549904706579762
+    },
+    {
+      "seed": 62,
+      "policy": "primal_dual",
+      "ips": 1.2068098462278658,
+      "snips": 0.43439916673607354,
+      "ess": 198.83708311565027,
+      "max_weight": 6.549904706579762
+    },
+    {
+      "seed": 62,
+      "policy": "line_search",
+      "ips": 1.2068098462278658,
+      "snips": 0.43439916673607354,
+      "ess": 198.83708311565027,
+      "max_weight": 6.549904706579762
+    },
+    {
+      "seed": 62,
+      "policy": "coordinate",
+      "ips": 1.2068098462278658,
+      "snips": 0.43439916673607354,
+      "ess": 198.83708311565027,
+      "max_weight": 6.549904706579762
+    },
+    {
+      "seed": 62,
+      "policy": "random_same_count",
+      "ips": 1.2079058144985135,
+      "snips": 0.43555085233686597,
+      "ess": 199.24917189481133,
+      "max_weight": 6.2561577887496345
+    },
+    {
+      "seed": 62,
+      "policy": "treat_none",
+      "ips": 1.2503661762209357,
+      "snips": 0.43012164749270193,
+      "ess": 210.63944733492443,
+      "max_weight": 6.549904706579762
+    },
+    {
+      "seed": 62,
+      "policy": "treat_all_eligible",
+      "ips": 0.5291212664949722,
+      "snips": 0.47941708101869995,
+      "ess": 83.9394156406783,
+      "max_weight": 5.800726176781741
+    },
+    {
+      "seed": 62,
+      "policy": "oracle_constrained",
+      "ips": 1.0662649008234848,
+      "snips": 0.43175487315922984,
+      "ess": 176.25972276898932,
+      "max_weight": 6.549904706579762
+    },
+    {
+      "seed": 72,
+      "policy": "greedy",
+      "ips": 1.1385179910591046,
+      "snips": 0.4163195451193362,
+      "ess": 188.29620340059577,
+      "max_weight": 9.020887886462436
+    },
+    {
+      "seed": 72,
+      "policy": "heap",
+      "ips": 1.1385179910591046,
+      "snips": 0.4163195451193362,
+      "ess": 188.29620340059577,
+      "max_weight": 9.020887886462436
+    },
+    {
+      "seed": 72,
+      "policy": "primal_dual",
+      "ips": 1.1385179910591046,
+      "snips": 0.4163195451193362,
+      "ess": 188.29620340059577,
+      "max_weight": 9.020887886462436
+    },
+    {
+      "seed": 72,
+      "policy": "line_search",
+      "ips": 1.1385179910591046,
+      "snips": 0.4163195451193362,
+      "ess": 188.29620340059577,
+      "max_weight": 9.020887886462436
+    },
+    {
+      "seed": 72,
+      "policy": "coordinate",
+      "ips": 1.1385179910591046,
+      "snips": 0.4163195451193362,
+      "ess": 188.29620340059577,
+      "max_weight": 9.020887886462436
+    },
+    {
+      "seed": 72,
+      "policy": "random_same_count",
+      "ips": 1.082307298401905,
+      "snips": 0.4155803606175181,
+      "ess": 182.80515903800463,
+      "max_weight": 8.434293757077866
+    },
+    {
+      "seed": 72,
+      "policy": "treat_none",
+      "ips": 1.1592213842327252,
+      "snips": 0.4146953095904741,
+      "ess": 195.00698081407586,
+      "max_weight": 8.434293757077866
+    },
+    {
+      "seed": 72,
+      "policy": "treat_all_eligible",
+      "ips": 0.5903275793751342,
+      "snips": 0.45966542898712015,
+      "ess": 93.70003874319295,
+      "max_weight": 9.020887886462436
+    },
+    {
+      "seed": 72,
+      "policy": "oracle_constrained",
+      "ips": 1.0913733689800647,
+      "snips": 0.42652546012564824,
+      "ess": 177.49018872384895,
+      "max_weight": 8.434293757077866
+    },
+    {
+      "seed": 82,
+      "policy": "greedy",
+      "ips": 1.191002971969905,
+      "snips": 0.42647143610568466,
+      "ess": 200.80394708569347,
+      "max_weight": 6.927282850058973
+    },
+    {
+      "seed": 82,
+      "policy": "heap",
+      "ips": 1.191002971969905,
+      "snips": 0.42647143610568466,
+      "ess": 200.80394708569347,
+      "max_weight": 6.927282850058973
+    },
+    {
+      "seed": 82,
+      "policy": "primal_dual",
+      "ips": 1.1801976041200517,
+      "snips": 0.42739264432765134,
+      "ess": 198.08095421016168,
+      "max_weight": 6.927282850058973
+    },
+    {
+      "seed": 82,
+      "policy": "line_search",
+      "ips": 1.1801976041200517,
+      "snips": 0.42739264432765134,
+      "ess": 198.08095421016168,
+      "max_weight": 6.927282850058973
+    },
+    {
+      "seed": 82,
+      "policy": "coordinate",
+      "ips": 1.1801976041200517,
+      "snips": 0.42739264432765134,
+      "ess": 198.08095421016168,
+      "max_weight": 6.927282850058973
+    },
+    {
+      "seed": 82,
+      "policy": "random_same_count",
+      "ips": 1.1280618808664082,
+      "snips": 0.41919174591797054,
+      "ess": 196.78855917371106,
+      "max_weight": 6.927282850058973
+    },
+    {
+      "seed": 82,
+      "policy": "treat_none",
+      "ips": 1.2251525091344095,
+      "snips": 0.41826701055659155,
+      "ess": 213.05994373012956,
+      "max_weight": 6.927282850058973
+    },
+    {
+      "seed": 82,
+      "policy": "treat_all_eligible",
+      "ips": 0.49466230707146225,
+      "snips": 0.47583742785524447,
+      "ess": 79.39544147646436,
+      "max_weight": 6.759784137848607
+    },
+    {
+      "seed": 82,
+      "policy": "oracle_constrained",
+      "ips": 1.1446428293950044,
+      "snips": 0.4296478276038394,
+      "ess": 192.58553419359126,
+      "max_weight": 6.927282850058973
+    }
+  ],
+  "solver_rows": [
+    {
+      "seed": 42,
+      "solver": "greedy",
+      "objective_net_value": 8.411357806868622,
+      "selected_count": 13,
+      "feasible": true,
+      "stopping_reason": "sorted_net_value",
+      "converged": null,
+      "runtime_seconds": 0.00014587500000029507,
+      "constraint_diagnostics": {
+        "feasible": true,
+        "max_constraint_violation": 0.0,
+        "violations": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "usage": {
+          "cost": 13.0,
+          "slot": {
+            "2": 5,
+            "1": 6,
+            "3": 1,
+            "0": 1
+          },
+          "user": {
+            "push-e2e-42-54": 1,
+            "push-e2e-42-209": 1,
+            "push-e2e-42-66": 1,
+            "push-e2e-42-100": 1,
+            "push-e2e-42-42": 1,
+            "push-e2e-42-60": 1,
+            "push-e2e-42-6": 1,
+            "push-e2e-42-152": 1,
+            "push-e2e-42-117": 1,
+            "push-e2e-42-239": 1,
+            "push-e2e-42-57": 1,
+            "push-e2e-42-19": 1,
+            "push-e2e-42-134": 1
+          },
+          "action": {
+            "push": 13
+          },
+          "decision_key": [
+            [
+              "push-e2e-42-134",
+              2
+            ],
+            [
+              "push-e2e-42-117",
+              2
+            ],
+            [
+              "push-e2e-42-239",
+              1
+            ],
+            [
+              "push-e2e-42-54",
+              2
+            ],
+            [
+              "push-e2e-42-100",
+              2
+            ],
+            [
+              "push-e2e-42-60",
+              1
+            ],
+            [
+              "push-e2e-42-66",
+              1
+            ],
+            [
+              "push-e2e-42-6",
+              0
+            ],
+            [
+              "push-e2e-42-152",
+              1
+            ],
+            [
+              "push-e2e-42-19",
+              2
+            ],
+            [
+              "push-e2e-42-42",
+              3
+            ],
+            [
+              "push-e2e-42-209",
+              1
+            ],
+            [
+              "push-e2e-42-57",
+              1
+            ]
+          ]
+        },
+        "invalid_index_count": 0,
+        "ineligible_selected_count": 0,
+        "minimum_interval_violation_count": 0
+      }
+    },
+    {
+      "seed": 42,
+      "solver": "heap",
+      "objective_net_value": 8.411357806868622,
+      "selected_count": 13,
+      "feasible": true,
+      "stopping_reason": "heap_exhausted_static_net_order",
+      "converged": null,
+      "runtime_seconds": 0.00020058300000025397,
+      "constraint_diagnostics": {
+        "feasible": true,
+        "max_constraint_violation": 0.0,
+        "violations": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "usage": {
+          "cost": 13.0,
+          "slot": {
+            "2": 5,
+            "1": 6,
+            "3": 1,
+            "0": 1
+          },
+          "user": {
+            "push-e2e-42-54": 1,
+            "push-e2e-42-209": 1,
+            "push-e2e-42-66": 1,
+            "push-e2e-42-100": 1,
+            "push-e2e-42-42": 1,
+            "push-e2e-42-60": 1,
+            "push-e2e-42-6": 1,
+            "push-e2e-42-152": 1,
+            "push-e2e-42-117": 1,
+            "push-e2e-42-239": 1,
+            "push-e2e-42-57": 1,
+            "push-e2e-42-19": 1,
+            "push-e2e-42-134": 1
+          },
+          "action": {
+            "push": 13
+          },
+          "decision_key": [
+            [
+              "push-e2e-42-134",
+              2
+            ],
+            [
+              "push-e2e-42-117",
+              2
+            ],
+            [
+              "push-e2e-42-239",
+              1
+            ],
+            [
+              "push-e2e-42-54",
+              2
+            ],
+            [
+              "push-e2e-42-100",
+              2
+            ],
+            [
+              "push-e2e-42-60",
+              1
+            ],
+            [
+              "push-e2e-42-66",
+              1
+            ],
+            [
+              "push-e2e-42-6",
+              0
+            ],
+            [
+              "push-e2e-42-152",
+              1
+            ],
+            [
+              "push-e2e-42-19",
+              2
+            ],
+            [
+              "push-e2e-42-42",
+              3
+            ],
+            [
+              "push-e2e-42-209",
+              1
+            ],
+            [
+              "push-e2e-42-57",
+              1
+            ]
+          ]
+        },
+        "invalid_index_count": 0,
+        "ineligible_selected_count": 0,
+        "minimum_interval_violation_count": 0
+      }
+    },
+    {
+      "seed": 42,
+      "solver": "primal_dual",
+      "objective_net_value": 8.411357806868622,
+      "selected_count": 13,
+      "feasible": true,
+      "stopping_reason": "primal_dual_tolerance",
+      "converged": null,
+      "runtime_seconds": 0.0006436669999998479,
+      "constraint_diagnostics": {
+        "feasible": true,
+        "max_constraint_violation": 0.0,
+        "violations": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "usage": {
+          "cost": 13.0,
+          "slot": {
+            "2": 5,
+            "1": 6,
+            "3": 1,
+            "0": 1
+          },
+          "user": {
+            "push-e2e-42-54": 1,
+            "push-e2e-42-209": 1,
+            "push-e2e-42-66": 1,
+            "push-e2e-42-100": 1,
+            "push-e2e-42-42": 1,
+            "push-e2e-42-60": 1,
+            "push-e2e-42-6": 1,
+            "push-e2e-42-152": 1,
+            "push-e2e-42-117": 1,
+            "push-e2e-42-239": 1,
+            "push-e2e-42-57": 1,
+            "push-e2e-42-19": 1,
+            "push-e2e-42-134": 1
+          },
+          "action": {
+            "push": 13
+          },
+          "decision_key": [
+            [
+              "push-e2e-42-134",
+              2
+            ],
+            [
+              "push-e2e-42-117",
+              2
+            ],
+            [
+              "push-e2e-42-239",
+              1
+            ],
+            [
+              "push-e2e-42-54",
+              2
+            ],
+            [
+              "push-e2e-42-100",
+              2
+            ],
+            [
+              "push-e2e-42-60",
+              1
+            ],
+            [
+              "push-e2e-42-66",
+              1
+            ],
+            [
+              "push-e2e-42-6",
+              0
+            ],
+            [
+              "push-e2e-42-152",
+              1
+            ],
+            [
+              "push-e2e-42-19",
+              2
+            ],
+            [
+              "push-e2e-42-42",
+              3
+            ],
+            [
+              "push-e2e-42-209",
+              1
+            ],
+            [
+              "push-e2e-42-57",
+              1
+            ]
+          ]
+        },
+        "invalid_index_count": 0,
+        "ineligible_selected_count": 0,
+        "minimum_interval_violation_count": 0
+      }
+    },
+    {
+      "seed": 42,
+      "solver": "line_search",
+      "objective_net_value": 8.411357806868622,
+      "selected_count": 13,
+      "feasible": true,
+      "stopping_reason": "line_search_tolerance",
+      "converged": null,
+      "runtime_seconds": 0.0012307919999998695,
+      "constraint_diagnostics": {
+        "feasible": true,
+        "max_constraint_violation": 0.0,
+        "violations": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "usage": {
+          "cost": 13.0,
+          "slot": {
+            "2": 5,
+            "1": 6,
+            "3": 1,
+            "0": 1
+          },
+          "user": {
+            "push-e2e-42-54": 1,
+            "push-e2e-42-209": 1,
+            "push-e2e-42-66": 1,
+            "push-e2e-42-100": 1,
+            "push-e2e-42-42": 1,
+            "push-e2e-42-60": 1,
+            "push-e2e-42-6": 1,
+            "push-e2e-42-152": 1,
+            "push-e2e-42-117": 1,
+            "push-e2e-42-239": 1,
+            "push-e2e-42-57": 1,
+            "push-e2e-42-19": 1,
+            "push-e2e-42-134": 1
+          },
+          "action": {
+            "push": 13
+          },
+          "decision_key": [
+            [
+              "push-e2e-42-134",
+              2
+            ],
+            [
+              "push-e2e-42-117",
+              2
+            ],
+            [
+              "push-e2e-42-239",
+              1
+            ],
+            [
+              "push-e2e-42-54",
+              2
+            ],
+            [
+              "push-e2e-42-100",
+              2
+            ],
+            [
+              "push-e2e-42-60",
+              1
+            ],
+            [
+              "push-e2e-42-66",
+              1
+            ],
+            [
+              "push-e2e-42-6",
+              0
+            ],
+            [
+              "push-e2e-42-152",
+              1
+            ],
+            [
+              "push-e2e-42-19",
+              2
+            ],
+            [
+              "push-e2e-42-42",
+              3
+            ],
+            [
+              "push-e2e-42-209",
+              1
+            ],
+            [
+              "push-e2e-42-57",
+              1
+            ]
+          ]
+        },
+        "invalid_index_count": 0,
+        "ineligible_selected_count": 0,
+        "minimum_interval_violation_count": 0
+      }
+    },
+    {
+      "seed": 42,
+      "solver": "coordinate",
+      "objective_net_value": 8.411357806868622,
+      "selected_count": 13,
+      "feasible": true,
+      "stopping_reason": "coordinate_tolerance",
+      "converged": null,
+      "runtime_seconds": 0.0031582920000001735,
+      "constraint_diagnostics": {
+        "feasible": true,
+        "max_constraint_violation": 0.0,
+        "violations": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "usage": {
+          "cost": 13.0,
+          "slot": {
+            "2": 5,
+            "1": 6,
+            "3": 1,
+            "0": 1
+          },
+          "user": {
+            "push-e2e-42-54": 1,
+            "push-e2e-42-209": 1,
+            "push-e2e-42-66": 1,
+            "push-e2e-42-100": 1,
+            "push-e2e-42-42": 1,
+            "push-e2e-42-60": 1,
+            "push-e2e-42-6": 1,
+            "push-e2e-42-152": 1,
+            "push-e2e-42-117": 1,
+            "push-e2e-42-239": 1,
+            "push-e2e-42-57": 1,
+            "push-e2e-42-19": 1,
+            "push-e2e-42-134": 1
+          },
+          "action": {
+            "push": 13
+          },
+          "decision_key": [
+            [
+              "push-e2e-42-134",
+              2
+            ],
+            [
+              "push-e2e-42-117",
+              2
+            ],
+            [
+              "push-e2e-42-239",
+              1
+            ],
+            [
+              "push-e2e-42-54",
+              2
+            ],
+            [
+              "push-e2e-42-100",
+              2
+            ],
+            [
+              "push-e2e-42-60",
+              1
+            ],
+            [
+              "push-e2e-42-66",
+              1
+            ],
+            [
+              "push-e2e-42-6",
+              0
+            ],
+            [
+              "push-e2e-42-152",
+              1
+            ],
+            [
+              "push-e2e-42-19",
+              2
+            ],
+            [
+              "push-e2e-42-42",
+              3
+            ],
+            [
+              "push-e2e-42-209",
+              1
+            ],
+            [
+              "push-e2e-42-57",
+              1
+            ]
+          ]
+        },
+        "invalid_index_count": 0,
+        "ineligible_selected_count": 0,
+        "minimum_interval_violation_count": 0
+      }
+    },
+    {
+      "seed": 52,
+      "solver": "greedy",
+      "objective_net_value": 9.010450987501915,
+      "selected_count": 24,
+      "feasible": true,
+      "stopping_reason": "sorted_net_value",
+      "converged": null,
+      "runtime_seconds": 0.00018854200000006927,
+      "constraint_diagnostics": {
+        "feasible": true,
+        "max_constraint_violation": 0.0,
+        "violations": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "usage": {
+          "cost": 24.0,
+          "slot": {
+            "1": 13,
+            "2": 5,
+            "0": 3,
+            "3": 3
+          },
+          "user": {
+            "push-e2e-52-208": 1,
+            "push-e2e-52-126": 1,
+            "push-e2e-52-256": 1,
+            "push-e2e-52-107": 1,
+            "push-e2e-52-275": 1,
+            "push-e2e-52-31": 1,
+            "push-e2e-52-53": 1,
+            "push-e2e-52-229": 1,
+            "push-e2e-52-146": 1,
+            "push-e2e-52-93": 1,
+            "push-e2e-52-245": 1,
+            "push-e2e-52-189": 1,
+            "push-e2e-52-226": 1,
+            "push-e2e-52-181": 1,
+            "push-e2e-52-33": 1,
+            "push-e2e-52-77": 1,
+            "push-e2e-52-297": 1,
+            "push-e2e-52-97": 1,
+            "push-e2e-52-132": 1,
+            "push-e2e-52-174": 1,
+            "push-e2e-52-175": 1,
+            "push-e2e-52-106": 1,
+            "push-e2e-52-153": 1,
+            "push-e2e-52-63": 1
+          },
+          "action": {
+            "push": 24
+          },
+          "decision_key": [
+            [
+              "push-e2e-52-181",
+              0
+            ],
+            [
+              "push-e2e-52-53",
+              1
+            ],
+            [
+              "push-e2e-52-132",
+              3
+            ],
+            [
+              "push-e2e-52-97",
+              1
+            ],
+            [
+              "push-e2e-52-126",
+              2
+            ],
+            [
+              "push-e2e-52-63",
+              1
+            ],
+            [
+              "push-e2e-52-77",
+              2
+            ],
+            [
+              "push-e2e-52-175",
+              3
+            ],
+            [
+              "push-e2e-52-256",
+              2
+            ],
+            [
+              "push-e2e-52-229",
+              1
+            ],
+            [
+              "push-e2e-52-146",
+              1
+            ],
+            [
+              "push-e2e-52-174",
+              1
+            ],
+            [
+              "push-e2e-52-245",
+              0
+            ],
+            [
+              "push-e2e-52-208",
+              1
+            ],
+            [
+              "push-e2e-52-297",
+              2
+            ],
+            [
+              "push-e2e-52-153",
+              1
+            ],
+            [
+              "push-e2e-52-226",
+              1
+            ],
+            [
+              "push-e2e-52-106",
+              3
+            ],
+            [
+              "push-e2e-52-275",
+              1
+            ],
+            [
+              "push-e2e-52-33",
+              1
+            ],
+            [
+              "push-e2e-52-31",
+              1
+            ],
+            [
+              "push-e2e-52-189",
+              0
+            ],
+            [
+              "push-e2e-52-93",
+              1
+            ],
+            [
+              "push-e2e-52-107",
+              2
+            ]
+          ]
+        },
+        "invalid_index_count": 0,
+        "ineligible_selected_count": 0,
+        "minimum_interval_violation_count": 0
+      }
+    },
+    {
+      "seed": 52,
+      "solver": "heap",
+      "objective_net_value": 9.010450987501915,
+      "selected_count": 24,
+      "feasible": true,
+      "stopping_reason": "heap_exhausted_static_net_order",
+      "converged": null,
+      "runtime_seconds": 0.00023350000000021964,
+      "constraint_diagnostics": {
+        "feasible": true,
+        "max_constraint_violation": 0.0,
+        "violations": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "usage": {
+          "cost": 24.0,
+          "slot": {
+            "1": 13,
+            "2": 5,
+            "0": 3,
+            "3": 3
+          },
+          "user": {
+            "push-e2e-52-208": 1,
+            "push-e2e-52-126": 1,
+            "push-e2e-52-256": 1,
+            "push-e2e-52-107": 1,
+            "push-e2e-52-275": 1,
+            "push-e2e-52-31": 1,
+            "push-e2e-52-53": 1,
+            "push-e2e-52-229": 1,
+            "push-e2e-52-146": 1,
+            "push-e2e-52-93": 1,
+            "push-e2e-52-245": 1,
+            "push-e2e-52-189": 1,
+            "push-e2e-52-226": 1,
+            "push-e2e-52-181": 1,
+            "push-e2e-52-33": 1,
+            "push-e2e-52-77": 1,
+            "push-e2e-52-297": 1,
+            "push-e2e-52-97": 1,
+            "push-e2e-52-132": 1,
+            "push-e2e-52-174": 1,
+            "push-e2e-52-175": 1,
+            "push-e2e-52-106": 1,
+            "push-e2e-52-153": 1,
+            "push-e2e-52-63": 1
+          },
+          "action": {
+            "push": 24
+          },
+          "decision_key": [
+            [
+              "push-e2e-52-181",
+              0
+            ],
+            [
+              "push-e2e-52-53",
+              1
+            ],
+            [
+              "push-e2e-52-132",
+              3
+            ],
+            [
+              "push-e2e-52-97",
+              1
+            ],
+            [
+              "push-e2e-52-126",
+              2
+            ],
+            [
+              "push-e2e-52-63",
+              1
+            ],
+            [
+              "push-e2e-52-77",
+              2
+            ],
+            [
+              "push-e2e-52-175",
+              3
+            ],
+            [
+              "push-e2e-52-256",
+              2
+            ],
+            [
+              "push-e2e-52-229",
+              1
+            ],
+            [
+              "push-e2e-52-146",
+              1
+            ],
+            [
+              "push-e2e-52-174",
+              1
+            ],
+            [
+              "push-e2e-52-245",
+              0
+            ],
+            [
+              "push-e2e-52-208",
+              1
+            ],
+            [
+              "push-e2e-52-297",
+              2
+            ],
+            [
+              "push-e2e-52-153",
+              1
+            ],
+            [
+              "push-e2e-52-226",
+              1
+            ],
+            [
+              "push-e2e-52-106",
+              3
+            ],
+            [
+              "push-e2e-52-275",
+              1
+            ],
+            [
+              "push-e2e-52-33",
+              1
+            ],
+            [
+              "push-e2e-52-31",
+              1
+            ],
+            [
+              "push-e2e-52-189",
+              0
+            ],
+            [
+              "push-e2e-52-93",
+              1
+            ],
+            [
+              "push-e2e-52-107",
+              2
+            ]
+          ]
+        },
+        "invalid_index_count": 0,
+        "ineligible_selected_count": 0,
+        "minimum_interval_violation_count": 0
+      }
+    },
+    {
+      "seed": 52,
+      "solver": "primal_dual",
+      "objective_net_value": 9.010450987501915,
+      "selected_count": 24,
+      "feasible": true,
+      "stopping_reason": "primal_dual_tolerance",
+      "converged": null,
+      "runtime_seconds": 0.0007200840000001207,
+      "constraint_diagnostics": {
+        "feasible": true,
+        "max_constraint_violation": 0.0,
+        "violations": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "usage": {
+          "cost": 24.0,
+          "slot": {
+            "1": 13,
+            "2": 5,
+            "0": 3,
+            "3": 3
+          },
+          "user": {
+            "push-e2e-52-208": 1,
+            "push-e2e-52-126": 1,
+            "push-e2e-52-256": 1,
+            "push-e2e-52-107": 1,
+            "push-e2e-52-275": 1,
+            "push-e2e-52-31": 1,
+            "push-e2e-52-53": 1,
+            "push-e2e-52-229": 1,
+            "push-e2e-52-146": 1,
+            "push-e2e-52-93": 1,
+            "push-e2e-52-245": 1,
+            "push-e2e-52-189": 1,
+            "push-e2e-52-226": 1,
+            "push-e2e-52-181": 1,
+            "push-e2e-52-33": 1,
+            "push-e2e-52-77": 1,
+            "push-e2e-52-297": 1,
+            "push-e2e-52-97": 1,
+            "push-e2e-52-132": 1,
+            "push-e2e-52-174": 1,
+            "push-e2e-52-175": 1,
+            "push-e2e-52-106": 1,
+            "push-e2e-52-153": 1,
+            "push-e2e-52-63": 1
+          },
+          "action": {
+            "push": 24
+          },
+          "decision_key": [
+            [
+              "push-e2e-52-181",
+              0
+            ],
+            [
+              "push-e2e-52-53",
+              1
+            ],
+            [
+              "push-e2e-52-132",
+              3
+            ],
+            [
+              "push-e2e-52-97",
+              1
+            ],
+            [
+              "push-e2e-52-126",
+              2
+            ],
+            [
+              "push-e2e-52-63",
+              1
+            ],
+            [
+              "push-e2e-52-77",
+              2
+            ],
+            [
+              "push-e2e-52-175",
+              3
+            ],
+            [
+              "push-e2e-52-256",
+              2
+            ],
+            [
+              "push-e2e-52-229",
+              1
+            ],
+            [
+              "push-e2e-52-146",
+              1
+            ],
+            [
+              "push-e2e-52-174",
+              1
+            ],
+            [
+              "push-e2e-52-245",
+              0
+            ],
+            [
+              "push-e2e-52-208",
+              1
+            ],
+            [
+              "push-e2e-52-297",
+              2
+            ],
+            [
+              "push-e2e-52-153",
+              1
+            ],
+            [
+              "push-e2e-52-226",
+              1
+            ],
+            [
+              "push-e2e-52-106",
+              3
+            ],
+            [
+              "push-e2e-52-275",
+              1
+            ],
+            [
+              "push-e2e-52-33",
+              1
+            ],
+            [
+              "push-e2e-52-31",
+              1
+            ],
+            [
+              "push-e2e-52-189",
+              0
+            ],
+            [
+              "push-e2e-52-93",
+              1
+            ],
+            [
+              "push-e2e-52-107",
+              2
+            ]
+          ]
+        },
+        "invalid_index_count": 0,
+        "ineligible_selected_count": 0,
+        "minimum_interval_violation_count": 0
+      }
+    },
+    {
+      "seed": 52,
+      "solver": "line_search",
+      "objective_net_value": 9.010450987501915,
+      "selected_count": 24,
+      "feasible": true,
+      "stopping_reason": "line_search_tolerance",
+      "converged": null,
+      "runtime_seconds": 0.0013675830000003941,
+      "constraint_diagnostics": {
+        "feasible": true,
+        "max_constraint_violation": 0.0,
+        "violations": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "usage": {
+          "cost": 24.0,
+          "slot": {
+            "1": 13,
+            "2": 5,
+            "0": 3,
+            "3": 3
+          },
+          "user": {
+            "push-e2e-52-208": 1,
+            "push-e2e-52-126": 1,
+            "push-e2e-52-256": 1,
+            "push-e2e-52-107": 1,
+            "push-e2e-52-275": 1,
+            "push-e2e-52-31": 1,
+            "push-e2e-52-53": 1,
+            "push-e2e-52-229": 1,
+            "push-e2e-52-146": 1,
+            "push-e2e-52-93": 1,
+            "push-e2e-52-245": 1,
+            "push-e2e-52-189": 1,
+            "push-e2e-52-226": 1,
+            "push-e2e-52-181": 1,
+            "push-e2e-52-33": 1,
+            "push-e2e-52-77": 1,
+            "push-e2e-52-297": 1,
+            "push-e2e-52-97": 1,
+            "push-e2e-52-132": 1,
+            "push-e2e-52-174": 1,
+            "push-e2e-52-175": 1,
+            "push-e2e-52-106": 1,
+            "push-e2e-52-153": 1,
+            "push-e2e-52-63": 1
+          },
+          "action": {
+            "push": 24
+          },
+          "decision_key": [
+            [
+              "push-e2e-52-181",
+              0
+            ],
+            [
+              "push-e2e-52-53",
+              1
+            ],
+            [
+              "push-e2e-52-132",
+              3
+            ],
+            [
+              "push-e2e-52-97",
+              1
+            ],
+            [
+              "push-e2e-52-126",
+              2
+            ],
+            [
+              "push-e2e-52-63",
+              1
+            ],
+            [
+              "push-e2e-52-77",
+              2
+            ],
+            [
+              "push-e2e-52-175",
+              3
+            ],
+            [
+              "push-e2e-52-256",
+              2
+            ],
+            [
+              "push-e2e-52-229",
+              1
+            ],
+            [
+              "push-e2e-52-146",
+              1
+            ],
+            [
+              "push-e2e-52-174",
+              1
+            ],
+            [
+              "push-e2e-52-245",
+              0
+            ],
+            [
+              "push-e2e-52-208",
+              1
+            ],
+            [
+              "push-e2e-52-297",
+              2
+            ],
+            [
+              "push-e2e-52-153",
+              1
+            ],
+            [
+              "push-e2e-52-226",
+              1
+            ],
+            [
+              "push-e2e-52-106",
+              3
+            ],
+            [
+              "push-e2e-52-275",
+              1
+            ],
+            [
+              "push-e2e-52-33",
+              1
+            ],
+            [
+              "push-e2e-52-31",
+              1
+            ],
+            [
+              "push-e2e-52-189",
+              0
+            ],
+            [
+              "push-e2e-52-93",
+              1
+            ],
+            [
+              "push-e2e-52-107",
+              2
+            ]
+          ]
+        },
+        "invalid_index_count": 0,
+        "ineligible_selected_count": 0,
+        "minimum_interval_violation_count": 0
+      }
+    },
+    {
+      "seed": 52,
+      "solver": "coordinate",
+      "objective_net_value": 9.010450987501915,
+      "selected_count": 24,
+      "feasible": true,
+      "stopping_reason": "coordinate_tolerance",
+      "converged": null,
+      "runtime_seconds": 0.003488874999999503,
+      "constraint_diagnostics": {
+        "feasible": true,
+        "max_constraint_violation": 0.0,
+        "violations": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "usage": {
+          "cost": 24.0,
+          "slot": {
+            "1": 13,
+            "2": 5,
+            "0": 3,
+            "3": 3
+          },
+          "user": {
+            "push-e2e-52-208": 1,
+            "push-e2e-52-126": 1,
+            "push-e2e-52-256": 1,
+            "push-e2e-52-107": 1,
+            "push-e2e-52-275": 1,
+            "push-e2e-52-31": 1,
+            "push-e2e-52-53": 1,
+            "push-e2e-52-229": 1,
+            "push-e2e-52-146": 1,
+            "push-e2e-52-93": 1,
+            "push-e2e-52-245": 1,
+            "push-e2e-52-189": 1,
+            "push-e2e-52-226": 1,
+            "push-e2e-52-181": 1,
+            "push-e2e-52-33": 1,
+            "push-e2e-52-77": 1,
+            "push-e2e-52-297": 1,
+            "push-e2e-52-97": 1,
+            "push-e2e-52-132": 1,
+            "push-e2e-52-174": 1,
+            "push-e2e-52-175": 1,
+            "push-e2e-52-106": 1,
+            "push-e2e-52-153": 1,
+            "push-e2e-52-63": 1
+          },
+          "action": {
+            "push": 24
+          },
+          "decision_key": [
+            [
+              "push-e2e-52-181",
+              0
+            ],
+            [
+              "push-e2e-52-53",
+              1
+            ],
+            [
+              "push-e2e-52-132",
+              3
+            ],
+            [
+              "push-e2e-52-97",
+              1
+            ],
+            [
+              "push-e2e-52-126",
+              2
+            ],
+            [
+              "push-e2e-52-63",
+              1
+            ],
+            [
+              "push-e2e-52-77",
+              2
+            ],
+            [
+              "push-e2e-52-175",
+              3
+            ],
+            [
+              "push-e2e-52-256",
+              2
+            ],
+            [
+              "push-e2e-52-229",
+              1
+            ],
+            [
+              "push-e2e-52-146",
+              1
+            ],
+            [
+              "push-e2e-52-174",
+              1
+            ],
+            [
+              "push-e2e-52-245",
+              0
+            ],
+            [
+              "push-e2e-52-208",
+              1
+            ],
+            [
+              "push-e2e-52-297",
+              2
+            ],
+            [
+              "push-e2e-52-153",
+              1
+            ],
+            [
+              "push-e2e-52-226",
+              1
+            ],
+            [
+              "push-e2e-52-106",
+              3
+            ],
+            [
+              "push-e2e-52-275",
+              1
+            ],
+            [
+              "push-e2e-52-33",
+              1
+            ],
+            [
+              "push-e2e-52-31",
+              1
+            ],
+            [
+              "push-e2e-52-189",
+              0
+            ],
+            [
+              "push-e2e-52-93",
+              1
+            ],
+            [
+              "push-e2e-52-107",
+              2
+            ]
+          ]
+        },
+        "invalid_index_count": 0,
+        "ineligible_selected_count": 0,
+        "minimum_interval_violation_count": 0
+      }
+    },
+    {
+      "seed": 62,
+      "solver": "greedy",
+      "objective_net_value": 12.971999688011667,
+      "selected_count": 29,
+      "feasible": true,
+      "stopping_reason": "sorted_net_value",
+      "converged": null,
+      "runtime_seconds": 0.00021416700000020938,
+      "constraint_diagnostics": {
+        "feasible": true,
+        "max_constraint_violation": 0.0,
+        "violations": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "usage": {
+          "cost": 29.0,
+          "slot": {
+            "2": 4,
+            "1": 20,
+            "3": 4,
+            "0": 1
+          },
+          "user": {
+            "push-e2e-62-200": 1,
+            "push-e2e-62-285": 1,
+            "push-e2e-62-241": 1,
+            "push-e2e-62-20": 1,
+            "push-e2e-62-129": 1,
+            "push-e2e-62-243": 1,
+            "push-e2e-62-117": 1,
+            "push-e2e-62-279": 1,
+            "push-e2e-62-135": 1,
+            "push-e2e-62-267": 1,
+            "push-e2e-62-77": 1,
+            "push-e2e-62-195": 1,
+            "push-e2e-62-74": 1,
+            "push-e2e-62-32": 1,
+            "push-e2e-62-298": 1,
+            "push-e2e-62-122": 1,
+            "push-e2e-62-205": 1,
+            "push-e2e-62-4": 1,
+            "push-e2e-62-127": 1,
+            "push-e2e-62-289": 1,
+            "push-e2e-62-237": 1,
+            "push-e2e-62-248": 1,
+            "push-e2e-62-76": 1,
+            "push-e2e-62-150": 1,
+            "push-e2e-62-85": 1,
+            "push-e2e-62-116": 1,
+            "push-e2e-62-245": 1,
+            "push-e2e-62-14": 1,
+            "push-e2e-62-213": 1
+          },
+          "action": {
+            "push": 29
+          },
+          "decision_key": [
+            [
+              "push-e2e-62-195",
+              2
+            ],
+            [
+              "push-e2e-62-122",
+              3
+            ],
+            [
+              "push-e2e-62-85",
+              1
+            ],
+            [
+              "push-e2e-62-289",
+              1
+            ],
+            [
+              "push-e2e-62-135",
+              1
+            ],
+            [
+              "push-e2e-62-20",
+              3
+            ],
+            [
+              "push-e2e-62-77",
+              1
+            ],
+            [
+              "push-e2e-62-298",
+              1
+            ],
+            [
+              "push-e2e-62-14",
+              1
+            ],
+            [
+              "push-e2e-62-243",
+              1
+            ],
+            [
+              "push-e2e-62-74",
+              1
+            ],
+            [
+              "push-e2e-62-241",
+              1
+            ],
+            [
+              "push-e2e-62-150",
+              1
+            ],
+            [
+              "push-e2e-62-285",
+              1
+            ],
+            [
+              "push-e2e-62-213",
+              1
+            ],
+            [
+              "push-e2e-62-117",
+              2
+            ],
+            [
+              "push-e2e-62-116",
+              1
+            ],
+            [
+              "push-e2e-62-32",
+              2
+            ],
+            [
+              "push-e2e-62-245",
+              1
+            ],
+            [
+              "push-e2e-62-267",
+              1
+            ],
+            [
+              "push-e2e-62-205",
+              3
+            ],
+            [
+              "push-e2e-62-279",
+              1
+            ],
+            [
+              "push-e2e-62-127",
+              3
+            ],
+            [
+              "push-e2e-62-200",
+              2
+            ],
+            [
+              "push-e2e-62-248",
+              1
+            ],
+            [
+              "push-e2e-62-4",
+              0
+            ],
+            [
+              "push-e2e-62-76",
+              1
+            ],
+            [
+              "push-e2e-62-129",
+              1
+            ],
+            [
+              "push-e2e-62-237",
+              1
+            ]
+          ]
+        },
+        "invalid_index_count": 0,
+        "ineligible_selected_count": 0,
+        "minimum_interval_violation_count": 0
+      }
+    },
+    {
+      "seed": 62,
+      "solver": "heap",
+      "objective_net_value": 12.971999688011667,
+      "selected_count": 29,
+      "feasible": true,
+      "stopping_reason": "heap_exhausted_static_net_order",
+      "converged": null,
+      "runtime_seconds": 0.0002607089999999701,
+      "constraint_diagnostics": {
+        "feasible": true,
+        "max_constraint_violation": 0.0,
+        "violations": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "usage": {
+          "cost": 29.0,
+          "slot": {
+            "2": 4,
+            "1": 20,
+            "3": 4,
+            "0": 1
+          },
+          "user": {
+            "push-e2e-62-200": 1,
+            "push-e2e-62-285": 1,
+            "push-e2e-62-241": 1,
+            "push-e2e-62-20": 1,
+            "push-e2e-62-129": 1,
+            "push-e2e-62-243": 1,
+            "push-e2e-62-117": 1,
+            "push-e2e-62-279": 1,
+            "push-e2e-62-135": 1,
+            "push-e2e-62-267": 1,
+            "push-e2e-62-77": 1,
+            "push-e2e-62-195": 1,
+            "push-e2e-62-74": 1,
+            "push-e2e-62-32": 1,
+            "push-e2e-62-298": 1,
+            "push-e2e-62-122": 1,
+            "push-e2e-62-205": 1,
+            "push-e2e-62-4": 1,
+            "push-e2e-62-127": 1,
+            "push-e2e-62-289": 1,
+            "push-e2e-62-237": 1,
+            "push-e2e-62-248": 1,
+            "push-e2e-62-76": 1,
+            "push-e2e-62-150": 1,
+            "push-e2e-62-85": 1,
+            "push-e2e-62-116": 1,
+            "push-e2e-62-245": 1,
+            "push-e2e-62-14": 1,
+            "push-e2e-62-213": 1
+          },
+          "action": {
+            "push": 29
+          },
+          "decision_key": [
+            [
+              "push-e2e-62-195",
+              2
+            ],
+            [
+              "push-e2e-62-122",
+              3
+            ],
+            [
+              "push-e2e-62-85",
+              1
+            ],
+            [
+              "push-e2e-62-289",
+              1
+            ],
+            [
+              "push-e2e-62-135",
+              1
+            ],
+            [
+              "push-e2e-62-20",
+              3
+            ],
+            [
+              "push-e2e-62-77",
+              1
+            ],
+            [
+              "push-e2e-62-298",
+              1
+            ],
+            [
+              "push-e2e-62-14",
+              1
+            ],
+            [
+              "push-e2e-62-243",
+              1
+            ],
+            [
+              "push-e2e-62-74",
+              1
+            ],
+            [
+              "push-e2e-62-241",
+              1
+            ],
+            [
+              "push-e2e-62-150",
+              1
+            ],
+            [
+              "push-e2e-62-285",
+              1
+            ],
+            [
+              "push-e2e-62-213",
+              1
+            ],
+            [
+              "push-e2e-62-117",
+              2
+            ],
+            [
+              "push-e2e-62-116",
+              1
+            ],
+            [
+              "push-e2e-62-32",
+              2
+            ],
+            [
+              "push-e2e-62-245",
+              1
+            ],
+            [
+              "push-e2e-62-267",
+              1
+            ],
+            [
+              "push-e2e-62-205",
+              3
+            ],
+            [
+              "push-e2e-62-279",
+              1
+            ],
+            [
+              "push-e2e-62-127",
+              3
+            ],
+            [
+              "push-e2e-62-200",
+              2
+            ],
+            [
+              "push-e2e-62-248",
+              1
+            ],
+            [
+              "push-e2e-62-4",
+              0
+            ],
+            [
+              "push-e2e-62-76",
+              1
+            ],
+            [
+              "push-e2e-62-129",
+              1
+            ],
+            [
+              "push-e2e-62-237",
+              1
+            ]
+          ]
+        },
+        "invalid_index_count": 0,
+        "ineligible_selected_count": 0,
+        "minimum_interval_violation_count": 0
+      }
+    },
+    {
+      "seed": 62,
+      "solver": "primal_dual",
+      "objective_net_value": 12.971999688011667,
+      "selected_count": 29,
+      "feasible": true,
+      "stopping_reason": "primal_dual_tolerance",
+      "converged": null,
+      "runtime_seconds": 0.0007872090000002885,
+      "constraint_diagnostics": {
+        "feasible": true,
+        "max_constraint_violation": 0.0,
+        "violations": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "usage": {
+          "cost": 29.0,
+          "slot": {
+            "2": 4,
+            "1": 20,
+            "3": 4,
+            "0": 1
+          },
+          "user": {
+            "push-e2e-62-200": 1,
+            "push-e2e-62-285": 1,
+            "push-e2e-62-241": 1,
+            "push-e2e-62-20": 1,
+            "push-e2e-62-129": 1,
+            "push-e2e-62-243": 1,
+            "push-e2e-62-117": 1,
+            "push-e2e-62-279": 1,
+            "push-e2e-62-135": 1,
+            "push-e2e-62-267": 1,
+            "push-e2e-62-77": 1,
+            "push-e2e-62-195": 1,
+            "push-e2e-62-74": 1,
+            "push-e2e-62-32": 1,
+            "push-e2e-62-298": 1,
+            "push-e2e-62-122": 1,
+            "push-e2e-62-205": 1,
+            "push-e2e-62-4": 1,
+            "push-e2e-62-127": 1,
+            "push-e2e-62-289": 1,
+            "push-e2e-62-237": 1,
+            "push-e2e-62-248": 1,
+            "push-e2e-62-76": 1,
+            "push-e2e-62-150": 1,
+            "push-e2e-62-85": 1,
+            "push-e2e-62-116": 1,
+            "push-e2e-62-245": 1,
+            "push-e2e-62-14": 1,
+            "push-e2e-62-213": 1
+          },
+          "action": {
+            "push": 29
+          },
+          "decision_key": [
+            [
+              "push-e2e-62-195",
+              2
+            ],
+            [
+              "push-e2e-62-122",
+              3
+            ],
+            [
+              "push-e2e-62-85",
+              1
+            ],
+            [
+              "push-e2e-62-289",
+              1
+            ],
+            [
+              "push-e2e-62-135",
+              1
+            ],
+            [
+              "push-e2e-62-20",
+              3
+            ],
+            [
+              "push-e2e-62-77",
+              1
+            ],
+            [
+              "push-e2e-62-298",
+              1
+            ],
+            [
+              "push-e2e-62-14",
+              1
+            ],
+            [
+              "push-e2e-62-243",
+              1
+            ],
+            [
+              "push-e2e-62-74",
+              1
+            ],
+            [
+              "push-e2e-62-241",
+              1
+            ],
+            [
+              "push-e2e-62-150",
+              1
+            ],
+            [
+              "push-e2e-62-285",
+              1
+            ],
+            [
+              "push-e2e-62-213",
+              1
+            ],
+            [
+              "push-e2e-62-117",
+              2
+            ],
+            [
+              "push-e2e-62-116",
+              1
+            ],
+            [
+              "push-e2e-62-32",
+              2
+            ],
+            [
+              "push-e2e-62-245",
+              1
+            ],
+            [
+              "push-e2e-62-267",
+              1
+            ],
+            [
+              "push-e2e-62-205",
+              3
+            ],
+            [
+              "push-e2e-62-279",
+              1
+            ],
+            [
+              "push-e2e-62-127",
+              3
+            ],
+            [
+              "push-e2e-62-200",
+              2
+            ],
+            [
+              "push-e2e-62-248",
+              1
+            ],
+            [
+              "push-e2e-62-4",
+              0
+            ],
+            [
+              "push-e2e-62-76",
+              1
+            ],
+            [
+              "push-e2e-62-129",
+              1
+            ],
+            [
+              "push-e2e-62-237",
+              1
+            ]
+          ]
+        },
+        "invalid_index_count": 0,
+        "ineligible_selected_count": 0,
+        "minimum_interval_violation_count": 0
+      }
+    },
+    {
+      "seed": 62,
+      "solver": "line_search",
+      "objective_net_value": 12.971999688011667,
+      "selected_count": 29,
+      "feasible": true,
+      "stopping_reason": "line_search_tolerance",
+      "converged": null,
+      "runtime_seconds": 0.0014882500000004129,
+      "constraint_diagnostics": {
+        "feasible": true,
+        "max_constraint_violation": 0.0,
+        "violations": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "usage": {
+          "cost": 29.0,
+          "slot": {
+            "2": 4,
+            "1": 20,
+            "3": 4,
+            "0": 1
+          },
+          "user": {
+            "push-e2e-62-200": 1,
+            "push-e2e-62-285": 1,
+            "push-e2e-62-241": 1,
+            "push-e2e-62-20": 1,
+            "push-e2e-62-129": 1,
+            "push-e2e-62-243": 1,
+            "push-e2e-62-117": 1,
+            "push-e2e-62-279": 1,
+            "push-e2e-62-135": 1,
+            "push-e2e-62-267": 1,
+            "push-e2e-62-77": 1,
+            "push-e2e-62-195": 1,
+            "push-e2e-62-74": 1,
+            "push-e2e-62-32": 1,
+            "push-e2e-62-298": 1,
+            "push-e2e-62-122": 1,
+            "push-e2e-62-205": 1,
+            "push-e2e-62-4": 1,
+            "push-e2e-62-127": 1,
+            "push-e2e-62-289": 1,
+            "push-e2e-62-237": 1,
+            "push-e2e-62-248": 1,
+            "push-e2e-62-76": 1,
+            "push-e2e-62-150": 1,
+            "push-e2e-62-85": 1,
+            "push-e2e-62-116": 1,
+            "push-e2e-62-245": 1,
+            "push-e2e-62-14": 1,
+            "push-e2e-62-213": 1
+          },
+          "action": {
+            "push": 29
+          },
+          "decision_key": [
+            [
+              "push-e2e-62-195",
+              2
+            ],
+            [
+              "push-e2e-62-122",
+              3
+            ],
+            [
+              "push-e2e-62-85",
+              1
+            ],
+            [
+              "push-e2e-62-289",
+              1
+            ],
+            [
+              "push-e2e-62-135",
+              1
+            ],
+            [
+              "push-e2e-62-20",
+              3
+            ],
+            [
+              "push-e2e-62-77",
+              1
+            ],
+            [
+              "push-e2e-62-298",
+              1
+            ],
+            [
+              "push-e2e-62-14",
+              1
+            ],
+            [
+              "push-e2e-62-243",
+              1
+            ],
+            [
+              "push-e2e-62-74",
+              1
+            ],
+            [
+              "push-e2e-62-241",
+              1
+            ],
+            [
+              "push-e2e-62-150",
+              1
+            ],
+            [
+              "push-e2e-62-285",
+              1
+            ],
+            [
+              "push-e2e-62-213",
+              1
+            ],
+            [
+              "push-e2e-62-117",
+              2
+            ],
+            [
+              "push-e2e-62-116",
+              1
+            ],
+            [
+              "push-e2e-62-32",
+              2
+            ],
+            [
+              "push-e2e-62-245",
+              1
+            ],
+            [
+              "push-e2e-62-267",
+              1
+            ],
+            [
+              "push-e2e-62-205",
+              3
+            ],
+            [
+              "push-e2e-62-279",
+              1
+            ],
+            [
+              "push-e2e-62-127",
+              3
+            ],
+            [
+              "push-e2e-62-200",
+              2
+            ],
+            [
+              "push-e2e-62-248",
+              1
+            ],
+            [
+              "push-e2e-62-4",
+              0
+            ],
+            [
+              "push-e2e-62-76",
+              1
+            ],
+            [
+              "push-e2e-62-129",
+              1
+            ],
+            [
+              "push-e2e-62-237",
+              1
+            ]
+          ]
+        },
+        "invalid_index_count": 0,
+        "ineligible_selected_count": 0,
+        "minimum_interval_violation_count": 0
+      }
+    },
+    {
+      "seed": 62,
+      "solver": "coordinate",
+      "objective_net_value": 12.971999688011667,
+      "selected_count": 29,
+      "feasible": true,
+      "stopping_reason": "coordinate_tolerance",
+      "converged": null,
+      "runtime_seconds": 0.0037396669999996135,
+      "constraint_diagnostics": {
+        "feasible": true,
+        "max_constraint_violation": 0.0,
+        "violations": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "usage": {
+          "cost": 29.0,
+          "slot": {
+            "2": 4,
+            "1": 20,
+            "3": 4,
+            "0": 1
+          },
+          "user": {
+            "push-e2e-62-200": 1,
+            "push-e2e-62-285": 1,
+            "push-e2e-62-241": 1,
+            "push-e2e-62-20": 1,
+            "push-e2e-62-129": 1,
+            "push-e2e-62-243": 1,
+            "push-e2e-62-117": 1,
+            "push-e2e-62-279": 1,
+            "push-e2e-62-135": 1,
+            "push-e2e-62-267": 1,
+            "push-e2e-62-77": 1,
+            "push-e2e-62-195": 1,
+            "push-e2e-62-74": 1,
+            "push-e2e-62-32": 1,
+            "push-e2e-62-298": 1,
+            "push-e2e-62-122": 1,
+            "push-e2e-62-205": 1,
+            "push-e2e-62-4": 1,
+            "push-e2e-62-127": 1,
+            "push-e2e-62-289": 1,
+            "push-e2e-62-237": 1,
+            "push-e2e-62-248": 1,
+            "push-e2e-62-76": 1,
+            "push-e2e-62-150": 1,
+            "push-e2e-62-85": 1,
+            "push-e2e-62-116": 1,
+            "push-e2e-62-245": 1,
+            "push-e2e-62-14": 1,
+            "push-e2e-62-213": 1
+          },
+          "action": {
+            "push": 29
+          },
+          "decision_key": [
+            [
+              "push-e2e-62-195",
+              2
+            ],
+            [
+              "push-e2e-62-122",
+              3
+            ],
+            [
+              "push-e2e-62-85",
+              1
+            ],
+            [
+              "push-e2e-62-289",
+              1
+            ],
+            [
+              "push-e2e-62-135",
+              1
+            ],
+            [
+              "push-e2e-62-20",
+              3
+            ],
+            [
+              "push-e2e-62-77",
+              1
+            ],
+            [
+              "push-e2e-62-298",
+              1
+            ],
+            [
+              "push-e2e-62-14",
+              1
+            ],
+            [
+              "push-e2e-62-243",
+              1
+            ],
+            [
+              "push-e2e-62-74",
+              1
+            ],
+            [
+              "push-e2e-62-241",
+              1
+            ],
+            [
+              "push-e2e-62-150",
+              1
+            ],
+            [
+              "push-e2e-62-285",
+              1
+            ],
+            [
+              "push-e2e-62-213",
+              1
+            ],
+            [
+              "push-e2e-62-117",
+              2
+            ],
+            [
+              "push-e2e-62-116",
+              1
+            ],
+            [
+              "push-e2e-62-32",
+              2
+            ],
+            [
+              "push-e2e-62-245",
+              1
+            ],
+            [
+              "push-e2e-62-267",
+              1
+            ],
+            [
+              "push-e2e-62-205",
+              3
+            ],
+            [
+              "push-e2e-62-279",
+              1
+            ],
+            [
+              "push-e2e-62-127",
+              3
+            ],
+            [
+              "push-e2e-62-200",
+              2
+            ],
+            [
+              "push-e2e-62-248",
+              1
+            ],
+            [
+              "push-e2e-62-4",
+              0
+            ],
+            [
+              "push-e2e-62-76",
+              1
+            ],
+            [
+              "push-e2e-62-129",
+              1
+            ],
+            [
+              "push-e2e-62-237",
+              1
+            ]
+          ]
+        },
+        "invalid_index_count": 0,
+        "ineligible_selected_count": 0,
+        "minimum_interval_violation_count": 0
+      }
+    },
+    {
+      "seed": 72,
+      "solver": "greedy",
+      "objective_net_value": 19.632922236479605,
+      "selected_count": 28,
+      "feasible": true,
+      "stopping_reason": "sorted_net_value",
+      "converged": null,
+      "runtime_seconds": 0.0002085419999993121,
+      "constraint_diagnostics": {
+        "feasible": true,
+        "max_constraint_violation": 0.0,
+        "violations": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "usage": {
+          "cost": 28.0,
+          "slot": {
+            "0": 7,
+            "3": 3,
+            "1": 10,
+            "2": 8
+          },
+          "user": {
+            "push-e2e-72-117": 1,
+            "push-e2e-72-184": 1,
+            "push-e2e-72-289": 1,
+            "push-e2e-72-221": 1,
+            "push-e2e-72-284": 1,
+            "push-e2e-72-291": 1,
+            "push-e2e-72-60": 1,
+            "push-e2e-72-123": 1,
+            "push-e2e-72-214": 1,
+            "push-e2e-72-85": 1,
+            "push-e2e-72-158": 1,
+            "push-e2e-72-77": 1,
+            "push-e2e-72-195": 1,
+            "push-e2e-72-104": 1,
+            "push-e2e-72-143": 1,
+            "push-e2e-72-157": 1,
+            "push-e2e-72-140": 1,
+            "push-e2e-72-19": 1,
+            "push-e2e-72-135": 1,
+            "push-e2e-72-13": 1,
+            "push-e2e-72-33": 1,
+            "push-e2e-72-297": 1,
+            "push-e2e-72-241": 1,
+            "push-e2e-72-273": 1,
+            "push-e2e-72-39": 1,
+            "push-e2e-72-76": 1,
+            "push-e2e-72-58": 1,
+            "push-e2e-72-182": 1
+          },
+          "action": {
+            "push": 28
+          },
+          "decision_key": [
+            [
+              "push-e2e-72-39",
+              2
+            ],
+            [
+              "push-e2e-72-143",
+              2
+            ],
+            [
+              "push-e2e-72-273",
+              0
+            ],
+            [
+              "push-e2e-72-85",
+              0
+            ],
+            [
+              "push-e2e-72-291",
+              1
+            ],
+            [
+              "push-e2e-72-184",
+              3
+            ],
+            [
+              "push-e2e-72-289",
+              3
+            ],
+            [
+              "push-e2e-72-214",
+              2
+            ],
+            [
+              "push-e2e-72-241",
+              2
+            ],
+            [
+              "push-e2e-72-297",
+              2
+            ],
+            [
+              "push-e2e-72-182",
+              0
+            ],
+            [
+              "push-e2e-72-135",
+              0
+            ],
+            [
+              "push-e2e-72-104",
+              1
+            ],
+            [
+              "push-e2e-72-76",
+              1
+            ],
+            [
+              "push-e2e-72-157",
+              2
+            ],
+            [
+              "push-e2e-72-13",
+              1
+            ],
+            [
+              "push-e2e-72-19",
+              0
+            ],
+            [
+              "push-e2e-72-123",
+              0
+            ],
+            [
+              "push-e2e-72-117",
+              0
+            ],
+            [
+              "push-e2e-72-58",
+              1
+            ],
+            [
+              "push-e2e-72-60",
+              1
+            ],
+            [
+              "push-e2e-72-284",
+              1
+            ],
+            [
+              "push-e2e-72-158",
+              2
+            ],
+            [
+              "push-e2e-72-140",
+              1
+            ],
+            [
+              "push-e2e-72-221",
+              3
+            ],
+            [
+              "push-e2e-72-33",
+              1
+            ],
+            [
+              "push-e2e-72-77",
+              2
+            ],
+            [
+              "push-e2e-72-195",
+              1
+            ]
+          ]
+        },
+        "invalid_index_count": 0,
+        "ineligible_selected_count": 0,
+        "minimum_interval_violation_count": 0
+      }
+    },
+    {
+      "seed": 72,
+      "solver": "heap",
+      "objective_net_value": 19.632922236479605,
+      "selected_count": 28,
+      "feasible": true,
+      "stopping_reason": "heap_exhausted_static_net_order",
+      "converged": null,
+      "runtime_seconds": 0.0002584169999995112,
+      "constraint_diagnostics": {
+        "feasible": true,
+        "max_constraint_violation": 0.0,
+        "violations": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "usage": {
+          "cost": 28.0,
+          "slot": {
+            "0": 7,
+            "3": 3,
+            "1": 10,
+            "2": 8
+          },
+          "user": {
+            "push-e2e-72-117": 1,
+            "push-e2e-72-184": 1,
+            "push-e2e-72-289": 1,
+            "push-e2e-72-221": 1,
+            "push-e2e-72-284": 1,
+            "push-e2e-72-291": 1,
+            "push-e2e-72-60": 1,
+            "push-e2e-72-123": 1,
+            "push-e2e-72-214": 1,
+            "push-e2e-72-85": 1,
+            "push-e2e-72-158": 1,
+            "push-e2e-72-77": 1,
+            "push-e2e-72-195": 1,
+            "push-e2e-72-104": 1,
+            "push-e2e-72-143": 1,
+            "push-e2e-72-157": 1,
+            "push-e2e-72-140": 1,
+            "push-e2e-72-19": 1,
+            "push-e2e-72-135": 1,
+            "push-e2e-72-13": 1,
+            "push-e2e-72-33": 1,
+            "push-e2e-72-297": 1,
+            "push-e2e-72-241": 1,
+            "push-e2e-72-273": 1,
+            "push-e2e-72-39": 1,
+            "push-e2e-72-76": 1,
+            "push-e2e-72-58": 1,
+            "push-e2e-72-182": 1
+          },
+          "action": {
+            "push": 28
+          },
+          "decision_key": [
+            [
+              "push-e2e-72-39",
+              2
+            ],
+            [
+              "push-e2e-72-143",
+              2
+            ],
+            [
+              "push-e2e-72-273",
+              0
+            ],
+            [
+              "push-e2e-72-85",
+              0
+            ],
+            [
+              "push-e2e-72-291",
+              1
+            ],
+            [
+              "push-e2e-72-184",
+              3
+            ],
+            [
+              "push-e2e-72-289",
+              3
+            ],
+            [
+              "push-e2e-72-214",
+              2
+            ],
+            [
+              "push-e2e-72-241",
+              2
+            ],
+            [
+              "push-e2e-72-297",
+              2
+            ],
+            [
+              "push-e2e-72-182",
+              0
+            ],
+            [
+              "push-e2e-72-135",
+              0
+            ],
+            [
+              "push-e2e-72-104",
+              1
+            ],
+            [
+              "push-e2e-72-76",
+              1
+            ],
+            [
+              "push-e2e-72-157",
+              2
+            ],
+            [
+              "push-e2e-72-13",
+              1
+            ],
+            [
+              "push-e2e-72-19",
+              0
+            ],
+            [
+              "push-e2e-72-123",
+              0
+            ],
+            [
+              "push-e2e-72-117",
+              0
+            ],
+            [
+              "push-e2e-72-58",
+              1
+            ],
+            [
+              "push-e2e-72-60",
+              1
+            ],
+            [
+              "push-e2e-72-284",
+              1
+            ],
+            [
+              "push-e2e-72-158",
+              2
+            ],
+            [
+              "push-e2e-72-140",
+              1
+            ],
+            [
+              "push-e2e-72-221",
+              3
+            ],
+            [
+              "push-e2e-72-33",
+              1
+            ],
+            [
+              "push-e2e-72-77",
+              2
+            ],
+            [
+              "push-e2e-72-195",
+              1
+            ]
+          ]
+        },
+        "invalid_index_count": 0,
+        "ineligible_selected_count": 0,
+        "minimum_interval_violation_count": 0
+      }
+    },
+    {
+      "seed": 72,
+      "solver": "primal_dual",
+      "objective_net_value": 19.632922236479605,
+      "selected_count": 28,
+      "feasible": true,
+      "stopping_reason": "primal_dual_tolerance",
+      "converged": null,
+      "runtime_seconds": 0.0007787500000002723,
+      "constraint_diagnostics": {
+        "feasible": true,
+        "max_constraint_violation": 0.0,
+        "violations": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "usage": {
+          "cost": 28.0,
+          "slot": {
+            "0": 7,
+            "3": 3,
+            "1": 10,
+            "2": 8
+          },
+          "user": {
+            "push-e2e-72-117": 1,
+            "push-e2e-72-184": 1,
+            "push-e2e-72-289": 1,
+            "push-e2e-72-221": 1,
+            "push-e2e-72-284": 1,
+            "push-e2e-72-291": 1,
+            "push-e2e-72-60": 1,
+            "push-e2e-72-123": 1,
+            "push-e2e-72-214": 1,
+            "push-e2e-72-85": 1,
+            "push-e2e-72-158": 1,
+            "push-e2e-72-77": 1,
+            "push-e2e-72-195": 1,
+            "push-e2e-72-104": 1,
+            "push-e2e-72-143": 1,
+            "push-e2e-72-157": 1,
+            "push-e2e-72-140": 1,
+            "push-e2e-72-19": 1,
+            "push-e2e-72-135": 1,
+            "push-e2e-72-13": 1,
+            "push-e2e-72-33": 1,
+            "push-e2e-72-297": 1,
+            "push-e2e-72-241": 1,
+            "push-e2e-72-273": 1,
+            "push-e2e-72-39": 1,
+            "push-e2e-72-76": 1,
+            "push-e2e-72-58": 1,
+            "push-e2e-72-182": 1
+          },
+          "action": {
+            "push": 28
+          },
+          "decision_key": [
+            [
+              "push-e2e-72-39",
+              2
+            ],
+            [
+              "push-e2e-72-143",
+              2
+            ],
+            [
+              "push-e2e-72-273",
+              0
+            ],
+            [
+              "push-e2e-72-85",
+              0
+            ],
+            [
+              "push-e2e-72-291",
+              1
+            ],
+            [
+              "push-e2e-72-184",
+              3
+            ],
+            [
+              "push-e2e-72-289",
+              3
+            ],
+            [
+              "push-e2e-72-214",
+              2
+            ],
+            [
+              "push-e2e-72-241",
+              2
+            ],
+            [
+              "push-e2e-72-297",
+              2
+            ],
+            [
+              "push-e2e-72-182",
+              0
+            ],
+            [
+              "push-e2e-72-135",
+              0
+            ],
+            [
+              "push-e2e-72-104",
+              1
+            ],
+            [
+              "push-e2e-72-76",
+              1
+            ],
+            [
+              "push-e2e-72-157",
+              2
+            ],
+            [
+              "push-e2e-72-13",
+              1
+            ],
+            [
+              "push-e2e-72-19",
+              0
+            ],
+            [
+              "push-e2e-72-123",
+              0
+            ],
+            [
+              "push-e2e-72-117",
+              0
+            ],
+            [
+              "push-e2e-72-58",
+              1
+            ],
+            [
+              "push-e2e-72-60",
+              1
+            ],
+            [
+              "push-e2e-72-284",
+              1
+            ],
+            [
+              "push-e2e-72-158",
+              2
+            ],
+            [
+              "push-e2e-72-140",
+              1
+            ],
+            [
+              "push-e2e-72-221",
+              3
+            ],
+            [
+              "push-e2e-72-33",
+              1
+            ],
+            [
+              "push-e2e-72-77",
+              2
+            ],
+            [
+              "push-e2e-72-195",
+              1
+            ]
+          ]
+        },
+        "invalid_index_count": 0,
+        "ineligible_selected_count": 0,
+        "minimum_interval_violation_count": 0
+      }
+    },
+    {
+      "seed": 72,
+      "solver": "line_search",
+      "objective_net_value": 19.632922236479605,
+      "selected_count": 28,
+      "feasible": true,
+      "stopping_reason": "line_search_tolerance",
+      "converged": null,
+      "runtime_seconds": 0.0015219999999995792,
+      "constraint_diagnostics": {
+        "feasible": true,
+        "max_constraint_violation": 0.0,
+        "violations": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "usage": {
+          "cost": 28.0,
+          "slot": {
+            "0": 7,
+            "3": 3,
+            "1": 10,
+            "2": 8
+          },
+          "user": {
+            "push-e2e-72-117": 1,
+            "push-e2e-72-184": 1,
+            "push-e2e-72-289": 1,
+            "push-e2e-72-221": 1,
+            "push-e2e-72-284": 1,
+            "push-e2e-72-291": 1,
+            "push-e2e-72-60": 1,
+            "push-e2e-72-123": 1,
+            "push-e2e-72-214": 1,
+            "push-e2e-72-85": 1,
+            "push-e2e-72-158": 1,
+            "push-e2e-72-77": 1,
+            "push-e2e-72-195": 1,
+            "push-e2e-72-104": 1,
+            "push-e2e-72-143": 1,
+            "push-e2e-72-157": 1,
+            "push-e2e-72-140": 1,
+            "push-e2e-72-19": 1,
+            "push-e2e-72-135": 1,
+            "push-e2e-72-13": 1,
+            "push-e2e-72-33": 1,
+            "push-e2e-72-297": 1,
+            "push-e2e-72-241": 1,
+            "push-e2e-72-273": 1,
+            "push-e2e-72-39": 1,
+            "push-e2e-72-76": 1,
+            "push-e2e-72-58": 1,
+            "push-e2e-72-182": 1
+          },
+          "action": {
+            "push": 28
+          },
+          "decision_key": [
+            [
+              "push-e2e-72-39",
+              2
+            ],
+            [
+              "push-e2e-72-143",
+              2
+            ],
+            [
+              "push-e2e-72-273",
+              0
+            ],
+            [
+              "push-e2e-72-85",
+              0
+            ],
+            [
+              "push-e2e-72-291",
+              1
+            ],
+            [
+              "push-e2e-72-184",
+              3
+            ],
+            [
+              "push-e2e-72-289",
+              3
+            ],
+            [
+              "push-e2e-72-214",
+              2
+            ],
+            [
+              "push-e2e-72-241",
+              2
+            ],
+            [
+              "push-e2e-72-297",
+              2
+            ],
+            [
+              "push-e2e-72-182",
+              0
+            ],
+            [
+              "push-e2e-72-135",
+              0
+            ],
+            [
+              "push-e2e-72-104",
+              1
+            ],
+            [
+              "push-e2e-72-76",
+              1
+            ],
+            [
+              "push-e2e-72-157",
+              2
+            ],
+            [
+              "push-e2e-72-13",
+              1
+            ],
+            [
+              "push-e2e-72-19",
+              0
+            ],
+            [
+              "push-e2e-72-123",
+              0
+            ],
+            [
+              "push-e2e-72-117",
+              0
+            ],
+            [
+              "push-e2e-72-58",
+              1
+            ],
+            [
+              "push-e2e-72-60",
+              1
+            ],
+            [
+              "push-e2e-72-284",
+              1
+            ],
+            [
+              "push-e2e-72-158",
+              2
+            ],
+            [
+              "push-e2e-72-140",
+              1
+            ],
+            [
+              "push-e2e-72-221",
+              3
+            ],
+            [
+              "push-e2e-72-33",
+              1
+            ],
+            [
+              "push-e2e-72-77",
+              2
+            ],
+            [
+              "push-e2e-72-195",
+              1
+            ]
+          ]
+        },
+        "invalid_index_count": 0,
+        "ineligible_selected_count": 0,
+        "minimum_interval_violation_count": 0
+      }
+    },
+    {
+      "seed": 72,
+      "solver": "coordinate",
+      "objective_net_value": 19.632922236479605,
+      "selected_count": 28,
+      "feasible": true,
+      "stopping_reason": "coordinate_tolerance",
+      "converged": null,
+      "runtime_seconds": 0.003716457999999534,
+      "constraint_diagnostics": {
+        "feasible": true,
+        "max_constraint_violation": 0.0,
+        "violations": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "usage": {
+          "cost": 28.0,
+          "slot": {
+            "0": 7,
+            "3": 3,
+            "1": 10,
+            "2": 8
+          },
+          "user": {
+            "push-e2e-72-117": 1,
+            "push-e2e-72-184": 1,
+            "push-e2e-72-289": 1,
+            "push-e2e-72-221": 1,
+            "push-e2e-72-284": 1,
+            "push-e2e-72-291": 1,
+            "push-e2e-72-60": 1,
+            "push-e2e-72-123": 1,
+            "push-e2e-72-214": 1,
+            "push-e2e-72-85": 1,
+            "push-e2e-72-158": 1,
+            "push-e2e-72-77": 1,
+            "push-e2e-72-195": 1,
+            "push-e2e-72-104": 1,
+            "push-e2e-72-143": 1,
+            "push-e2e-72-157": 1,
+            "push-e2e-72-140": 1,
+            "push-e2e-72-19": 1,
+            "push-e2e-72-135": 1,
+            "push-e2e-72-13": 1,
+            "push-e2e-72-33": 1,
+            "push-e2e-72-297": 1,
+            "push-e2e-72-241": 1,
+            "push-e2e-72-273": 1,
+            "push-e2e-72-39": 1,
+            "push-e2e-72-76": 1,
+            "push-e2e-72-58": 1,
+            "push-e2e-72-182": 1
+          },
+          "action": {
+            "push": 28
+          },
+          "decision_key": [
+            [
+              "push-e2e-72-39",
+              2
+            ],
+            [
+              "push-e2e-72-143",
+              2
+            ],
+            [
+              "push-e2e-72-273",
+              0
+            ],
+            [
+              "push-e2e-72-85",
+              0
+            ],
+            [
+              "push-e2e-72-291",
+              1
+            ],
+            [
+              "push-e2e-72-184",
+              3
+            ],
+            [
+              "push-e2e-72-289",
+              3
+            ],
+            [
+              "push-e2e-72-214",
+              2
+            ],
+            [
+              "push-e2e-72-241",
+              2
+            ],
+            [
+              "push-e2e-72-297",
+              2
+            ],
+            [
+              "push-e2e-72-182",
+              0
+            ],
+            [
+              "push-e2e-72-135",
+              0
+            ],
+            [
+              "push-e2e-72-104",
+              1
+            ],
+            [
+              "push-e2e-72-76",
+              1
+            ],
+            [
+              "push-e2e-72-157",
+              2
+            ],
+            [
+              "push-e2e-72-13",
+              1
+            ],
+            [
+              "push-e2e-72-19",
+              0
+            ],
+            [
+              "push-e2e-72-123",
+              0
+            ],
+            [
+              "push-e2e-72-117",
+              0
+            ],
+            [
+              "push-e2e-72-58",
+              1
+            ],
+            [
+              "push-e2e-72-60",
+              1
+            ],
+            [
+              "push-e2e-72-284",
+              1
+            ],
+            [
+              "push-e2e-72-158",
+              2
+            ],
+            [
+              "push-e2e-72-140",
+              1
+            ],
+            [
+              "push-e2e-72-221",
+              3
+            ],
+            [
+              "push-e2e-72-33",
+              1
+            ],
+            [
+              "push-e2e-72-77",
+              2
+            ],
+            [
+              "push-e2e-72-195",
+              1
+            ]
+          ]
+        },
+        "invalid_index_count": 0,
+        "ineligible_selected_count": 0,
+        "minimum_interval_violation_count": 0
+      }
+    },
+    {
+      "seed": 82,
+      "solver": "greedy",
+      "objective_net_value": 22.20420553906106,
+      "selected_count": 31,
+      "feasible": true,
+      "stopping_reason": "sorted_net_value",
+      "converged": null,
+      "runtime_seconds": 0.00023975000000042712,
+      "constraint_diagnostics": {
+        "feasible": true,
+        "max_constraint_violation": 0.0,
+        "violations": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "usage": {
+          "cost": 31.0,
+          "slot": {
+            "1": 25,
+            "2": 4,
+            "3": 2
+          },
+          "user": {
+            "push-e2e-82-146": 1,
+            "push-e2e-82-158": 1,
+            "push-e2e-82-44": 1,
+            "push-e2e-82-211": 1,
+            "push-e2e-82-215": 1,
+            "push-e2e-82-88": 1,
+            "push-e2e-82-39": 1,
+            "push-e2e-82-254": 1,
+            "push-e2e-82-214": 1,
+            "push-e2e-82-13": 1,
+            "push-e2e-82-190": 1,
+            "push-e2e-82-110": 1,
+            "push-e2e-82-126": 1,
+            "push-e2e-82-33": 1,
+            "push-e2e-82-290": 1,
+            "push-e2e-82-259": 1,
+            "push-e2e-82-175": 1,
+            "push-e2e-82-257": 1,
+            "push-e2e-82-78": 1,
+            "push-e2e-82-25": 1,
+            "push-e2e-82-149": 1,
+            "push-e2e-82-48": 1,
+            "push-e2e-82-187": 1,
+            "push-e2e-82-154": 1,
+            "push-e2e-82-180": 1,
+            "push-e2e-82-227": 1,
+            "push-e2e-82-273": 1,
+            "push-e2e-82-269": 1,
+            "push-e2e-82-163": 1,
+            "push-e2e-82-87": 1,
+            "push-e2e-82-51": 1
+          },
+          "action": {
+            "push": 31
+          },
+          "decision_key": [
+            [
+              "push-e2e-82-110",
+              2
+            ],
+            [
+              "push-e2e-82-273",
+              2
+            ],
+            [
+              "push-e2e-82-269",
+              1
+            ],
+            [
+              "push-e2e-82-158",
+              1
+            ],
+            [
+              "push-e2e-82-126",
+              1
+            ],
+            [
+              "push-e2e-82-78",
+              1
+            ],
+            [
+              "push-e2e-82-25",
+              1
+            ],
+            [
+              "push-e2e-82-180",
+              1
+            ],
+            [
+              "push-e2e-82-257",
+              2
+            ],
+            [
+              "push-e2e-82-33",
+              1
+            ],
+            [
+              "push-e2e-82-259",
+              1
+            ],
+            [
+              "push-e2e-82-51",
+              3
+            ],
+            [
+              "push-e2e-82-214",
+              1
+            ],
+            [
+              "push-e2e-82-175",
+              1
+            ],
+            [
+              "push-e2e-82-87",
+              3
+            ],
+            [
+              "push-e2e-82-187",
+              1
+            ],
+            [
+              "push-e2e-82-215",
+              1
+            ],
+            [
+              "push-e2e-82-44",
+              1
+            ],
+            [
+              "push-e2e-82-39",
+              1
+            ],
+            [
+              "push-e2e-82-227",
+              1
+            ],
+            [
+              "push-e2e-82-149",
+              2
+            ],
+            [
+              "push-e2e-82-211",
+              1
+            ],
+            [
+              "push-e2e-82-154",
+              1
+            ],
+            [
+              "push-e2e-82-88",
+              1
+            ],
+            [
+              "push-e2e-82-48",
+              1
+            ],
+            [
+              "push-e2e-82-146",
+              1
+            ],
+            [
+              "push-e2e-82-190",
+              1
+            ],
+            [
+              "push-e2e-82-13",
+              1
+            ],
+            [
+              "push-e2e-82-254",
+              1
+            ],
+            [
+              "push-e2e-82-290",
+              1
+            ],
+            [
+              "push-e2e-82-163",
+              1
+            ]
+          ]
+        },
+        "invalid_index_count": 0,
+        "ineligible_selected_count": 0,
+        "minimum_interval_violation_count": 0
+      }
+    },
+    {
+      "seed": 82,
+      "solver": "heap",
+      "objective_net_value": 22.20420553906106,
+      "selected_count": 31,
+      "feasible": true,
+      "stopping_reason": "heap_exhausted_static_net_order",
+      "converged": null,
+      "runtime_seconds": 0.00027975000000068917,
+      "constraint_diagnostics": {
+        "feasible": true,
+        "max_constraint_violation": 0.0,
+        "violations": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "usage": {
+          "cost": 31.0,
+          "slot": {
+            "1": 25,
+            "2": 4,
+            "3": 2
+          },
+          "user": {
+            "push-e2e-82-146": 1,
+            "push-e2e-82-158": 1,
+            "push-e2e-82-44": 1,
+            "push-e2e-82-211": 1,
+            "push-e2e-82-215": 1,
+            "push-e2e-82-88": 1,
+            "push-e2e-82-39": 1,
+            "push-e2e-82-254": 1,
+            "push-e2e-82-214": 1,
+            "push-e2e-82-13": 1,
+            "push-e2e-82-190": 1,
+            "push-e2e-82-110": 1,
+            "push-e2e-82-126": 1,
+            "push-e2e-82-33": 1,
+            "push-e2e-82-290": 1,
+            "push-e2e-82-259": 1,
+            "push-e2e-82-175": 1,
+            "push-e2e-82-257": 1,
+            "push-e2e-82-78": 1,
+            "push-e2e-82-25": 1,
+            "push-e2e-82-149": 1,
+            "push-e2e-82-48": 1,
+            "push-e2e-82-187": 1,
+            "push-e2e-82-154": 1,
+            "push-e2e-82-180": 1,
+            "push-e2e-82-227": 1,
+            "push-e2e-82-273": 1,
+            "push-e2e-82-269": 1,
+            "push-e2e-82-163": 1,
+            "push-e2e-82-87": 1,
+            "push-e2e-82-51": 1
+          },
+          "action": {
+            "push": 31
+          },
+          "decision_key": [
+            [
+              "push-e2e-82-110",
+              2
+            ],
+            [
+              "push-e2e-82-273",
+              2
+            ],
+            [
+              "push-e2e-82-269",
+              1
+            ],
+            [
+              "push-e2e-82-158",
+              1
+            ],
+            [
+              "push-e2e-82-126",
+              1
+            ],
+            [
+              "push-e2e-82-78",
+              1
+            ],
+            [
+              "push-e2e-82-25",
+              1
+            ],
+            [
+              "push-e2e-82-180",
+              1
+            ],
+            [
+              "push-e2e-82-257",
+              2
+            ],
+            [
+              "push-e2e-82-33",
+              1
+            ],
+            [
+              "push-e2e-82-259",
+              1
+            ],
+            [
+              "push-e2e-82-51",
+              3
+            ],
+            [
+              "push-e2e-82-214",
+              1
+            ],
+            [
+              "push-e2e-82-175",
+              1
+            ],
+            [
+              "push-e2e-82-87",
+              3
+            ],
+            [
+              "push-e2e-82-187",
+              1
+            ],
+            [
+              "push-e2e-82-215",
+              1
+            ],
+            [
+              "push-e2e-82-44",
+              1
+            ],
+            [
+              "push-e2e-82-39",
+              1
+            ],
+            [
+              "push-e2e-82-227",
+              1
+            ],
+            [
+              "push-e2e-82-149",
+              2
+            ],
+            [
+              "push-e2e-82-211",
+              1
+            ],
+            [
+              "push-e2e-82-154",
+              1
+            ],
+            [
+              "push-e2e-82-88",
+              1
+            ],
+            [
+              "push-e2e-82-48",
+              1
+            ],
+            [
+              "push-e2e-82-146",
+              1
+            ],
+            [
+              "push-e2e-82-190",
+              1
+            ],
+            [
+              "push-e2e-82-13",
+              1
+            ],
+            [
+              "push-e2e-82-254",
+              1
+            ],
+            [
+              "push-e2e-82-290",
+              1
+            ],
+            [
+              "push-e2e-82-163",
+              1
+            ]
+          ]
+        },
+        "invalid_index_count": 0,
+        "ineligible_selected_count": 0,
+        "minimum_interval_violation_count": 0
+      }
+    },
+    {
+      "seed": 82,
+      "solver": "primal_dual",
+      "objective_net_value": 22.81071139650015,
+      "selected_count": 34,
+      "feasible": true,
+      "stopping_reason": "primal_dual_tolerance",
+      "converged": null,
+      "runtime_seconds": 0.0020258749999992887,
+      "constraint_diagnostics": {
+        "feasible": true,
+        "max_constraint_violation": 0.0,
+        "violations": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "usage": {
+          "cost": 34.0,
+          "slot": {
+            "1": 25,
+            "3": 3,
+            "2": 5,
+            "0": 1
+          },
+          "user": {
+            "push-e2e-82-146": 1,
+            "push-e2e-82-158": 1,
+            "push-e2e-82-44": 1,
+            "push-e2e-82-215": 1,
+            "push-e2e-82-211": 1,
+            "push-e2e-82-88": 1,
+            "push-e2e-82-39": 1,
+            "push-e2e-82-110": 1,
+            "push-e2e-82-254": 1,
+            "push-e2e-82-214": 1,
+            "push-e2e-82-13": 1,
+            "push-e2e-82-126": 1,
+            "push-e2e-82-257": 1,
+            "push-e2e-82-190": 1,
+            "push-e2e-82-149": 1,
+            "push-e2e-82-33": 1,
+            "push-e2e-82-48": 1,
+            "push-e2e-82-290": 1,
+            "push-e2e-82-259": 1,
+            "push-e2e-82-175": 1,
+            "push-e2e-82-273": 1,
+            "push-e2e-82-78": 1,
+            "push-e2e-82-25": 1,
+            "push-e2e-82-187": 1,
+            "push-e2e-82-154": 1,
+            "push-e2e-82-87": 1,
+            "push-e2e-82-180": 1,
+            "push-e2e-82-227": 1,
+            "push-e2e-82-269": 1,
+            "push-e2e-82-51": 1,
+            "push-e2e-82-163": 1,
+            "push-e2e-82-201": 1,
+            "push-e2e-82-35": 1,
+            "push-e2e-82-29": 1
+          },
+          "action": {
+            "push": 34
+          },
+          "decision_key": [
+            [
+              "push-e2e-82-110",
+              2
+            ],
+            [
+              "push-e2e-82-273",
+              2
+            ],
+            [
+              "push-e2e-82-269",
+              1
+            ],
+            [
+              "push-e2e-82-158",
+              1
+            ],
+            [
+              "push-e2e-82-35",
+              1
+            ],
+            [
+              "push-e2e-82-48",
+              0
+            ],
+            [
+              "push-e2e-82-78",
+              1
+            ],
+            [
+              "push-e2e-82-25",
+              1
+            ],
+            [
+              "push-e2e-82-29",
+              1
+            ],
+            [
+              "push-e2e-82-180",
+              1
+            ],
+            [
+              "push-e2e-82-257",
+              2
+            ],
+            [
+              "push-e2e-82-33",
+              1
+            ],
+            [
+              "push-e2e-82-259",
+              1
+            ],
+            [
+              "push-e2e-82-51",
+              3
+            ],
+            [
+              "push-e2e-82-214",
+              1
+            ],
+            [
+              "push-e2e-82-175",
+              1
+            ],
+            [
+              "push-e2e-82-87",
+              3
+            ],
+            [
+              "push-e2e-82-187",
+              1
+            ],
+            [
+              "push-e2e-82-44",
+              1
+            ],
+            [
+              "push-e2e-82-39",
+              1
+            ],
+            [
+              "push-e2e-82-201",
+              1
+            ],
+            [
+              "push-e2e-82-227",
+              1
+            ],
+            [
+              "push-e2e-82-149",
+              2
+            ],
+            [
+              "push-e2e-82-211",
+              1
+            ],
+            [
+              "push-e2e-82-154",
+              1
+            ],
+            [
+              "push-e2e-82-215",
+              3
+            ],
+            [
+              "push-e2e-82-88",
+              1
+            ],
+            [
+              "push-e2e-82-146",
+              1
+            ],
+            [
+              "push-e2e-82-126",
+              2
+            ],
+            [
+              "push-e2e-82-190",
+              1
+            ],
+            [
+              "push-e2e-82-13",
+              1
+            ],
+            [
+              "push-e2e-82-254",
+              1
+            ],
+            [
+              "push-e2e-82-290",
+              1
+            ],
+            [
+              "push-e2e-82-163",
+              1
+            ]
+          ]
+        },
+        "invalid_index_count": 0,
+        "ineligible_selected_count": 0,
+        "minimum_interval_violation_count": 0
+      }
+    },
+    {
+      "seed": 82,
+      "solver": "line_search",
+      "objective_net_value": 22.81071139650015,
+      "selected_count": 34,
+      "feasible": true,
+      "stopping_reason": "line_search_tolerance",
+      "converged": null,
+      "runtime_seconds": 0.002763708999999892,
+      "constraint_diagnostics": {
+        "feasible": true,
+        "max_constraint_violation": 0.0,
+        "violations": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "usage": {
+          "cost": 34.0,
+          "slot": {
+            "1": 25,
+            "3": 3,
+            "2": 5,
+            "0": 1
+          },
+          "user": {
+            "push-e2e-82-146": 1,
+            "push-e2e-82-158": 1,
+            "push-e2e-82-44": 1,
+            "push-e2e-82-215": 1,
+            "push-e2e-82-211": 1,
+            "push-e2e-82-88": 1,
+            "push-e2e-82-39": 1,
+            "push-e2e-82-254": 1,
+            "push-e2e-82-110": 1,
+            "push-e2e-82-214": 1,
+            "push-e2e-82-13": 1,
+            "push-e2e-82-126": 1,
+            "push-e2e-82-190": 1,
+            "push-e2e-82-257": 1,
+            "push-e2e-82-149": 1,
+            "push-e2e-82-33": 1,
+            "push-e2e-82-48": 1,
+            "push-e2e-82-290": 1,
+            "push-e2e-82-259": 1,
+            "push-e2e-82-175": 1,
+            "push-e2e-82-78": 1,
+            "push-e2e-82-25": 1,
+            "push-e2e-82-273": 1,
+            "push-e2e-82-187": 1,
+            "push-e2e-82-154": 1,
+            "push-e2e-82-180": 1,
+            "push-e2e-82-87": 1,
+            "push-e2e-82-227": 1,
+            "push-e2e-82-269": 1,
+            "push-e2e-82-163": 1,
+            "push-e2e-82-51": 1,
+            "push-e2e-82-201": 1,
+            "push-e2e-82-35": 1,
+            "push-e2e-82-29": 1
+          },
+          "action": {
+            "push": 34
+          },
+          "decision_key": [
+            [
+              "push-e2e-82-110",
+              2
+            ],
+            [
+              "push-e2e-82-273",
+              2
+            ],
+            [
+              "push-e2e-82-269",
+              1
+            ],
+            [
+              "push-e2e-82-158",
+              1
+            ],
+            [
+              "push-e2e-82-35",
+              1
+            ],
+            [
+              "push-e2e-82-48",
+              0
+            ],
+            [
+              "push-e2e-82-78",
+              1
+            ],
+            [
+              "push-e2e-82-25",
+              1
+            ],
+            [
+              "push-e2e-82-29",
+              1
+            ],
+            [
+              "push-e2e-82-180",
+              1
+            ],
+            [
+              "push-e2e-82-257",
+              2
+            ],
+            [
+              "push-e2e-82-33",
+              1
+            ],
+            [
+              "push-e2e-82-259",
+              1
+            ],
+            [
+              "push-e2e-82-51",
+              3
+            ],
+            [
+              "push-e2e-82-214",
+              1
+            ],
+            [
+              "push-e2e-82-175",
+              1
+            ],
+            [
+              "push-e2e-82-87",
+              3
+            ],
+            [
+              "push-e2e-82-187",
+              1
+            ],
+            [
+              "push-e2e-82-44",
+              1
+            ],
+            [
+              "push-e2e-82-39",
+              1
+            ],
+            [
+              "push-e2e-82-201",
+              1
+            ],
+            [
+              "push-e2e-82-227",
+              1
+            ],
+            [
+              "push-e2e-82-149",
+              2
+            ],
+            [
+              "push-e2e-82-211",
+              1
+            ],
+            [
+              "push-e2e-82-154",
+              1
+            ],
+            [
+              "push-e2e-82-215",
+              3
+            ],
+            [
+              "push-e2e-82-88",
+              1
+            ],
+            [
+              "push-e2e-82-146",
+              1
+            ],
+            [
+              "push-e2e-82-126",
+              2
+            ],
+            [
+              "push-e2e-82-190",
+              1
+            ],
+            [
+              "push-e2e-82-13",
+              1
+            ],
+            [
+              "push-e2e-82-254",
+              1
+            ],
+            [
+              "push-e2e-82-290",
+              1
+            ],
+            [
+              "push-e2e-82-163",
+              1
+            ]
+          ]
+        },
+        "invalid_index_count": 0,
+        "ineligible_selected_count": 0,
+        "minimum_interval_violation_count": 0
+      }
+    },
+    {
+      "seed": 82,
+      "solver": "coordinate",
+      "objective_net_value": 22.81071139650015,
+      "selected_count": 34,
+      "feasible": true,
+      "stopping_reason": "coordinate_tolerance",
+      "converged": null,
+      "runtime_seconds": 0.004034624999999181,
+      "constraint_diagnostics": {
+        "feasible": true,
+        "max_constraint_violation": 0.0,
+        "violations": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "usage": {
+          "cost": 34.0,
+          "slot": {
+            "1": 25,
+            "3": 3,
+            "2": 5,
+            "0": 1
+          },
+          "user": {
+            "push-e2e-82-146": 1,
+            "push-e2e-82-158": 1,
+            "push-e2e-82-44": 1,
+            "push-e2e-82-215": 1,
+            "push-e2e-82-211": 1,
+            "push-e2e-82-88": 1,
+            "push-e2e-82-39": 1,
+            "push-e2e-82-254": 1,
+            "push-e2e-82-110": 1,
+            "push-e2e-82-214": 1,
+            "push-e2e-82-13": 1,
+            "push-e2e-82-126": 1,
+            "push-e2e-82-190": 1,
+            "push-e2e-82-257": 1,
+            "push-e2e-82-149": 1,
+            "push-e2e-82-33": 1,
+            "push-e2e-82-48": 1,
+            "push-e2e-82-290": 1,
+            "push-e2e-82-259": 1,
+            "push-e2e-82-175": 1,
+            "push-e2e-82-78": 1,
+            "push-e2e-82-25": 1,
+            "push-e2e-82-273": 1,
+            "push-e2e-82-187": 1,
+            "push-e2e-82-154": 1,
+            "push-e2e-82-180": 1,
+            "push-e2e-82-87": 1,
+            "push-e2e-82-227": 1,
+            "push-e2e-82-269": 1,
+            "push-e2e-82-163": 1,
+            "push-e2e-82-51": 1,
+            "push-e2e-82-201": 1,
+            "push-e2e-82-35": 1,
+            "push-e2e-82-29": 1
+          },
+          "action": {
+            "push": 34
+          },
+          "decision_key": [
+            [
+              "push-e2e-82-110",
+              2
+            ],
+            [
+              "push-e2e-82-273",
+              2
+            ],
+            [
+              "push-e2e-82-269",
+              1
+            ],
+            [
+              "push-e2e-82-158",
+              1
+            ],
+            [
+              "push-e2e-82-35",
+              1
+            ],
+            [
+              "push-e2e-82-48",
+              0
+            ],
+            [
+              "push-e2e-82-78",
+              1
+            ],
+            [
+              "push-e2e-82-25",
+              1
+            ],
+            [
+              "push-e2e-82-29",
+              1
+            ],
+            [
+              "push-e2e-82-180",
+              1
+            ],
+            [
+              "push-e2e-82-257",
+              2
+            ],
+            [
+              "push-e2e-82-33",
+              1
+            ],
+            [
+              "push-e2e-82-259",
+              1
+            ],
+            [
+              "push-e2e-82-51",
+              3
+            ],
+            [
+              "push-e2e-82-214",
+              1
+            ],
+            [
+              "push-e2e-82-175",
+              1
+            ],
+            [
+              "push-e2e-82-87",
+              3
+            ],
+            [
+              "push-e2e-82-187",
+              1
+            ],
+            [
+              "push-e2e-82-44",
+              1
+            ],
+            [
+              "push-e2e-82-39",
+              1
+            ],
+            [
+              "push-e2e-82-201",
+              1
+            ],
+            [
+              "push-e2e-82-227",
+              1
+            ],
+            [
+              "push-e2e-82-149",
+              2
+            ],
+            [
+              "push-e2e-82-211",
+              1
+            ],
+            [
+              "push-e2e-82-154",
+              1
+            ],
+            [
+              "push-e2e-82-215",
+              3
+            ],
+            [
+              "push-e2e-82-88",
+              1
+            ],
+            [
+              "push-e2e-82-146",
+              1
+            ],
+            [
+              "push-e2e-82-126",
+              2
+            ],
+            [
+              "push-e2e-82-190",
+              1
+            ],
+            [
+              "push-e2e-82-13",
+              1
+            ],
+            [
+              "push-e2e-82-254",
+              1
+            ],
+            [
+              "push-e2e-82-290",
+              1
+            ],
+            [
+              "push-e2e-82-163",
+              1
+            ]
+          ]
+        },
+        "invalid_index_count": 0,
+        "ineligible_selected_count": 0,
+        "minimum_interval_violation_count": 0
+      }
+    }
+  ],
+  "three_arm": {
+    "evidence_class": "SYNTHETIC_SCALE_STRESS",
+    "config": {
+      "sizes": [
+        300
+      ],
+      "seeds": [
+        42,
+        52,
+        62,
+        72,
+        82
+      ],
+      "models": [
+        "One-vs-Control",
+        "MultiTreatmentOutcome"
+      ],
+      "arms": [
+        0,
+        1,
+        2
+      ],
+      "eligibility_mask": true
+    },
+    "rows": [
+      {
+        "model": "One-vs-Control",
+        "size": 300,
+        "seed": 42,
+        "status": "PASS",
+        "runtime_seconds": 0.27317104199999953,
+        "peak_rss_mb": 171.9375,
+        "device": "cpu",
+        "arm_metrics": {
+          "1": {
+            "pehe": 0.09080124660653217,
+            "ate_bias": -0.03872579613491442,
+            "eligible_test_rows": 67
+          },
+          "2": {
+            "pehe": 0.13714113417225765,
+            "ate_bias": -0.09388666665937712,
+            "eligible_test_rows": 55
+          }
+        },
+        "policy_regret": 0.007496011866473424,
+        "best_action_accuracy": 0.7866666666666666,
+        "eligibility_violations": 0,
+        "oracle_mean_effect": 0.18365880162451356,
+        "policy_mean_effect": 0.17616278975804014
+      },
+      {
+        "model": "MultiTreatmentOutcome",
+        "size": 300,
+        "seed": 42,
+        "status": "PASS",
+        "runtime_seconds": 0.1945277920000006,
+        "peak_rss_mb": 172.078125,
+        "device": "cpu",
+        "arm_metrics": {
+          "1": {
+            "pehe": 0.08045791407938158,
+            "ate_bias": -0.007037852724200627,
+            "eligible_test_rows": 67
+          },
+          "2": {
+            "pehe": 0.09221222182764845,
+            "ate_bias": -0.01888112868026459,
+            "eligible_test_rows": 55
+          }
+        },
+        "policy_regret": 0.00631177693898964,
+        "best_action_accuracy": 0.8,
+        "eligibility_violations": 0,
+        "oracle_mean_effect": 0.18365880162451356,
+        "policy_mean_effect": 0.1773470246855239
+      },
+      {
+        "model": "One-vs-Control",
+        "size": 300,
+        "seed": 52,
+        "status": "PASS",
+        "runtime_seconds": 0.26085058399999994,
+        "peak_rss_mb": 172.078125,
+        "device": "cpu",
+        "arm_metrics": {
+          "1": {
+            "pehe": 0.07861497831165035,
+            "ate_bias": -0.033495589620646665,
+            "eligible_test_rows": 59
+          },
+          "2": {
+            "pehe": 0.12539766516908984,
+            "ate_bias": -0.05152518084621602,
+            "eligible_test_rows": 57
+          }
+        },
+        "policy_regret": 0.004412314761918796,
+        "best_action_accuracy": 0.92,
+        "eligibility_violations": 0,
+        "oracle_mean_effect": 0.1931305827240175,
+        "policy_mean_effect": 0.1887182679620987
+      },
+      {
+        "model": "MultiTreatmentOutcome",
+        "size": 300,
+        "seed": 52,
+        "status": "PASS",
+        "runtime_seconds": 0.18541275000000113,
+        "peak_rss_mb": 172.078125,
+        "device": "cpu",
+        "arm_metrics": {
+          "1": {
+            "pehe": 0.06786621096896392,
+            "ate_bias": 0.011589035324970715,
+            "eligible_test_rows": 59
+          },
+          "2": {
+            "pehe": 0.10411881323046573,
+            "ate_bias": 0.009467875133440273,
+            "eligible_test_rows": 57
+          }
+        },
+        "policy_regret": 0.007517040090481442,
+        "best_action_accuracy": 0.8933333333333333,
+        "eligibility_violations": 0,
+        "oracle_mean_effect": 0.1931305827240175,
+        "policy_mean_effect": 0.18561354263353608
+      },
+      {
+        "model": "One-vs-Control",
+        "size": 300,
+        "seed": 62,
+        "status": "PASS",
+        "runtime_seconds": 0.2612303340000004,
+        "peak_rss_mb": 172.078125,
+        "device": "cpu",
+        "arm_metrics": {
+          "1": {
+            "pehe": 0.09395324644606938,
+            "ate_bias": -0.03880020688748781,
+            "eligible_test_rows": 67
+          },
+          "2": {
+            "pehe": 0.1519042101642256,
+            "ate_bias": -0.10837035779742282,
+            "eligible_test_rows": 63
+          }
+        },
+        "policy_regret": 0.0231488898030137,
+        "best_action_accuracy": 0.7733333333333333,
+        "eligibility_violations": 0,
+        "oracle_mean_effect": 0.20965343640228246,
+        "policy_mean_effect": 0.18650454659926877
+      },
+      {
+        "model": "MultiTreatmentOutcome",
+        "size": 300,
+        "seed": 62,
+        "status": "PASS",
+        "runtime_seconds": 0.18556941699999996,
+        "peak_rss_mb": 172.078125,
+        "device": "cpu",
+        "arm_metrics": {
+          "1": {
+            "pehe": 0.08146105009147825,
+            "ate_bias": 0.002625423665514298,
+            "eligible_test_rows": 67
+          },
+          "2": {
+            "pehe": 0.07866950209818975,
+            "ate_bias": -0.031268585454329575,
+            "eligible_test_rows": 63
+          }
+        },
+        "policy_regret": 0.009193789001069366,
+        "best_action_accuracy": 0.84,
+        "eligibility_violations": 0,
+        "oracle_mean_effect": 0.20965343640228246,
+        "policy_mean_effect": 0.20045964740121308
+      },
+      {
+        "model": "One-vs-Control",
+        "size": 300,
+        "seed": 72,
+        "status": "PASS",
+        "runtime_seconds": 0.2585598750000013,
+        "peak_rss_mb": 172.078125,
+        "device": "cpu",
+        "arm_metrics": {
+          "1": {
+            "pehe": 0.08359124163412582,
+            "ate_bias": -0.033618038285811835,
+            "eligible_test_rows": 71
+          },
+          "2": {
+            "pehe": 0.15568431913992478,
+            "ate_bias": -0.08881944479763403,
+            "eligible_test_rows": 63
+          }
+        },
+        "policy_regret": 0.005394015335649392,
+        "best_action_accuracy": 0.88,
+        "eligibility_violations": 0,
+        "oracle_mean_effect": 0.19818801365380181,
+        "policy_mean_effect": 0.19279399831815242
+      },
+      {
+        "model": "MultiTreatmentOutcome",
+        "size": 300,
+        "seed": 72,
+        "status": "PASS",
+        "runtime_seconds": 0.18491537499999922,
+        "peak_rss_mb": 172.078125,
+        "device": "cpu",
+        "arm_metrics": {
+          "1": {
+            "pehe": 0.05782298144214821,
+            "ate_bias": -0.017449515153997813,
+            "eligible_test_rows": 71
+          },
+          "2": {
+            "pehe": 0.09639218970937709,
+            "ate_bias": -0.02792886382047878,
+            "eligible_test_rows": 63
+          }
+        },
+        "policy_regret": 0.004005079888930372,
+        "best_action_accuracy": 0.8933333333333333,
+        "eligibility_violations": 0,
+        "oracle_mean_effect": 0.19818801365380181,
+        "policy_mean_effect": 0.19418293376487147
+      },
+      {
+        "model": "One-vs-Control",
+        "size": 300,
+        "seed": 82,
+        "status": "PASS",
+        "runtime_seconds": 0.2580410000000022,
+        "peak_rss_mb": 172.078125,
+        "device": "cpu",
+        "arm_metrics": {
+          "1": {
+            "pehe": 0.08421151892658754,
+            "ate_bias": -0.04818761242480302,
+            "eligible_test_rows": 68
+          },
+          "2": {
+            "pehe": 0.13737971749114788,
+            "ate_bias": -0.06346164325352643,
+            "eligible_test_rows": 60
+          }
+        },
+        "policy_regret": 0.01146021888893835,
+        "best_action_accuracy": 0.8666666666666667,
+        "eligibility_violations": 0,
+        "oracle_mean_effect": 0.2090208486067591,
+        "policy_mean_effect": 0.19756062971782076
+      },
+      {
+        "model": "MultiTreatmentOutcome",
+        "size": 300,
+        "seed": 82,
+        "status": "PASS",
+        "runtime_seconds": 0.18483770899999996,
+        "peak_rss_mb": 172.078125,
+        "device": "cpu",
+        "arm_metrics": {
+          "1": {
+            "pehe": 0.06194147038450329,
+            "ate_bias": -0.025430341735647177,
+            "eligible_test_rows": 68
+          },
+          "2": {
+            "pehe": 0.09848231659388679,
+            "ate_bias": -0.023396007063728297,
+            "eligible_test_rows": 60
+          }
+        },
+        "policy_regret": 0.009354514109162554,
+        "best_action_accuracy": 0.88,
+        "eligibility_violations": 0,
+        "oracle_mean_effect": 0.2090208486067591,
+        "policy_mean_effect": 0.19966633449759658
+      }
+    ],
+    "limitations": [
+      "The MRT raw context was unavailable, so this is not Push-derived semi-synthetic evidence.",
+      "The unified model is the existing shared API adapter, not MEMENTO/HydraNet/M3TN/MTMT or EFIN.",
+      "Policy metrics use generated truth and an explicit eligibility mask."
+    ],
+    "status": "PASS"
+  },
+  "runtime_seconds": 15.286908332999998,
+  "gates": {
+    "code_pass": "PASS",
+    "test_pass": "PASS",
+    "experiment_pass": "PASS",
+    "research_gate_pass": "PARTIAL",
+    "real_mrt_lane": "BLOCKED_LICENSE_AND_LOCAL_ARCHIVE",
+    "full_sequential_dr": "NOT_AVAILABLE_CONTINUATION_MODEL_MISSING"
+  },
+  "limitations": [
+    "This is known-truth semi-synthetic evidence, not real Push business lift.",
+    "The local myBPmyLife archive remains unavailable/unlicensed; no raw data was downloaded.",
+    "The OPE lane is one-step binary IPS/SNIPS; it is not full sequential DR.",
+    "Three-arm comparison reuses the existing DeepUplift synthetic multi-treatment runner and remains separate from the binary candidate optimizer contract."
+  ],
+  "next_tasks": [
+    "Add a continuation-value nuisance model before claiming full sequential DR.",
+    "Reopen real MRT lane only after archive fingerprint and license are verified.",
+    "Add a multi-arm candidate/OPE adapter using actual logged arm probabilities."
+  ],
+  "validation": {
+    "command": "python3 -m pytest -q tests/orchestration tests/benchmarks/test_push_e2e_v2.py",
+    "returncode": 0,
+    "stdout": ".......                                                                  [100%]\n7 passed in 4.12s\n",
+    "stderr": ""
+  }
+}

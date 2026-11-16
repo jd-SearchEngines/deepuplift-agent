@@ -6,5 +6,5 @@ Return code: `0`
 
 ```text
 .......                                                                  [100%]
-7 passed in 4.12s
+7 passed in 4.09s
 ```
