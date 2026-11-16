@@ -7,7 +7,7 @@ LABEL=com.deepuplift.autonomous-runner
 if [ -f "$PID_FILE" ] && kill -0 "$(cat "$PID_FILE")" 2>/dev/null; then
   echo "RUNNING pid=$(cat "$PID_FILE") state=$STATE_ROOT"
 else
-  echo "STOPPED state=$STATE_ROOT"
+  echo "NO_MANUAL_PID state=$STATE_ROOT"
 fi
 if launchctl print "gui/$(id -u)/$LABEL" >/dev/null 2>&1; then
   echo "LAUNCHD loaded label=$LABEL"
