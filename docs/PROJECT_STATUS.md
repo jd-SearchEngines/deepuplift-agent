@@ -297,3 +297,11 @@ This gate proves a local bounded engineering workflow, not causal validity, real
 The metric layer now has a hand-calculated Qini/AUUC fixture (`qini=0.625`, `auuc=3.625`), participant-cluster bootstrap support, and a multi-arm policy-value estimator using the logged per-row arm probability matrix. Focused tests passed (`10 passed`); the full Python 3.11 suite passed (`114 passed, 2 skipped`). The SDK read-only reviewer timed out and was not counted as a pass. No raw MRT data or business claims are attached to this gate.
 
 The next eligible phase is Gate 2 Push data provenance reconciliation. Real-data and long-running causal experiments remain gated until archive source, license, fingerprint, dictionary version and run IDs agree.
+
+## 13. 2026-11-16 Gate 2 Push data provenance
+
+**Gate status: BLOCKED / NOT_AVAILABLE for real local myBPmyLife execution.** Report: [PUSH_DATA_PROVENANCE_RECONCILIATION.md](benchmarks/PUSH_DATA_PROVENANCE_RECONCILIATION.md), machine-readable result: [PUSH_DATA_PROVENANCE_RECONCILIATION.json](benchmarks/PUSH_DATA_PROVENANCE_RECONCILIATION.json).
+
+The bounded local filename audit found no raw `Data_MRT.zip` or participant-level myBPmyLife archive. The upstream repository is public, but GitHub reports no license metadata or root license file; therefore the archive was not downloaded. Historical P0/P1 supplied-snapshot PASS evidence and the Experiment A zero-row `NOT_AVAILABLE` result remain separate and reconcile to `PARTIAL / NOT_VERIFIED`, not a real-data PASS.
+
+The real Push lane is paused at the license/archive-fingerprint gate. Semi-synthetic known-truth work may continue; no raw data download, redistribution or long-running real MRT experiment will be started without authorized provenance evidence.
